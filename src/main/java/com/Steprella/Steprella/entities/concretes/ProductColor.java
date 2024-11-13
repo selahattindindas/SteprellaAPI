@@ -26,5 +26,5 @@ public class ProductColor extends BaseEntity {
     private Color color;
 
     @OneToMany(mappedBy = "productColor", cascade = CascadeType.ALL)
-    private List<ProductColorFile> images;
+    private List<ProductColorFile> files;
 }

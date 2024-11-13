@@ -1,5 +1,6 @@
 package com.Steprella.Steprella.entities.concretes;
 
+import com.Steprella.Steprella.entities.abstracts.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "shoe_models")
-public class ShoeModel {
+public class ShoeModel extends BaseEntity {
 
     @Column(name = "model_name", nullable = false)
     private String modelName;

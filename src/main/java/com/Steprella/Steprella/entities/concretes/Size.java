@@ -1,5 +1,6 @@
 package com.Steprella.Steprella.entities.concretes;
 
+import com.Steprella.Steprella.entities.abstracts.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -14,7 +15,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Entity
 @Table(name = "sizes")
-public class Size {
+public class Size extends BaseEntity {
 
     @Column(name = "size_value", nullable = false)
     private int sizeValue;

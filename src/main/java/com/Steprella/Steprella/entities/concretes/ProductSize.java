@@ -1,5 +1,6 @@
 package com.Steprella.Steprella.entities.concretes;
 
+import com.Steprella.Steprella.entities.abstracts.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,7 +13,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Entity
 @Table(name = "product_sizes")
-public class ProductSize {
+public class ProductSize extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)

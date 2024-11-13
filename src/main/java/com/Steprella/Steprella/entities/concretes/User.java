@@ -1,6 +1,7 @@
 package com.Steprella.Steprella.entities.concretes;
 
 import com.Steprella.Steprella.entities.abstracts.BaseEntity;
+import com.Steprella.Steprella.services.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
