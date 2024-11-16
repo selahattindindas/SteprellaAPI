@@ -19,9 +19,8 @@ public class ProductSize extends BaseEntity {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    @ManyToOne
-    @JoinColumn(name = "size_id", nullable = false)
-    private Size size;
+    @Column(name="size_value", nullable = false)
+    private int sizeValue;
 
     @Column(name = "stock_quantity", nullable = false)
     private int stockQuantity;

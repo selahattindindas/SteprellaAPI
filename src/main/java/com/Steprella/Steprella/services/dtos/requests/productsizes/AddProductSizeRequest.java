@@ -16,7 +16,7 @@ public class AddProductSizeRequest {
     private int productId;
 
     @NotNull
-    private int sizeId;
+    private int sizeValue;
 
     @NotNull
     private int stockQuantity;

@@ -19,7 +19,7 @@ public class UpdateProductSizeRequest {
     private int productId;
 
     @NotNull
-    private int sizeId;
+    private int sizeValue;
 
     @NotNull
     private int stockQuantity;

@@ -15,7 +15,7 @@ public class UpdateProductSizeResponse {
 
     private int productId;
 
-    private int sizeId;
+    private int sizeValue;
 
     private int stockQuantity;
 }
