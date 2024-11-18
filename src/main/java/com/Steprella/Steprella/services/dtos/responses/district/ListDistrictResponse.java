@@ -14,4 +14,6 @@ public class ListDistrictResponse {
     private int id;
 
     private String name;
+
+    private int cityId;
 }

@@ -17,9 +17,6 @@ public class AddAddressRequest {
     private String description;
 
     @NotNull
-    private int userId;
-
-    @NotNull
     private int cityId;
 
     @NotNull

@@ -19,10 +19,13 @@ public class Comment extends AuditEntity {
     @JoinColumn(name = "product_id")
     private Product product;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
     @Column(name="comment_text")
     private String commentText;
+
+    @Column(name="rating")
+    private Integer rating;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
 }

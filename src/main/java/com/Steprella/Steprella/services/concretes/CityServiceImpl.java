@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class CityServiceImpl implements CityService {
 
-        private CityRepository cityRepository;
+    private CityRepository cityRepository;
 
     @Override
     public List<ListCityResponse> getAll() {

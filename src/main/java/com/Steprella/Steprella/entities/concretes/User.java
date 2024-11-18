@@ -7,8 +7,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Getter
@@ -17,7 +19,8 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "users")
-public class User extends BaseEntity {
+@Inheritance(strategy = InheritanceType.JOINED)
+public class User extends BaseEntity implements UserDetails {
 
     @Column(name = "password" , nullable = false)
     private String password;
@@ -29,18 +32,33 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @OneToMany(mappedBy= "user", cascade = CascadeType.ALL)
-    private List<Favorite> favorites = new ArrayList<>();
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of();
+    }
 
-    @OneToMany(mappedBy= "user", cascade = CascadeType.ALL)
-    private List<Rating> ratings = new ArrayList<>();
+    @Override
+    public String getUsername() {
+        return email;
+    }
 
-    @OneToMany(mappedBy= "user", cascade = CascadeType.ALL)
-    private List<Comment> comments = new ArrayList<>();
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Address> addresses = new ArrayList<>();
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private UserDetail userDetail;
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }

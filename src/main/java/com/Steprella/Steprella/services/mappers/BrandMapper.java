@@ -18,12 +18,16 @@ public interface BrandMapper {
     ListBrandResponse listResponseFromBrand(Brand brand);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "productList", ignore = true)
+    @Mapping(target = "shoeModels", ignore = true)
     Brand brandFromAddRequest(AddBrandRequest request);
 
     AddBrandResponse addResponseBrand(Brand brand);
 
     @Mapping(target = "id", source = "request.id")
-    Brand brandFrommUpdateRequest(UpdateBrandRequest request);
+    @Mapping(target = "productList", ignore = true)
+    @Mapping(target = "shoeModels", ignore = true)
+    Brand brandFromUpdateRequest(UpdateBrandRequest request);
 
     @Mapping(target = "id", source = "brand.id")
     UpdateBrandResponse updateResponseBrand(Brand brand);

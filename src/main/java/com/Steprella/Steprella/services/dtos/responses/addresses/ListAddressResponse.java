@@ -13,8 +13,6 @@ public class ListAddressResponse {
 
     private int id;
 
-    private int userId;
-
     private String cityName;
 
     private String districtName;

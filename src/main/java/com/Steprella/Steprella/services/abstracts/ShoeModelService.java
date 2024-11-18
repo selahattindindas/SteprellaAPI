@@ -10,6 +10,8 @@ import java.util.List;
 
 public interface ShoeModelService {
 
+    List<ListShoeModelResponse> getAll();
+
     List<ListShoeModelResponse> getShoeModelsByBrandId(int brandId);
 
     ListShoeModelResponse getById(int id);

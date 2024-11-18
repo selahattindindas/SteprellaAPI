@@ -13,8 +13,6 @@ public class AddAddressResponse {
 
     private int id;
 
-    private int userId;
-
     private int cityId;
 
     private int districtId;

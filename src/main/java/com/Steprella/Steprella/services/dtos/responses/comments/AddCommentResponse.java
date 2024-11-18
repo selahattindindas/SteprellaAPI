@@ -17,5 +17,7 @@ public class AddCommentResponse {
 
     private int productId;
 
-    private int userId;
+    private int rating;
+
+    private String createdDate;
 }

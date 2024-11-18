@@ -17,5 +17,5 @@ public class UpdateCommentResponse {
 
     private int productId;
 
-    private int userId;
+    private int rating;
 }

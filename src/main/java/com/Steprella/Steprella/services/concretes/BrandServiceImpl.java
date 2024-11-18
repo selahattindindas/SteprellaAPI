@@ -45,7 +45,7 @@ public class BrandServiceImpl implements BrandService {
 
     @Override
     public UpdateBrandResponse update(UpdateBrandRequest request) {
-        Brand updateBrand = BrandMapper.INSTANCE.brandFrommUpdateRequest(request);
+        Brand updateBrand = BrandMapper.INSTANCE.brandFromUpdateRequest(request);
         Brand saveBrand = brandRepository.save(updateBrand);
 
         return BrandMapper.INSTANCE.updateResponseBrand(saveBrand);

@@ -17,11 +17,11 @@ public class ListCommentResponse {
 
     private int productId;
 
-    private int userId;
+    private String firstName;
 
-    private String userFirstName;
-
-    private String userLastName;
+    private String lastName;
 
     private String createdDate;
+
+    private int rating;
 }

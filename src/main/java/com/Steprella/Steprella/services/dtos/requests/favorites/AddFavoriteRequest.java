@@ -14,7 +14,4 @@ public class AddFavoriteRequest {
 
     @NotNull
     private int productId;
-
-    @NotNull
-    private int userId;
 }

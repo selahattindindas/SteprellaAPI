@@ -19,11 +19,11 @@ public class AuditEntity extends BaseEntity {
 
     @CreatedDate
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "created_date", nullable = false, updatable = false)
+    @Column(name = "created_date", nullable = true, updatable = false)
     private Date createdDate;
 
     @LastModifiedDate
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "updated_date", nullable = false)
+    @Column(name = "updated_date", nullable = true)
     private Date updatedDate;
 }

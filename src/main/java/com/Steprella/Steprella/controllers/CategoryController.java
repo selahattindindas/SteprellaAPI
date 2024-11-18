@@ -1,6 +1,6 @@
 package com.Steprella.Steprella.controllers;
 
-import com.Steprella.Steprella.core.services.messages.Messages;
+import com.Steprella.Steprella.core.utils.messages.Messages;
 import com.Steprella.Steprella.entities.concretes.Category;
 import com.Steprella.Steprella.services.abstracts.CategoryService;
 import com.Steprella.Steprella.services.dtos.requests.categories.AddCategoryRequest;
@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -40,7 +41,11 @@ public class CategoryController extends BaseController{
     }
 
     @PostMapping("/create-category")
-    public ResponseEntity<BaseResponse<AddCategoryResponse>> add(@RequestBody @Valid AddCategoryRequest request) {
+    public ResponseEntity<BaseResponse<AddCategoryResponse>> add(@RequestBody @Valid AddCategoryRequest request, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return sendResponse(HttpStatus.BAD_REQUEST, Messages.Error.CUSTOM_BAD_REQUEST, null);
+        }
+
         Category parentCategory = null;
         if (request.getParentId() != null) {
             parentCategory = categoryService.getCategoryByParentId(request.getParentId());
@@ -54,7 +59,10 @@ public class CategoryController extends BaseController{
     }
 
     @PutMapping("/update-category")
-    public ResponseEntity<BaseResponse<UpdateCategoryResponse>> update(@RequestBody @Valid UpdateCategoryRequest request) {
+    public ResponseEntity<BaseResponse<UpdateCategoryResponse>> update(@RequestBody @Valid UpdateCategoryRequest request, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return sendResponse(HttpStatus.BAD_REQUEST, Messages.Error.CUSTOM_BAD_REQUEST, null);
+        }
         Category existingCategory = categoryService.getCategoryById(request.getId());
             if(existingCategory == null)
                 sendResponse(HttpStatus.NOT_FOUND, Messages.Error.CUSTOM_CATEGORY_NOT_FOUND, null);
@@ -66,6 +74,7 @@ public class CategoryController extends BaseController{
                 return sendResponse(HttpStatus.NOT_FOUND, Messages.Error.CUSTOM_PARENT_NOT_FOUND, null);
             }
         }
+        assert existingCategory != null;
         existingCategory.setParent(parentCategory);
 
         UpdateCategoryResponse updateCategoryResponse = categoryService.update(request, existingCategory);

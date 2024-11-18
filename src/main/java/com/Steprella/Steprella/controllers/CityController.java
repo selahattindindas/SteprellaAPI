@@ -1,6 +1,6 @@
 package com.Steprella.Steprella.controllers;
 
-import com.Steprella.Steprella.core.services.messages.Messages;
+import com.Steprella.Steprella.core.utils.messages.Messages;
 import com.Steprella.Steprella.services.abstracts.CityService;
 import com.Steprella.Steprella.services.dtos.responses.BaseResponse;
 import com.Steprella.Steprella.services.dtos.responses.cities.ListCityResponse;

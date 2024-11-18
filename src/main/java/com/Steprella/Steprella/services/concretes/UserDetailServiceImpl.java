@@ -1,5 +1,6 @@
 package com.Steprella.Steprella.services.concretes;
 
+import com.Steprella.Steprella.repositories.UserDetailRepository;
 import com.Steprella.Steprella.services.abstracts.UserDetailService;
 import com.Steprella.Steprella.services.dtos.requests.userdetails.AddUserDetailRequest;
 import com.Steprella.Steprella.services.dtos.requests.userdetails.UpdateUserDetailRequest;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 public class UserDetailServiceImpl implements UserDetailService {
+
+    private UserDetailRepository userDetailRepository;
 
     @Override
     public ListUserDetailResponse getUserDetailByUserId(int userId) {

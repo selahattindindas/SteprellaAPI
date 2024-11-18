@@ -35,9 +35,6 @@ public class Product extends AuditEntity {
     private List<Favorite> favorites = new ArrayList<>();
 
     @OneToMany(mappedBy= "product", cascade = CascadeType.ALL)
-    private List<Rating> ratings = new ArrayList<>();
-
-    @OneToMany(mappedBy= "product", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
 
     @ManyToOne

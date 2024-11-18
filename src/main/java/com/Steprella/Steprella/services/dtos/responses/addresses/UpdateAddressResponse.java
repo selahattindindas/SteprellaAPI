@@ -13,8 +13,6 @@ public class UpdateAddressResponse {
 
     private int id;
 
-    private int userId;
-
     private int cityId;
 
     private int districtId;
