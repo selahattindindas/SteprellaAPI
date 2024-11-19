@@ -16,4 +16,6 @@ public class ListAddressResponse {
     private String cityName;
 
     private String districtName;
+
+    private int userId;
 }

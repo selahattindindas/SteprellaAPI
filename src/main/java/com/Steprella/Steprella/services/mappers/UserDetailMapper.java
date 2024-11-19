@@ -1,6 +1,5 @@
 package com.Steprella.Steprella.services.mappers;
 
-import com.Steprella.Steprella.entities.concretes.Customer;
 import com.Steprella.Steprella.entities.concretes.UserDetail;
 import com.Steprella.Steprella.services.dtos.requests.userdetails.AddUserDetailRequest;
 import com.Steprella.Steprella.services.dtos.requests.userdetails.UpdateUserDetailRequest;
@@ -20,14 +19,13 @@ public interface UserDetailMapper {
     ListUserDetailResponse listResponseFromUserDetail(UserDetail userDetail);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "customer", source = "customer")
-    UserDetail userDetailFromAddRequest(AddUserDetailRequest request, Customer customer);
+    @Mapping(target = "user", ignore = true)
+    UserDetail userDetailFromAddRequest(AddUserDetailRequest request);
 
     AddUserDetailResponse addResponseFromUserDetail(UserDetail userDetail);
 
-    @Mapping(target = "id", source = "request.id")
-    @Mapping(target = "customer", source = "customer")
-    UserDetail userDetailFromUpdateRequest(UpdateUserDetailRequest request, Customer customer);
+    @Mapping(target = "user", ignore = true)
+    UserDetail userDetailFromUpdateRequest(UpdateUserDetailRequest request);
 
     UpdateUserDetailResponse updateResponseFromUserDetail(UserDetail userDetail);
 }

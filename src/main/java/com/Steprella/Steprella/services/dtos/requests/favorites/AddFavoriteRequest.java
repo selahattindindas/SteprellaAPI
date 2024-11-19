@@ -13,5 +13,8 @@ import lombok.Setter;
 public class AddFavoriteRequest {
 
     @NotNull
-    private int productId;
+    private int productVariantId;
+
+    @NotNull
+    private int userId;
 }

@@ -20,5 +20,8 @@ public class AddAddressRequest {
     private int cityId;
 
     @NotNull
+    private int userId;
+
+    @NotNull
     private int districtId;
 }

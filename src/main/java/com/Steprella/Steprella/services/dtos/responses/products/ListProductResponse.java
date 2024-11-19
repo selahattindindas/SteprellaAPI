@@ -1,7 +1,6 @@
 package com.Steprella.Steprella.services.dtos.responses.products;
 
 import com.Steprella.Steprella.services.dtos.responses.comments.ListCommentResponse;
-import com.Steprella.Steprella.services.dtos.responses.productcolors.ListProductColorResponse;
 import com.Steprella.Steprella.services.dtos.responses.productsizes.ListProductSizeResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,9 +28,7 @@ public class ListProductResponse {
 
     private String shoeModelName;
 
-    private List<ListProductSizeResponse> productSizes;
+    private String createdDate;
 
-    private List<ListProductColorResponse> productColors;
-
-    private List<ListCommentResponse> productComments;
+    private String updatedDate;
 }

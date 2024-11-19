@@ -27,6 +27,7 @@ public class CityController extends BaseController{
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, cities);
     }
 
+    @GetMapping("/{id}")
     public ResponseEntity<BaseResponse<ListCityResponse>> getById(@PathVariable int id) {
         ListCityResponse city = cityService.getById(id);
         if (city == null){

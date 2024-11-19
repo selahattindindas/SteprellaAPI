@@ -15,13 +15,15 @@ public class ListCommentResponse {
 
     private String commentText;
 
-    private int productId;
+    private int productVariantId;
 
     private String firstName;
 
     private String lastName;
 
     private String createdDate;
+
+    private String updatedDate;
 
     private int rating;
 }

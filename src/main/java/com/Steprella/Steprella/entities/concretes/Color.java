@@ -22,5 +22,5 @@ public class Color extends BaseEntity {
     private String name;
 
     @OneToMany(mappedBy = "color", cascade = CascadeType.ALL)
-    private List<ProductColor> productColors = new ArrayList<>();
+    private List<ProductVariant> productVariants = new ArrayList<>();
 }

@@ -64,8 +64,21 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     public Category getCategoryById(int id) {
-
         return categoryRepository.findById(id).orElse(null);
+    }
+
+    public String getCategoryHierarchy(Category category) {
+        StringBuilder hierarchy = new StringBuilder();
+
+        while (category != null) {
+            if (hierarchy.length() > 0) {
+                hierarchy.insert(0, " > ");
+            }
+            hierarchy.insert(0, category.getName());
+            category = category.getParent();
+        }
+
+        return hierarchy.toString();
     }
 
 }

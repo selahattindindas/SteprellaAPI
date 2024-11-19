@@ -25,4 +25,5 @@ public class AddUserDetailRequest {
 
     @NotNull
     private Gender gender;
+
 }

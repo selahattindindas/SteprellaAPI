@@ -2,6 +2,9 @@ package com.Steprella.Steprella.controllers;
 
 import com.Steprella.Steprella.core.utils.messages.Messages;
 import com.Steprella.Steprella.services.abstracts.CommentService;
+import com.Steprella.Steprella.services.abstracts.ProductService;
+import com.Steprella.Steprella.services.abstracts.ProductVariantService;
+import com.Steprella.Steprella.services.abstracts.UserService;
 import com.Steprella.Steprella.services.dtos.requests.comments.AddCommentRequest;
 import com.Steprella.Steprella.services.dtos.requests.comments.UpdateCommentRequest;
 import com.Steprella.Steprella.services.dtos.responses.BaseResponse;
@@ -23,10 +26,12 @@ import java.util.List;
 public class CommentController extends BaseController{
 
     private final CommentService commentService;
+    private final UserService userService;
+    private final ProductVariantService productVariantService;
 
-    @GetMapping("/by-product-id/{productId}")
-    public ResponseEntity<BaseResponse<List<ListCommentResponse>>> getCommentByProductId(@PathVariable int productId){
-        List<ListCommentResponse> comments = commentService.getCommentsByProductId(productId);
+    @GetMapping("/by-product-id/{productVariantId}")
+    public ResponseEntity<BaseResponse<List<ListCommentResponse>>> getCommentByProductVariantId(@PathVariable int productVariantId){
+        List<ListCommentResponse> comments = commentService.getCommentsByProductVariantId(productVariantId);
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, comments);
     }
 
@@ -46,6 +51,11 @@ public class CommentController extends BaseController{
             return sendResponse(HttpStatus.BAD_REQUEST, Messages.Error.CUSTOM_BAD_REQUEST, null);
         }
 
+        ResponseEntity<BaseResponse<AddCommentResponse>> validationResponse = validateCommentDependencies(request.getProductVariantId(), request.getUserId());
+        if (validationResponse != null) {
+            return validationResponse;
+        }
+
         AddCommentResponse addCommentResponse = commentService.add(request);
         return sendResponse(HttpStatus.CREATED, Messages.Success.CUSTOM_SUCCESSFULLY, addCommentResponse);
     }
@@ -60,6 +70,11 @@ public class CommentController extends BaseController{
             return sendResponse(HttpStatus.NOT_FOUND, Messages.Error.CUSTOM_COMMENT_NOT_FOUND, null);
         }
 
+        ResponseEntity<BaseResponse<UpdateCommentResponse>> validationResponse = validateCommentDependencies(request.getProductVariantId(), request.getUserId());
+        if (validationResponse != null) {
+            return validationResponse;
+        }
+
         UpdateCommentResponse updateCommentResponse = commentService.update(request);
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, updateCommentResponse);
     }
@@ -68,5 +83,15 @@ public class CommentController extends BaseController{
     public ResponseEntity<BaseResponse<Void>>delete(@PathVariable int id) {
         commentService.delete(id);
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, null);
+    }
+
+    private <T> ResponseEntity<BaseResponse<T>> validateCommentDependencies(int productVariantId, int userId) {
+        if (productVariantService.getById(productVariantId) == null) {
+            return sendResponse(HttpStatus.NOT_FOUND, Messages.Error.CUSTOM_SHOE_MODEL_NOT_FOUND, null);
+        }
+        if (userService.getById(userId) == null) {
+            return sendResponse(HttpStatus.NOT_FOUND, Messages.Error.CUSTOM_USER_NOT_FOUND, null);
+        }
+        return null;
     }
 }

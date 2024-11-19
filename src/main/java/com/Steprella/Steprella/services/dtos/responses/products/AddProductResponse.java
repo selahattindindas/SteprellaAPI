@@ -22,4 +22,6 @@ public class AddProductResponse {
     private int brandId;
 
     private int shoeModelId;
+
+    private String createdDate;
 }

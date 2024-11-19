@@ -22,4 +22,6 @@ public class UpdateProductResponse {
     private int brandId;
 
     private int shoeModelId;
+
+    private String updatedDate;
 }

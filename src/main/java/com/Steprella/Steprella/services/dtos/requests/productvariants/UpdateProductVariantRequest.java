@@ -1,25 +1,27 @@
-package com.Steprella.Steprella.services.dtos.requests.productcolors;
+package com.Steprella.Steprella.services.dtos.requests.productvariants;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
+import java.util.Date;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class AddProductColorRequest {
+public class UpdateProductVariantRequest {
 
     @NotNull
-    private int productId;
+    private int id;
 
     @NotNull
     private int colorId;
 
-    private List<MultipartFile> files;
+    @NotNull
+    private int productId;
+
+    private Date updatedDate;
 }

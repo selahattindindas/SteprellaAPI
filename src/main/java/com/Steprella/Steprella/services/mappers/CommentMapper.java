@@ -1,7 +1,6 @@
 package com.Steprella.Steprella.services.mappers;
 
 import com.Steprella.Steprella.entities.concretes.Comment;
-import com.Steprella.Steprella.entities.concretes.Customer;
 import com.Steprella.Steprella.services.dtos.requests.comments.AddCommentRequest;
 import com.Steprella.Steprella.services.dtos.requests.comments.UpdateCommentRequest;
 import com.Steprella.Steprella.services.dtos.responses.comments.AddCommentResponse;
@@ -16,30 +15,33 @@ public interface CommentMapper {
 
     CommentMapper INSTANCE = Mappers.getMapper(CommentMapper.class);
 
-    @Mapping(target = "productId", source = "product.id")
-    @Mapping(target = "firstName", source = "customer.userDetail.firstName")
-    @Mapping(target = "lastName", source = "customer.userDetail.lastName")
+    @Mapping(target = "productVariantId", source = "productVariant.id")
+    @Mapping(target = "firstName", source = "user.userDetail.firstName")
+    @Mapping(target = "lastName", source = "user.userDetail.lastName")
     @Mapping(target = "createdDate", source = "createdDate")
+    @Mapping(target = "updatedDate", source = "updatedDate")
     ListCommentResponse listResponseFromComment(Comment comment);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "product.id", source = "request.productId")
+    @Mapping(target = "productVariant.id", source = "productVariantId")
+    @Mapping(target = "user.id", source = "userId")
     @Mapping(target = "createdDate", ignore = true)
     @Mapping(target = "updatedDate", ignore = true)
-    @Mapping(target = "customer", source = "customer")
-    Comment commentFromAddRequest(AddCommentRequest request, Customer customer);
+    Comment commentFromAddRequest(AddCommentRequest request);
 
-    @Mapping(target = "createdDate", source = "comment.createdDate")
-    @Mapping(target = "productId", source = "product.id")
+    @Mapping(target = "createdDate", source = "createdDate")
+    @Mapping(target = "productVariantId", source = "productVariant.id")
+    @Mapping(target = "userId", source = "user.id")
     AddCommentResponse addResponseComment(Comment comment);
 
-    @Mapping(target = "id", source = "request.id")
-    @Mapping(target = "product.id", source = "request.productId")
+    @Mapping(target = "id", source = "id")
+    @Mapping(target = "productVariant.id", source = "productVariantId")
+    @Mapping(target = "user.id", source = "userId")
     @Mapping(target = "createdDate", ignore = true)
     @Mapping(target = "updatedDate", ignore = true)
-    @Mapping(target = "customer", source = "customer")
-    Comment commentFromUpdateRequest(UpdateCommentRequest request, Customer customer);
+    Comment commentFromUpdateRequest(UpdateCommentRequest request);
 
-    @Mapping(target = "productId", source = "product.id")
+    @Mapping(target = "productVariantId", source = "productVariant.id")
+    @Mapping(target = "userId", source = "user.id")
     UpdateCommentResponse updateResponseComment(Comment comment);
 }

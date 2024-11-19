@@ -8,5 +8,5 @@ import java.util.List;
 @Repository
 public interface CommentRepository extends BaseRepository<Comment, Integer> {
 
-    List<Comment> findByProductId(int productId);
+    List<Comment> findByProductVariantId(int productVariantId);
 }

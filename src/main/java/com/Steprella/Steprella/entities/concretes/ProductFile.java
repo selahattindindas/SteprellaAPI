@@ -14,10 +14,10 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "product_color_files")
-public class ProductColorFile extends File {
+@Table(name = "product_files")
+public class ProductFile extends File{
 
     @ManyToOne
-    @JoinColumn(name = "product_color_id", nullable = false)
-    private ProductColor productColor;
+    @JoinColumn(name = "product_variant_id", nullable = false)
+    private ProductVariant productVariant;
 }

@@ -15,9 +15,11 @@ public class AddCommentResponse {
 
     private String commentText;
 
-    private int productId;
+    private int productVariantId;
 
     private int rating;
 
     private String createdDate;
+
+    private int userId;
 }

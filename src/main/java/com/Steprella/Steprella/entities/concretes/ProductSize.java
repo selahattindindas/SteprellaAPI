@@ -16,8 +16,8 @@ import lombok.Setter;
 public class ProductSize extends BaseEntity {
 
     @ManyToOne
-    @JoinColumn(name = "product_id", nullable = false)
-    private Product product;
+    @JoinColumn(name = "product_variant_id", nullable = false)
+    private ProductVariant productVariant;
 
     @Column(name="size_value", nullable = false)
     private int sizeValue;

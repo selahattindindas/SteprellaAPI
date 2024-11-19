@@ -17,7 +17,7 @@ import lombok.Setter;
 public class File extends BaseEntity {
 
     @JoinColumn(name="file_name")
-    private String imageName;
+    private String fileName;
 
     @JoinColumn(name = "path")
     private String path;

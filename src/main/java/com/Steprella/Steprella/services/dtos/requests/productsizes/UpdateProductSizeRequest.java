@@ -16,7 +16,7 @@ public class UpdateProductSizeRequest {
     private int id;
 
     @NotNull
-    private int productId;
+    private int productVariantId;
 
     @NotNull
     private int sizeValue;

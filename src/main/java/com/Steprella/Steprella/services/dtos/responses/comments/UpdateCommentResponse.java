@@ -15,7 +15,11 @@ public class UpdateCommentResponse {
 
     private String commentText;
 
-    private int productId;
+    private int productVariantId;
 
     private int rating;
+
+    private int userId;
+
+    private String updatedDate;
 }

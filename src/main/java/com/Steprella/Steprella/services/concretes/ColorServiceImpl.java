@@ -22,4 +22,10 @@ public class ColorServiceImpl implements ColorService {
         List<Color> colors = colorRepository.findAll();
         return colors.stream().map(ColorMapper.INSTANCE::listResponseFromColor).collect(Collectors.toList());
     }
+
+    @Override
+    public ListColorResponse getById(int id) {
+        Color color = colorRepository.findById(id).orElse(null);
+        return ColorMapper.INSTANCE.listResponseFromColor(color);
+    }
 }

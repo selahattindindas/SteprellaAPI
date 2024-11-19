@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -32,4 +33,6 @@ public class UpdateProductRequest {
 
     @NotNull
     private int shoeModelId;
+
+    private Date updatedDate;
 }

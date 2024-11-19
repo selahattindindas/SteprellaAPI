@@ -16,7 +16,7 @@ import java.util.List;
 public class ProductSizeServiceImpl implements ProductSizeService {
 
     @Override
-    public List<ListProductSizeResponse> getProductSizesByProductId(int productId) {
+    public List<ListProductSizeResponse> getProductSizesByProductVariantId(int productVariantId) {
         return List.of();
     }
 

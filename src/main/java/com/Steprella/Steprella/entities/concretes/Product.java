@@ -22,20 +22,8 @@ public class Product extends AuditEntity {
     @Column(name = "price", nullable = false)
     private BigDecimal price;
 
-    @JoinColumn(name="description")
+    @Column(name="description")
     private String description;
-
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
-    private List<ProductSize> productSizes = new ArrayList<>();
-
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
-    private List<ProductColor> productColors = new ArrayList<>();
-
-    @OneToMany(mappedBy= "product", cascade = CascadeType.ALL)
-    private List<Favorite> favorites = new ArrayList<>();
-
-    @OneToMany(mappedBy= "product", cascade = CascadeType.ALL)
-    private List<Comment> comments = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name="category_id", nullable = false)
@@ -48,4 +36,7 @@ public class Product extends AuditEntity {
     @ManyToOne
     @JoinColumn(name="shoe_model_id", nullable = false)
     private ShoeModel shoeModel;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private List<ProductVariant> productVariants = new ArrayList<>();
 }

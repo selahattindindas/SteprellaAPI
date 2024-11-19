@@ -25,4 +25,5 @@ public interface CategoryService {
 
     Category getCategoryByParentId(Integer parentId);
 
+    String getCategoryHierarchy(Category category);
 }

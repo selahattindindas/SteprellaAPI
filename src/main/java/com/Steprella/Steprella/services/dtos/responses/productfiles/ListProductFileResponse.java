@@ -1,4 +1,4 @@
-package com.Steprella.Steprella.services.dtos.responses.productcolors;
+package com.Steprella.Steprella.services.dtos.responses.productfiles;
 
 import com.Steprella.Steprella.services.dtos.responses.files.ListFileResponse;
 import lombok.AllArgsConstructor;
@@ -12,13 +12,9 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ListProductColorResponse {
+public class ListProductFileResponse {
 
-    private int id;
+    private int productVariantId;
 
-    private int productId;
-
-    private String colorName;
-
-    private List<ListFileResponse> colorFiles;
+    private List<ListFileResponse> files;
 }

@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface ProductSizeService {
 
-    List<ListProductSizeResponse> getProductSizesByProductId(int productId);
+    List<ListProductSizeResponse> getProductSizesByProductVariantId(int productVariantId);
 
     ListProductSizeResponse getById(int id);
 

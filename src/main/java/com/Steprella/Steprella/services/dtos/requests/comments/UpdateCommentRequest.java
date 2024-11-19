@@ -24,7 +24,10 @@ public class UpdateCommentRequest {
     private String commentText;
 
     @NotNull
-    private int productId;
+    private int productVariantId;
+
+    @NotNull
+    private int userId;
 
     @NotNull
     @Min(value = 1)

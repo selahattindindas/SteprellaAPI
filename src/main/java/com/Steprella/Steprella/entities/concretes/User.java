@@ -19,7 +19,6 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "users")
-@Inheritance(strategy = InheritanceType.JOINED)
 public class User extends BaseEntity implements UserDetails {
 
     @Column(name = "password" , nullable = false)
@@ -31,6 +30,19 @@ public class User extends BaseEntity implements UserDetails {
     @Column(name = "role" , nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @OneToMany(mappedBy= "user", cascade = CascadeType.ALL)
+    private List<Address> addresses;
+
+    @OneToMany(mappedBy= "user", cascade = CascadeType.ALL)
+    private List<Comment> comments;
+
+    @OneToMany(mappedBy= "user", cascade = CascadeType.ALL)
+    private List<Favorite> favorites;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_detail_id", referencedColumnName = "id", nullable = false)
+    private UserDetail userDetail;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

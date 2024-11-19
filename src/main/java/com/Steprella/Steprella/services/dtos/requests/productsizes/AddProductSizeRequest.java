@@ -13,7 +13,7 @@ import lombok.Setter;
 public class AddProductSizeRequest {
 
     @NotNull
-    private int productId;
+    private int productVariantId;
 
     @NotNull
     private int sizeValue;

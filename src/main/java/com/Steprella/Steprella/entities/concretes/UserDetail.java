@@ -30,5 +30,5 @@ public class UserDetail extends BaseEntity {
     private Gender gender;
 
     @OneToOne(mappedBy = "userDetail", fetch = FetchType.LAZY)
-    private Customer customer;
+    private User user;
 }

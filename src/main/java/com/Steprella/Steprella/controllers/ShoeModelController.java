@@ -1,6 +1,7 @@
 package com.Steprella.Steprella.controllers;
 
 import com.Steprella.Steprella.core.utils.messages.Messages;
+import com.Steprella.Steprella.services.abstracts.BrandService;
 import com.Steprella.Steprella.services.abstracts.ShoeModelService;
 import com.Steprella.Steprella.services.dtos.requests.shoemodels.AddShoeModelRequest;
 import com.Steprella.Steprella.services.dtos.requests.shoemodels.UpdateShoeModelRequest;
@@ -23,6 +24,7 @@ import java.util.List;
 public class ShoeModelController extends BaseController{
 
     private final ShoeModelService shoeModelService;
+    private final BrandService brandService;
 
     @GetMapping("/get-all")
     public ResponseEntity<BaseResponse<List<ListShoeModelResponse>>> getAll(){
@@ -50,6 +52,9 @@ public class ShoeModelController extends BaseController{
         if (bindingResult.hasErrors()) {
             return sendResponse(HttpStatus.BAD_REQUEST, Messages.Error.CUSTOM_BAD_REQUEST, null);
         }
+        if (brandService.getById(request.getBrandId()) == null) {
+            return sendResponse(HttpStatus.NOT_FOUND, Messages.Error.CUSTOM_BRAND_NOT_FOUND, null);
+        }
 
         AddShoeModelResponse addModelResponse = shoeModelService.add(request);
         return sendResponse(HttpStatus.CREATED, Messages.Success.CUSTOM_SUCCESSFULLY, addModelResponse);
@@ -63,6 +68,10 @@ public class ShoeModelController extends BaseController{
 
         if(shoeModelService.getById(request.getId()) == null){
             return sendResponse(HttpStatus.NOT_FOUND, Messages.Error.CUSTOM_SHOE_MODEL_NOT_FOUND, null);
+        }
+
+        if (brandService.getById(request.getBrandId()) == null) {
+            return sendResponse(HttpStatus.NOT_FOUND, Messages.Error.CUSTOM_BRAND_NOT_FOUND, null);
         }
 
         UpdateShoeModelResponse updateModelResponse = shoeModelService.update(request);
