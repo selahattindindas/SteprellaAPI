@@ -18,4 +18,6 @@ public interface ProductFileService {
     void delete(int id);
 
     List<ListFileResponse> getResponse(List<ProductFile> productFiles);
+
+    List<ProductFile> getResponseByProductVariantId(int productVariantId);
 }

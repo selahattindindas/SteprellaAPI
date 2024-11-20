@@ -1,7 +1,7 @@
 package com.Steprella.Steprella.services.dtos.responses.productvariants;
 
 import com.Steprella.Steprella.services.dtos.responses.comments.ListCommentResponse;
-import com.Steprella.Steprella.services.dtos.responses.productfiles.ListProductFileResponse;
+import com.Steprella.Steprella.services.dtos.responses.files.ListFileResponse;
 import com.Steprella.Steprella.services.dtos.responses.products.ListProductResponse;
 import com.Steprella.Steprella.services.dtos.responses.productsizes.ListProductSizeResponse;
 import lombok.AllArgsConstructor;
@@ -27,5 +27,5 @@ public class ListProductVariantResponse extends ListProductResponse {
 
     private List<ListCommentResponse> productComments;
 
-    private List<ListProductFileResponse> productFiles;
+    private List<ListFileResponse> productFiles;
 }

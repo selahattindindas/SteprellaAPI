@@ -61,4 +61,9 @@ public class ProductFileServiceImpl implements ProductFileService {
     public List<ListFileResponse> getResponse(List<ProductFile> productFiles) {
         return ProductFileMapper.INSTANCE.listResponseFromFileResponses(productFiles);
     }
+
+    @Override
+    public List<ProductFile> getResponseByProductVariantId(int productVariantId) {
+        return productFileRepository.findByProductVariantId(productVariantId);
+    }
 }

@@ -17,6 +17,9 @@ public class AddUserDetailRequest {
     @NotBlank
     private String firstName;
 
+    @NotNull
+    private int userId;
+
     @NotBlank
     private String lastName;
 

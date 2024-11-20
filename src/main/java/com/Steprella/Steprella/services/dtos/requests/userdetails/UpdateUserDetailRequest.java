@@ -15,7 +15,7 @@ import lombok.Setter;
 public class UpdateUserDetailRequest {
 
     @NotNull
-    private int id;
+    private int userId;
 
     @NotBlank
     private String firstName;

@@ -14,7 +14,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Entity
 @Table(name = "user_details")
-public class UserDetail extends BaseEntity {
+public class UserDetail extends BaseEntity{
 
     @Column(name = "first_name", nullable = false)
     private String firstName;
@@ -29,6 +29,8 @@ public class UserDetail extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @OneToOne(mappedBy = "userDetail", fetch = FetchType.LAZY)
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "user_id")
     private User user;
 }

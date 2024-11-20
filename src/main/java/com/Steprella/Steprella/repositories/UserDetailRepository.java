@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserDetailRepository extends BaseRepository<UserDetail, Integer>{
+
+    UserDetail findByUserId(int userId);
 }

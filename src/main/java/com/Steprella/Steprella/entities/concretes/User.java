@@ -40,8 +40,8 @@ public class User extends BaseEntity implements UserDetails {
     @OneToMany(mappedBy= "user", cascade = CascadeType.ALL)
     private List<Favorite> favorites;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_detail_id", referencedColumnName = "id", nullable = false)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @PrimaryKeyJoinColumn
     private UserDetail userDetail;
 
     @Override

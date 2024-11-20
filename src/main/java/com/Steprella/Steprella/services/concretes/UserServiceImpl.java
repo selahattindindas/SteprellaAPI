@@ -3,9 +3,8 @@ package com.Steprella.Steprella.services.concretes;
 import com.Steprella.Steprella.entities.concretes.User;
 import com.Steprella.Steprella.repositories.UserRepository;
 import com.Steprella.Steprella.services.abstracts.UserService;
-import com.Steprella.Steprella.services.dtos.requests.users.AddUserRequest;
-import com.Steprella.Steprella.services.dtos.responses.users.AddUserResponse;
 import com.Steprella.Steprella.services.dtos.responses.users.ListUserResponse;
+import com.Steprella.Steprella.services.mappers.UserMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,7 +26,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ListUserResponse getResponseById(int id) {
-        return null;
+        User user = userRepository.findById(id).orElse(null);
+        return UserMapper.INSTANCE.listResponseFromUser(user);
     }
 
     @Override
@@ -42,8 +42,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public AddUserResponse add(AddUserRequest request) {
-        return null;
+    public User add(User user) {
+        return userRepository.save(user);
     }
 
     @Override

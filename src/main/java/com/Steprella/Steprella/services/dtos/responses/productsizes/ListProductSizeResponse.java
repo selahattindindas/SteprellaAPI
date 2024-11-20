@@ -13,8 +13,6 @@ public class ListProductSizeResponse {
 
     private int id;
 
-    private int productVariantId;
-
     private int sizeValue;
 
     private int stockQuantity;

@@ -12,7 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class AddUserDetailResponse {
 
-    private int id;
+    private int userId;
 
     private String firstName;
 
