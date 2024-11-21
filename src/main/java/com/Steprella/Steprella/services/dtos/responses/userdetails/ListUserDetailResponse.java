@@ -12,8 +12,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ListUserDetailResponse {
 
-    private int userId;
-
     private String firstName;
 
     private String lastName;

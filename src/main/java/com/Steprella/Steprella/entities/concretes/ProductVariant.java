@@ -1,7 +1,6 @@
 package com.Steprella.Steprella.entities.concretes;
 
 import com.Steprella.Steprella.entities.abstracts.AuditEntity;
-import com.Steprella.Steprella.entities.abstracts.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,6 +25,12 @@ public class ProductVariant extends AuditEntity {
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
+
+    @Column(name = "rating", nullable = false)
+    private double rating = 0.0;
+
+    @Column(name = "rating_count", nullable = false)
+    private int ratingCount = 0;
 
     @OneToMany(mappedBy = "productVariant", cascade = CascadeType.ALL)
     private List<ProductSize> productSizes = new ArrayList<>();

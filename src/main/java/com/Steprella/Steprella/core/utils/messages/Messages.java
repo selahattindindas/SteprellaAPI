@@ -7,12 +7,15 @@ public class Messages {
         public static final String CUSTOM_PARENT_NOT_FOUND = "Böyle bir parent bulunamadı.";
         public static final String CUSTOM_CATEGORY_NOT_FOUND = "Böyle bir kategori bulunamadı.";
         public static final String CUSTOM_CITY_NOT_FOUND = "Böyle bir şehir bulunamadı.";
+        public static final String CUSTOM_DISTRICT_NOT_FOUND = "Böyle bir ilçe bulunamadı";
+        public static final String CUSTOM_DISTRICT_CITY_MISMATCH = "Bu şehire bağlı böyle bir ilçe yok";
         public static final String CUSTOM_BRAND_NOT_FOUND = "Böyle bir ayakkabı markası bulunamadı.";
         public static final String CUSTOM_COMMENT_NOT_FOUND = "Böyle bir yorum bulunamadı.";
         public static final String CUSTOM_SHOE_MODEL_NOT_FOUND = "Böyle bir ayakkabı modeli bulunamadı.";
         public static final String CUSTOM_COLOR_NOT_FOUND = "Böyle bir renk bulunamadı";
         public static final String CUSTOM_PRODUCT_SIZE_NOT_FOUND = "Böyle bir ürün ayakkabısı bulunamadı";
         public static final String CUSTOM_USER_DETAIL_NOT_FOUND = "Böyle bir kullanıcı detayı bulunamadı";
+        public static final String CUSTOM_ADDRESS_NOT_FOUND = "Böyle bir adres bulunamadı";
         public static final String CUSTOM_USER_NOT_FOUND = "Böyle bir kullanıcı bulunamadı.";
         public static final String CUSTOM_PRODUCT_NOT_FOUND = "Böyle bir ürün bulunamadı.";
         public static final String FILE_SIZE_EXCEEDED = "Dosya boyutu, izin verilen maksimum boyutu (%s) aşıyor.";

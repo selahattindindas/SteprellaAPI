@@ -40,8 +40,7 @@ public class User extends BaseEntity implements UserDetails {
     @OneToMany(mappedBy= "user", cascade = CascadeType.ALL)
     private List<Favorite> favorites;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    @PrimaryKeyJoinColumn
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private UserDetail userDetail;
 
     @Override

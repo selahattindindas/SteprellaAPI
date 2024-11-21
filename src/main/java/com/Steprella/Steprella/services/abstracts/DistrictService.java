@@ -7,4 +7,5 @@ import java.util.List;
 public interface DistrictService {
 
     List<ListDistrictResponse> getDistrictsByCityId(int cityId);
+    ListDistrictResponse getById(int id);
 }

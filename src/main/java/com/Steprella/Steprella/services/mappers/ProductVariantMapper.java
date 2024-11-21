@@ -1,10 +1,11 @@
 package com.Steprella.Steprella.services.mappers;
 
 import com.Steprella.Steprella.entities.concretes.ProductFile;
-import com.Steprella.Steprella.entities.concretes.ProductSize;
 import com.Steprella.Steprella.entities.concretes.ProductVariant;
 import com.Steprella.Steprella.services.dtos.requests.productvariants.AddProductVariantRequest;
 import com.Steprella.Steprella.services.dtos.requests.productvariants.UpdateProductVariantRequest;
+import com.Steprella.Steprella.services.dtos.responses.comments.ListCommentResponse;
+import com.Steprella.Steprella.services.dtos.responses.productsizes.ListProductSizeResponse;
 import com.Steprella.Steprella.services.dtos.responses.productvariants.AddProductVariantResponse;
 import com.Steprella.Steprella.services.dtos.responses.productvariants.ListProductVariantResponse;
 import com.Steprella.Steprella.services.dtos.responses.productvariants.UpdateProductVariantResponse;
@@ -20,19 +21,22 @@ public interface ProductVariantMapper {
     ProductVariantMapper INSTANCE = Mappers.getMapper(ProductVariantMapper.class);
 
     @Mapping(target = "productSizes", source = "productSizes")
-    @Mapping(target = "productComments", source = "productVariant.comments")
+    @Mapping(target = "productComments", source = "comments")
     @Mapping(target = "productFiles", source = "productFiles")
     @Mapping(target = "colorName", source = "productVariant.color.name")
     @Mapping(target = "createdDate", source = "productVariant.createdDate")
     @Mapping(target = "updatedDate", source = "productVariant.updatedDate")
     @Mapping(target = "price", source = "productVariant.product.price")
+    @Mapping(target = "rating", source = "productVariant.rating")
+    @Mapping(target = "ratingCount", source = "productVariant.ratingCount")
     @Mapping(target = "description", source = "productVariant.product.description")
     @Mapping(target = "categoryName", source = "productVariant.product.category.name")
     @Mapping(target = "brandName", source = "productVariant.product.brand.name")
     @Mapping(target = "shoeModelName", source = "productVariant.product.shoeModel.modelName")
     ListProductVariantResponse listResponseFromProductVariant(ProductVariant productVariant,
                                                               List<ProductFile> productFiles,
-                                                              List<ProductSize> productSizes);
+                                                              List<ListCommentResponse> comments,
+                                                              List<ListProductSizeResponse> productSizes);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "product.id", source = "productId")

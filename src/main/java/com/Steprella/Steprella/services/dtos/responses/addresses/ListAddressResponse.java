@@ -17,5 +17,5 @@ public class ListAddressResponse {
 
     private String districtName;
 
-    private int userId;
+    private String description;
 }

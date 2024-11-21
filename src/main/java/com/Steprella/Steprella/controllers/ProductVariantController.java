@@ -4,14 +4,9 @@ import com.Steprella.Steprella.core.utils.messages.Messages;
 import com.Steprella.Steprella.services.abstracts.ColorService;
 import com.Steprella.Steprella.services.abstracts.ProductService;
 import com.Steprella.Steprella.services.abstracts.ProductVariantService;
-import com.Steprella.Steprella.services.dtos.requests.products.AddProductRequest;
-import com.Steprella.Steprella.services.dtos.requests.products.UpdateProductRequest;
 import com.Steprella.Steprella.services.dtos.requests.productvariants.AddProductVariantRequest;
 import com.Steprella.Steprella.services.dtos.requests.productvariants.UpdateProductVariantRequest;
 import com.Steprella.Steprella.services.dtos.responses.BaseResponse;
-import com.Steprella.Steprella.services.dtos.responses.products.AddProductResponse;
-import com.Steprella.Steprella.services.dtos.responses.products.ListProductResponse;
-import com.Steprella.Steprella.services.dtos.responses.products.UpdateProductResponse;
 import com.Steprella.Steprella.services.dtos.responses.productvariants.AddProductVariantResponse;
 import com.Steprella.Steprella.services.dtos.responses.productvariants.ListProductVariantResponse;
 import com.Steprella.Steprella.services.dtos.responses.productvariants.UpdateProductVariantResponse;
@@ -46,6 +41,22 @@ public class ProductVariantController extends BaseController{
             return sendResponse(HttpStatus.NOT_FOUND, Messages.Error.CUSTOM_PRODUCT_NOT_FOUND, null);
         }
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, product);
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<BaseResponse<List<ListProductVariantResponse>>> filterProducts(
+            @RequestParam(required = false) Integer brandId,
+            @RequestParam(required = false) Integer colorId,
+            @RequestParam(required = false) Integer categoryId,
+            @RequestParam(required = false) Integer sizeId) {
+
+        List<ListProductVariantResponse> filteredProducts = productVariantService.filterProducts(brandId, colorId, categoryId, sizeId);
+
+        if (filteredProducts.isEmpty()) {
+            return sendResponse(HttpStatus.NO_CONTENT, Messages.Error.CUSTOM_PRODUCT_NOT_FOUND, null);
+        }
+
+        return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, filteredProducts);
     }
 
     @PostMapping("/create-product-variant")

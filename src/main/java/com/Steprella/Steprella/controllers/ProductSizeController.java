@@ -71,7 +71,7 @@ public class ProductSizeController extends BaseController{
             return sendResponse(HttpStatus.NOT_FOUND, Messages.Error.CUSTOM_PRODUCT_SIZE_NOT_FOUND, null);
         }
 
-        if (productSizeService.getById(request.getProductVariantId()) == null) {
+        if (productVariantService.getById(request.getProductVariantId()) == null) {
             return sendResponse(HttpStatus.NOT_FOUND, Messages.Error.CUSTOM_PRODUCT_NOT_FOUND, null);
         }
 

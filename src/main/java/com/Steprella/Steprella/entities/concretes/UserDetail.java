@@ -30,7 +30,6 @@ public class UserDetail extends BaseEntity{
     private Gender gender;
 
     @OneToOne
-    @MapsId
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 }

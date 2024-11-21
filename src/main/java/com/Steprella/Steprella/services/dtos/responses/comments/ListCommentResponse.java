@@ -15,8 +15,6 @@ public class ListCommentResponse {
 
     private String commentText;
 
-    private int productVariantId;
-
     private String firstName;
 
     private String lastName;

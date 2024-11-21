@@ -15,7 +15,6 @@ public interface CommentMapper {
 
     CommentMapper INSTANCE = Mappers.getMapper(CommentMapper.class);
 
-    @Mapping(target = "productVariantId", source = "productVariant.id")
     @Mapping(target = "firstName", source = "user.userDetail.firstName")
     @Mapping(target = "lastName", source = "user.userDetail.lastName")
     @Mapping(target = "createdDate", source = "createdDate")

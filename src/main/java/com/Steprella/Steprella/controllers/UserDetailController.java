@@ -17,8 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/user-details")
 @RequiredArgsConstructor
@@ -52,7 +50,7 @@ public class UserDetailController extends BaseController{
         if (bindingResult.hasErrors()) {
             return sendResponse(HttpStatus.BAD_REQUEST, Messages.Error.CUSTOM_BAD_REQUEST, null);
         }
-        if (userService.getResponseById(request.getUserId()) == null) {
+        if (userService.getById(request.getUserId()) == null) {
             return sendResponse(HttpStatus.NOT_FOUND, Messages.Error.CUSTOM_USER_NOT_FOUND, null);
         }
 

@@ -23,6 +23,10 @@ public class ListProductVariantResponse extends ListProductResponse {
 
     private String updatedDate;
 
+    private double rating;
+
+    private int ratingCount;
+
     private List<ListProductSizeResponse> productSizes;
 
     private List<ListCommentResponse> productComments;

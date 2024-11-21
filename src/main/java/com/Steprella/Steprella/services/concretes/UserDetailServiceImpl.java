@@ -1,8 +1,10 @@
 package com.Steprella.Steprella.services.concretes;
 
+import com.Steprella.Steprella.entities.concretes.User;
 import com.Steprella.Steprella.entities.concretes.UserDetail;
 import com.Steprella.Steprella.repositories.UserDetailRepository;
 import com.Steprella.Steprella.services.abstracts.UserDetailService;
+import com.Steprella.Steprella.services.abstracts.UserService;
 import com.Steprella.Steprella.services.dtos.requests.userdetails.AddUserDetailRequest;
 import com.Steprella.Steprella.services.dtos.requests.userdetails.UpdateUserDetailRequest;
 import com.Steprella.Steprella.services.dtos.responses.userdetails.AddUserDetailResponse;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 public class UserDetailServiceImpl implements UserDetailService {
 
     private UserDetailRepository userDetailRepository;
+    private UserService userService;
 
     @Override
     public ListUserDetailResponse getUserDetailByUserId(int userId) {
@@ -26,7 +29,9 @@ public class UserDetailServiceImpl implements UserDetailService {
 
     @Override
     public AddUserDetailResponse add(AddUserDetailRequest request) {
+        User user = userService.getById(request.getUserId());
         UserDetail addDetail = UserDetailMapper.INSTANCE.userDetailFromAddRequest(request);
+        addDetail.setUser(user);
         UserDetail saveDetail = userDetailRepository.save(addDetail);
 
         return UserDetailMapper.INSTANCE.addResponseFromUserDetail(saveDetail);
@@ -34,7 +39,9 @@ public class UserDetailServiceImpl implements UserDetailService {
 
     @Override
     public UpdateUserDetailResponse update(UpdateUserDetailRequest request) {
+        User user = userService.getById(request.getUserId());
         UserDetail updateDetail = UserDetailMapper.INSTANCE.userDetailFromUpdateRequest(request);
+        updateDetail.setUser(user);
         UserDetail saveDetail = userDetailRepository.save(updateDetail);
 
         return UserDetailMapper.INSTANCE.updateResponseFromUserDetail(saveDetail);

@@ -15,9 +15,9 @@ public interface UserDetailMapper {
 
     UserDetailMapper INSTANCE = Mappers.getMapper(UserDetailMapper.class);
 
-    @Mapping(target = "userId", source = "user.id")
     ListUserDetailResponse listResponseFromUserDetail(UserDetail userDetail);
 
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "user.id", source = "userId")
     UserDetail userDetailFromAddRequest(AddUserDetailRequest request);
 

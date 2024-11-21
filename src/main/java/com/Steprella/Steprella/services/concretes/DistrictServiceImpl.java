@@ -23,4 +23,11 @@ public class DistrictServiceImpl implements DistrictService {
 
         return districts.stream().map(DistrictMapper.INSTANCE::listResponseFromDistrict).collect(Collectors.toList());
     }
+
+    @Override
+    public ListDistrictResponse getById(int id) {
+        District district = districtRepository.findById(id).orElse(null);
+
+        return DistrictMapper.INSTANCE.listResponseFromDistrict(district);
+    }
 }

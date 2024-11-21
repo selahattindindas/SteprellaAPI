@@ -19,4 +19,6 @@ public interface AddressService {
     UpdateAddressResponse update(UpdateAddressRequest request);
 
     void delete(int id);
+
+    boolean isDistrictBelongsToCity(int districtId, int cityId);
 }
