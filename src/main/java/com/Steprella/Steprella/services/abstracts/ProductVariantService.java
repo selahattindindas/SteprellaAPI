@@ -18,7 +18,9 @@ public interface ProductVariantService {
 
     UpdateProductVariantResponse update(UpdateProductVariantRequest request);
 
-    List<ListProductVariantResponse> filterProducts(Integer brandId, Integer colorId, Integer categoryId, Integer sizeId);
+    List<ListProductVariantResponse> filterProducts(Integer brandId, Integer colorId, Integer categoryId, Integer sizeValue);
 
     void delete(int id);
+
+    boolean isProductVariantExist(int colorId, int productId);
 }

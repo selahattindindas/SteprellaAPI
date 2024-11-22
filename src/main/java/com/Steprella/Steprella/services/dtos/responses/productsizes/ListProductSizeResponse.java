@@ -16,4 +16,6 @@ public class ListProductSizeResponse {
     private int sizeValue;
 
     private int stockQuantity;
+
+    private boolean isActive;
 }

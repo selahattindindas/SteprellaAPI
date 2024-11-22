@@ -16,7 +16,7 @@ public interface ProductMapper {
     ProductMapper INSTANCE = Mappers.getMapper(ProductMapper.class);
 
     @Mapping(target = "shoeModelName", source = "shoeModel.modelName")
-    @Mapping(target = "categoryName", source = "category.name")
+    @Mapping(target = "category", source = "category")
     @Mapping(target = "brandName", source = "brand.name")
     @Mapping(target = "createdDate", source = "createdDate")
     @Mapping(target = "updatedDate", source = "updatedDate")

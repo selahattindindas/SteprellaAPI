@@ -24,4 +24,7 @@ public class ProductSize extends BaseEntity {
 
     @Column(name = "stock_quantity", nullable = false)
     private int stockQuantity;
+
+    @Column(name = "is_active", nullable = false)
+    private boolean isActive;
 }

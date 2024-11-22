@@ -30,7 +30,7 @@ public interface ProductVariantMapper {
     @Mapping(target = "rating", source = "productVariant.rating")
     @Mapping(target = "ratingCount", source = "productVariant.ratingCount")
     @Mapping(target = "description", source = "productVariant.product.description")
-    @Mapping(target = "categoryName", source = "productVariant.product.category.name")
+    @Mapping(target = "category", source = "productVariant.product.category")
     @Mapping(target = "brandName", source = "productVariant.product.brand.name")
     @Mapping(target = "shoeModelName", source = "productVariant.product.shoeModel.modelName")
     ListProductVariantResponse listResponseFromProductVariant(ProductVariant productVariant,

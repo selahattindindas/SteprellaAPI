@@ -1,7 +1,7 @@
 package com.Steprella.Steprella.services.dtos.responses.users;
 
 import com.Steprella.Steprella.services.dtos.responses.addresses.ListAddressResponse;
-import com.Steprella.Steprella.services.dtos.responses.userdetails.ListUserDetailResponse;
+import com.Steprella.Steprella.services.enums.Gender;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,7 +19,11 @@ public class ListUserResponse {
 
     private String email;
 
-    private ListUserDetailResponse userDetail;
+    private String fullName;
+
+    private String phone;
+
+    private Gender gender;
 
     private List<ListAddressResponse> addresses;
 }

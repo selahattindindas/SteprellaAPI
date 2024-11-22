@@ -15,8 +15,7 @@ public interface CommentMapper {
 
     CommentMapper INSTANCE = Mappers.getMapper(CommentMapper.class);
 
-    @Mapping(target = "firstName", source = "user.userDetail.firstName")
-    @Mapping(target = "lastName", source = "user.userDetail.lastName")
+    @Mapping(target = "fullName", source = "user.fullName")
     @Mapping(target = "createdDate", source = "createdDate")
     @Mapping(target = "updatedDate", source = "updatedDate")
     ListCommentResponse listResponseFromComment(Comment comment);

@@ -48,13 +48,12 @@ public class ProductController extends BaseController{
     @PostMapping("/create-product")
     public ResponseEntity<BaseResponse<AddProductResponse>> add(@RequestBody @Valid AddProductRequest request, BindingResult bindingResult) {
 
-        if (bindingResult.hasErrors()) {
+        if (bindingResult.hasErrors() || productService.isDistrictBelongsToCity(request.getShoeModelId(), request.getBrandId()))
             return sendResponse(HttpStatus.BAD_REQUEST, Messages.Error.CUSTOM_BAD_REQUEST, null);
-        }
+
         ResponseEntity<BaseResponse<AddProductResponse>> validationResponse = validateProductDependencies(request.getShoeModelId(), request.getCategoryId(), request.getBrandId());
-        if (validationResponse != null) {
+        if (validationResponse != null)
             return validationResponse;
-        }
 
         AddProductResponse addProductResponse = productService.add(request);
         return sendResponse(HttpStatus.CREATED, Messages.Success.CUSTOM_SUCCESSFULLY, addProductResponse);
@@ -62,9 +61,8 @@ public class ProductController extends BaseController{
 
     @PutMapping("/update-product")
     public ResponseEntity<BaseResponse<UpdateProductResponse>> update(@RequestBody @Valid UpdateProductRequest request, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
+        if (bindingResult.hasErrors() || productService.isDistrictBelongsToCity(request.getShoeModelId(), request.getBrandId()))
             return sendResponse(HttpStatus.BAD_REQUEST, Messages.Error.CUSTOM_BAD_REQUEST, null);
-        }
 
         ResponseEntity<BaseResponse<UpdateProductResponse>> validationResponse = validateProductDependencies(request.getShoeModelId(), request.getCategoryId(), request.getBrandId());
         if (validationResponse != null) {

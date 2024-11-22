@@ -48,9 +48,9 @@ public class ProductVariantController extends BaseController{
             @RequestParam(required = false) Integer brandId,
             @RequestParam(required = false) Integer colorId,
             @RequestParam(required = false) Integer categoryId,
-            @RequestParam(required = false) Integer sizeId) {
+            @RequestParam(required = false) Integer sizeValue) {
 
-        List<ListProductVariantResponse> filteredProducts = productVariantService.filterProducts(brandId, colorId, categoryId, sizeId);
+        List<ListProductVariantResponse> filteredProducts = productVariantService.filterProducts(brandId, colorId, categoryId, sizeValue);
 
         if (filteredProducts.isEmpty()) {
             return sendResponse(HttpStatus.NO_CONTENT, Messages.Error.CUSTOM_PRODUCT_NOT_FOUND, null);
@@ -63,6 +63,10 @@ public class ProductVariantController extends BaseController{
     public ResponseEntity<BaseResponse<AddProductVariantResponse>> add(@RequestBody @Valid AddProductVariantRequest request, BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
+            return sendResponse(HttpStatus.BAD_REQUEST, Messages.Error.CUSTOM_BAD_REQUEST, null);
+        }
+
+        if(productVariantService.isProductVariantExist(request.getColorId(), request.getProductId())){
             return sendResponse(HttpStatus.BAD_REQUEST, Messages.Error.CUSTOM_BAD_REQUEST, null);
         }
 

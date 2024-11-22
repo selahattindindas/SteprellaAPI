@@ -5,6 +5,7 @@ import com.Steprella.Steprella.repositories.ProductVariantRepository;
 import com.Steprella.Steprella.services.abstracts.*;
 import com.Steprella.Steprella.services.dtos.requests.productvariants.AddProductVariantRequest;
 import com.Steprella.Steprella.services.dtos.requests.productvariants.UpdateProductVariantRequest;
+import com.Steprella.Steprella.services.dtos.responses.categories.ListCategoryResponse;
 import com.Steprella.Steprella.services.dtos.responses.comments.ListCommentResponse;
 import com.Steprella.Steprella.services.dtos.responses.productsizes.ListProductSizeResponse;
 import com.Steprella.Steprella.services.dtos.responses.productvariants.AddProductVariantResponse;
@@ -47,7 +48,7 @@ public class ProductVariantServiceImpl implements ProductVariantService {
     }
 
     @Override
-    public List<ListProductVariantResponse> filterProducts(Integer brandId, Integer colorId, Integer categoryId, Integer sizeId) {
+    public List<ListProductVariantResponse> filterProducts(Integer brandId, Integer colorId, Integer categoryId, Integer sizeValue) {
         List<ProductVariant> filteredProductVariants = productVariantRepository.findAll();
 
         if (brandId != null) {
@@ -71,10 +72,11 @@ public class ProductVariantServiceImpl implements ProductVariantService {
                     .collect(Collectors.toList());
         }
 
-        if (sizeId != null) {
+        if (sizeValue != null) {
             filteredProductVariants = filteredProductVariants.stream()
                     .filter(productVariant -> productVariant.getProductSizes().stream()
-                            .anyMatch(productSize -> Integer.valueOf(productSize.getId()).equals(sizeId)))
+                            .anyMatch(productSize -> Integer.valueOf(productSize.getSizeValue()).equals(sizeValue)
+                                    && productSize.isActive()))
                     .collect(Collectors.toList());
         }
 
@@ -82,6 +84,7 @@ public class ProductVariantServiceImpl implements ProductVariantService {
                 .map(this::createProductVariantResponse)
                 .collect(Collectors.toList());
     }
+
 
     @Override
     public AddProductVariantResponse add(AddProductVariantRequest request) {
@@ -106,20 +109,24 @@ public class ProductVariantServiceImpl implements ProductVariantService {
         productVariantRepository.delete(productVariant);
     }
 
+    public boolean isProductVariantExist(int colorId, int productId) {
+        return productVariantRepository.existsByColorIdAndProductId(colorId, productId);
+    }
+
     private ListProductVariantResponse createProductVariantResponse(ProductVariant productVariant) {
-        String categoryHierarchy = categoryService.getCategoryHierarchy(productVariant.getProduct().getCategory());
         List<ProductFile> files = productFileService.getResponseByProductVariantId(productVariant.getId());
         List<ListCommentResponse> comments = commentService.getCommentsByProductVariantId(productVariant.getId());
         List<ListProductSizeResponse> productSizes = productSizeService.getProductSizesByProductVariantId(productVariant.getId());
+        List<ListCategoryResponse> categoryHierarchy = categoryService.getCategoryHierarchy(productVariant.getProduct().getCategory());
+        ListCategoryResponse category = categoryHierarchy.isEmpty() ? null : categoryHierarchy.getFirst();
 
         double averageRating = calculateAverageRating(comments);
         int totalComments = calculateTotalComments(comments);
 
         ListProductVariantResponse response = ProductVariantMapper.INSTANCE.listResponseFromProductVariant(productVariant, files, comments, productSizes);
-        response.setCategoryName(categoryHierarchy);
         response.setRating(averageRating);
         response.setRatingCount(totalComments);
-
+        response.setCategory(category);
         return response;
     }
 
@@ -140,4 +147,5 @@ public class ProductVariantServiceImpl implements ProductVariantService {
     private int calculateTotalComments(List<ListCommentResponse> comments) {
         return comments.size();
     }
+
 }

@@ -14,7 +14,6 @@ public interface UserMapper {
 
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
-    @Mapping(target = "userDetail", source = "user.userDetail")
     @Mapping(target = "addresses", source = "addresses")
     @Mapping(target = "email", source = "user.email")
     ListUserResponse listResponseFromUser(User user,

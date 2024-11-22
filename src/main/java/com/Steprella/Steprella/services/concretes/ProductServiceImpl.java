@@ -4,8 +4,10 @@ import com.Steprella.Steprella.entities.concretes.Product;
 import com.Steprella.Steprella.repositories.ProductRepository;
 import com.Steprella.Steprella.services.abstracts.CategoryService;
 import com.Steprella.Steprella.services.abstracts.ProductService;
+import com.Steprella.Steprella.services.abstracts.ShoeModelService;
 import com.Steprella.Steprella.services.dtos.requests.products.AddProductRequest;
 import com.Steprella.Steprella.services.dtos.requests.products.UpdateProductRequest;
+import com.Steprella.Steprella.services.dtos.responses.categories.ListCategoryResponse;
 import com.Steprella.Steprella.services.dtos.responses.products.AddProductResponse;
 import com.Steprella.Steprella.services.dtos.responses.products.ListProductResponse;
 import com.Steprella.Steprella.services.dtos.responses.products.UpdateProductResponse;
@@ -22,18 +24,18 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
     private final CategoryService categoryService;
+    private final ShoeModelService shoeModelService;
 
     @Override
     public List<ListProductResponse> getAll() {
         List<Product> products = productRepository.findAll();
 
         return products.stream().map(product -> {
-            String categoryHierarchy = categoryService.getCategoryHierarchy(product.getCategory());
+            List<ListCategoryResponse> categoryHierarchy = categoryService.getCategoryHierarchy(product.getCategory());
+            ListCategoryResponse category = categoryHierarchy.isEmpty() ? null : categoryHierarchy.getFirst();
 
             ListProductResponse response = ProductMapper.INSTANCE.listResponseFromProduct(product);
-
-            response.setCategoryName(categoryHierarchy);
-
+            response.setCategory(category);
             return response;
         }).collect(Collectors.toList());
     }
@@ -41,14 +43,12 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ListProductResponse getById(int id) {
         Product product = productRepository.findById(id).orElse(null);
+        List<ListCategoryResponse> categoryHierarchy = (product != null && product.getCategory() != null)
+                ? categoryService.getCategoryHierarchy(product.getCategory())
+                : null;
 
-        String categoryHierarchy = categoryService.getCategoryHierarchy(product.getCategory());
-        ListProductResponse response = ProductMapper.INSTANCE.listResponseFromProduct(product);
-        response.setCategoryName(categoryHierarchy);
-
-        return response;
+        return ProductMapper.INSTANCE.listResponseFromProduct(product);
     }
-
 
     @Override
     public AddProductResponse add(AddProductRequest request) {
@@ -69,5 +69,10 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findById(id).orElse(null);
         assert product != null;
         productRepository.delete(product);
+    }
+
+    @Override
+    public boolean isDistrictBelongsToCity(int modelId, int brandId) {
+        return shoeModelService.getById(modelId).getBrandId() != brandId;
     }
 }

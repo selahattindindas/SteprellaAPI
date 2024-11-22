@@ -1,6 +1,7 @@
 package com.Steprella.Steprella.entities.concretes;
 
 import com.Steprella.Steprella.entities.abstracts.BaseEntity;
+import com.Steprella.Steprella.services.enums.Gender;
 import com.Steprella.Steprella.services.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -31,6 +32,16 @@ public class User extends BaseEntity implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @Column(name = "fullName", nullable = false)
+    private String fullName;
+
+    @Column(name = "phone", nullable = false)
+    private String phone;
+
+    @Column(name = "gender" , nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
+
     @OneToMany(mappedBy= "user", cascade = CascadeType.ALL)
     private List<Address> addresses;
 
@@ -39,9 +50,6 @@ public class User extends BaseEntity implements UserDetails {
 
     @OneToMany(mappedBy= "user", cascade = CascadeType.ALL)
     private List<Favorite> favorites;
-
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    private UserDetail userDetail;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

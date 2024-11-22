@@ -19,4 +19,6 @@ public interface ProductService {
     UpdateProductResponse update(UpdateProductRequest request);
 
     void delete(int id);
+
+    boolean isDistrictBelongsToCity(int modelId, int brandId);
 }

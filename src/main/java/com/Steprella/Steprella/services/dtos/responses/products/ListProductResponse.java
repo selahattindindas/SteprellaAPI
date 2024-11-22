@@ -1,14 +1,12 @@
 package com.Steprella.Steprella.services.dtos.responses.products;
 
-import com.Steprella.Steprella.services.dtos.responses.comments.ListCommentResponse;
-import com.Steprella.Steprella.services.dtos.responses.productsizes.ListProductSizeResponse;
+import com.Steprella.Steprella.services.dtos.responses.categories.ListCategoryResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @Getter
 @Setter
@@ -22,8 +20,6 @@ public class ListProductResponse {
 
     private String description;
 
-    private String categoryName;
-
     private String brandName;
 
     private String shoeModelName;
@@ -31,4 +27,6 @@ public class ListProductResponse {
     private String createdDate;
 
     private String updatedDate;
+
+    private ListCategoryResponse category;
 }

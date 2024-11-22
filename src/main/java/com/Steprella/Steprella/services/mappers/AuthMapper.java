@@ -13,7 +13,6 @@ public interface AuthMapper {
     AuthMapper INSTANCE = Mappers.getMapper(AuthMapper.class);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target= "userDetail", ignore = true)
     User userFromAddRequest(AddUserRequest request);
 
     AddUserResponse addResponseFromUser(User user);

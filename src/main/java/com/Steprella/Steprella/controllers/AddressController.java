@@ -53,21 +53,18 @@ public class AddressController extends BaseController {
 
     @PostMapping("/create-address")
     public ResponseEntity<BaseResponse<AddAddressResponse>> add(@RequestBody @Valid AddAddressRequest request, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
+        if (bindingResult.hasErrors() || addressService.isDistrictBelongsToCity(request.getDistrictId(), request.getCityId()))
             return sendResponse(HttpStatus.BAD_REQUEST, Messages.Error.CUSTOM_BAD_REQUEST, null);
-        }
-        if (userService.getById(request.getUserId()) == null) {
+
+        if (userService.getById(request.getUserId()) == null)
             return sendResponse(HttpStatus.NOT_FOUND, Messages.Error.CUSTOM_USER_NOT_FOUND, null);
-        }
-        if (districtService.getById(request.getDistrictId()) == null) {
+
+        if (districtService.getById(request.getDistrictId()) == null)
             return sendResponse(HttpStatus.NOT_FOUND, Messages.Error.CUSTOM_DISTRICT_NOT_FOUND, null);
-        }
-        if (cityService.getById(request.getCityId()) == null) {
+
+        if (cityService.getById(request.getCityId()) == null)
             return sendResponse(HttpStatus.NOT_FOUND, Messages.Error.CUSTOM_CITY_NOT_FOUND, null);
-        }
-        if (addressService.isDistrictBelongsToCity(request.getDistrictId(), request.getCityId())) {
-            return sendResponse(HttpStatus.BAD_REQUEST, Messages.Error.CUSTOM_DISTRICT_CITY_MISMATCH, null);
-        }
+
 
         AddAddressResponse address = addressService.add(request);
         return sendResponse(HttpStatus.CREATED, Messages.Success.CUSTOM_SUCCESSFULLY, address);
@@ -75,26 +72,21 @@ public class AddressController extends BaseController {
 
     @PutMapping("/update-address")
     public ResponseEntity<BaseResponse<UpdateAddressResponse>> update(@RequestBody @Valid UpdateAddressRequest request, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
+        if (bindingResult.hasErrors() || addressService.isDistrictBelongsToCity(request.getDistrictId(), request.getCityId()))
             return sendResponse(HttpStatus.BAD_REQUEST, Messages.Error.CUSTOM_BAD_REQUEST, null);
-        }
 
-        if(addressService.getById(request.getId()) == null){
+        if(addressService.getById(request.getId()) == null)
             return sendResponse(HttpStatus.NOT_FOUND, Messages.Error.CUSTOM_ADDRESS_NOT_FOUND, null);
-        }
 
-        if (userService.getById(request.getUserId()) == null) {
+        if (userService.getById(request.getUserId()) == null)
             return sendResponse(HttpStatus.NOT_FOUND, Messages.Error.CUSTOM_USER_NOT_FOUND, null);
-        }
-        if (districtService.getById(request.getDistrictId()) == null) {
+
+        if (districtService.getById(request.getDistrictId()) == null)
             return sendResponse(HttpStatus.NOT_FOUND, Messages.Error.CUSTOM_DISTRICT_NOT_FOUND, null);
-        }
-        if (cityService.getById(request.getCityId()) == null) {
+
+        if (cityService.getById(request.getCityId()) == null)
             return sendResponse(HttpStatus.NOT_FOUND, Messages.Error.CUSTOM_CITY_NOT_FOUND, null);
-        }
-        if (addressService.isDistrictBelongsToCity(request.getDistrictId(), request.getCityId())) {
-            return sendResponse(HttpStatus.BAD_REQUEST, Messages.Error.CUSTOM_DISTRICT_CITY_MISMATCH, null);
-        }
+
 
         UpdateAddressResponse address = addressService.update(request);
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, address);

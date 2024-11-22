@@ -13,7 +13,7 @@ public interface CategoryService {
 
     List<ListCategoryResponse> getAll();
 
-    ListCategoryResponse getById(int id);
+    List<ListCategoryResponse> getById(int id);
 
     AddCategoryResponse add(AddCategoryRequest request, Category category);
 
@@ -25,5 +25,5 @@ public interface CategoryService {
 
     Category getCategoryByParentId(Integer parentId);
 
-    String getCategoryHierarchy(Category category);
+    List<ListCategoryResponse> getCategoryHierarchy(Category category);
 }

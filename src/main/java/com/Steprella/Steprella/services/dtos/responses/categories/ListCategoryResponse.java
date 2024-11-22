@@ -20,4 +20,14 @@ public class ListCategoryResponse {
     private int parentId;
 
     private List<ListCategoryResponse> children;
+
+    @Override
+    public String toString() {
+        return "ListCategoryResponse{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", parentId=" + parentId +
+                ", children=" + (children != null ? children.toString() : "[]") +
+                '}';
+    }
 }

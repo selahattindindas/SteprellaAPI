@@ -12,6 +12,7 @@ import com.Steprella.Steprella.services.mappers.CategoryMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,9 +31,18 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public ListCategoryResponse getById(int id) {
+    public List<ListCategoryResponse> getById(int id) {
         Category category = categoryRepository.findById(id).orElse(null);
-        return CategoryMapper.INSTANCE.listResponseFromCategory(category);
+        List<ListCategoryResponse> parentCategories = new ArrayList<>();
+        Category currentCategory = category;
+
+        while (currentCategory != null && currentCategory.getParent() != null) {
+            currentCategory = currentCategory.getParent();
+            ListCategoryResponse parentResponse = CategoryMapper.INSTANCE.listResponseFromCategory(currentCategory);
+            parentCategories.addFirst(parentResponse);
+        }
+
+        return parentCategories;
     }
 
     @Override
@@ -67,18 +77,17 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryRepository.findById(id).orElse(null);
     }
 
-    public String getCategoryHierarchy(Category category) {
-        StringBuilder hierarchy = new StringBuilder();
+    @Override
+    public List<ListCategoryResponse> getCategoryHierarchy(Category category) {
+        List<ListCategoryResponse> parentCategories = new ArrayList<>();
+        Category currentCategory = category;
 
-        while (category != null) {
-            if (hierarchy.length() > 0) {
-                hierarchy.insert(0, " > ");
-            }
-            hierarchy.insert(0, category.getName());
-            category = category.getParent();
+        while (currentCategory != null && currentCategory.getParent() != null) {
+            currentCategory = currentCategory.getParent();
+            ListCategoryResponse parentResponse = CategoryMapper.INSTANCE.listResponseFromCategory(currentCategory);
+            parentCategories.addFirst(parentResponse);
         }
 
-        return hierarchy.toString();
+        return parentCategories;
     }
-
 }
