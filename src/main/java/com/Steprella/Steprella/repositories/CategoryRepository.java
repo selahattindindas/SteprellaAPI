@@ -17,6 +17,5 @@ public interface CategoryRepository extends BaseRepository<Category, Integer> {
     @Query(value = "select c from Category c where c.parent.id in (:parentId)")
     List<Category> findByParentId(@Param("parentId") Integer parentId);
 
-    Optional<Category> findById(int id);
     Optional<Category> findByNameIgnoreCase(String name);
 }

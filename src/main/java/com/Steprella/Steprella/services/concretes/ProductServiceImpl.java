@@ -7,7 +7,6 @@ import com.Steprella.Steprella.services.abstracts.ProductService;
 import com.Steprella.Steprella.services.abstracts.ShoeModelService;
 import com.Steprella.Steprella.services.dtos.requests.products.AddProductRequest;
 import com.Steprella.Steprella.services.dtos.requests.products.UpdateProductRequest;
-import com.Steprella.Steprella.services.dtos.responses.categories.ListCategoryResponse;
 import com.Steprella.Steprella.services.dtos.responses.products.AddProductResponse;
 import com.Steprella.Steprella.services.dtos.responses.products.ListProductResponse;
 import com.Steprella.Steprella.services.dtos.responses.products.UpdateProductResponse;
@@ -30,23 +29,14 @@ public class ProductServiceImpl implements ProductService {
     public List<ListProductResponse> getAll() {
         List<Product> products = productRepository.findAll();
 
-        return products.stream().map(product -> {
-            List<ListCategoryResponse> categoryHierarchy = categoryService.getCategoryHierarchy(product.getCategory());
-            ListCategoryResponse category = categoryHierarchy.isEmpty() ? null : categoryHierarchy.getFirst();
-
-            ListProductResponse response = ProductMapper.INSTANCE.listResponseFromProduct(product);
-            response.setCategory(category);
-            return response;
-        }).collect(Collectors.toList());
+        return products.stream().map(
+          ProductMapper.INSTANCE::listResponseFromProduct
+        ).collect(Collectors.toList());
     }
 
     @Override
     public ListProductResponse getById(int id) {
         Product product = productRepository.findById(id).orElse(null);
-        List<ListCategoryResponse> categoryHierarchy = (product != null && product.getCategory() != null)
-                ? categoryService.getCategoryHierarchy(product.getCategory())
-                : null;
-
         return ProductMapper.INSTANCE.listResponseFromProduct(product);
     }
 

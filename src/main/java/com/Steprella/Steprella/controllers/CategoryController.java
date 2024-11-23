@@ -32,13 +32,13 @@ public class CategoryController extends BaseController{
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BaseResponse<List<ListCategoryResponse>>> getById(@PathVariable int id) {
-        List<ListCategoryResponse> categories = categoryService.getById(id);
+    public ResponseEntity<BaseResponse<ListCategoryResponse>> getById(@PathVariable int id) {
+        ListCategoryResponse category = categoryService.getById(id);
 
-        if (categories.isEmpty()) {
+        if (category == null) {
             return sendResponse(HttpStatus.NOT_FOUND, Messages.Error.CUSTOM_CATEGORY_NOT_FOUND, null);
         } else {
-            return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, categories);
+            return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, category);
         }
     }
 

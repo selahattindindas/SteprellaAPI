@@ -5,7 +5,6 @@ import com.Steprella.Steprella.repositories.ProductVariantRepository;
 import com.Steprella.Steprella.services.abstracts.*;
 import com.Steprella.Steprella.services.dtos.requests.productvariants.AddProductVariantRequest;
 import com.Steprella.Steprella.services.dtos.requests.productvariants.UpdateProductVariantRequest;
-import com.Steprella.Steprella.services.dtos.responses.categories.ListCategoryResponse;
 import com.Steprella.Steprella.services.dtos.responses.comments.ListCommentResponse;
 import com.Steprella.Steprella.services.dtos.responses.productsizes.ListProductSizeResponse;
 import com.Steprella.Steprella.services.dtos.responses.productvariants.AddProductVariantResponse;
@@ -117,8 +116,6 @@ public class ProductVariantServiceImpl implements ProductVariantService {
         List<ProductFile> files = productFileService.getResponseByProductVariantId(productVariant.getId());
         List<ListCommentResponse> comments = commentService.getCommentsByProductVariantId(productVariant.getId());
         List<ListProductSizeResponse> productSizes = productSizeService.getProductSizesByProductVariantId(productVariant.getId());
-        List<ListCategoryResponse> categoryHierarchy = categoryService.getCategoryHierarchy(productVariant.getProduct().getCategory());
-        ListCategoryResponse category = categoryHierarchy.isEmpty() ? null : categoryHierarchy.getFirst();
 
         double averageRating = calculateAverageRating(comments);
         int totalComments = calculateTotalComments(comments);
@@ -126,7 +123,6 @@ public class ProductVariantServiceImpl implements ProductVariantService {
         ListProductVariantResponse response = ProductVariantMapper.INSTANCE.listResponseFromProductVariant(productVariant, files, comments, productSizes);
         response.setRating(averageRating);
         response.setRatingCount(totalComments);
-        response.setCategory(category);
         return response;
     }
 
