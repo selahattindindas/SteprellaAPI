@@ -25,5 +25,5 @@ public interface CategoryService {
 
     Category getCategoryByParentId(Integer parentId);
 
-    List<ListCategoryResponse> getCategoryHierarchy(int id);
+    ListCategoryResponse getCategoryHierarchy(int id);
 }

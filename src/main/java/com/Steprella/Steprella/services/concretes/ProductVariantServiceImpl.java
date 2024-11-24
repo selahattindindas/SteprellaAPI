@@ -1,10 +1,12 @@
 package com.Steprella.Steprella.services.concretes;
+import com.Steprella.Steprella.entities.concretes.Category;
 import com.Steprella.Steprella.entities.concretes.ProductFile;
 import com.Steprella.Steprella.entities.concretes.ProductVariant;
 import com.Steprella.Steprella.repositories.ProductVariantRepository;
 import com.Steprella.Steprella.services.abstracts.*;
 import com.Steprella.Steprella.services.dtos.requests.productvariants.AddProductVariantRequest;
 import com.Steprella.Steprella.services.dtos.requests.productvariants.UpdateProductVariantRequest;
+import com.Steprella.Steprella.services.dtos.responses.categories.ListCategoryResponse;
 import com.Steprella.Steprella.services.dtos.responses.comments.ListCommentResponse;
 import com.Steprella.Steprella.services.dtos.responses.productsizes.ListProductSizeResponse;
 import com.Steprella.Steprella.services.dtos.responses.productvariants.AddProductVariantResponse;
@@ -30,13 +32,9 @@ public class ProductVariantServiceImpl implements ProductVariantService {
 
     @Override
     public List<ListProductVariantResponse> getAll() {
-        List<ProductVariant> productVariants = productVariantRepository.findAll();
-
-        return productVariants.stream().map(product -> {
-            ListProductVariantResponse response = createProductVariantResponse(product);
-
-            return response;
-        }).collect(Collectors.toList());
+        return productVariantRepository.findAll().stream()
+                .map(this::createProductVariantResponse)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -67,7 +65,7 @@ public class ProductVariantServiceImpl implements ProductVariantService {
         if (categoryId != null) {
             filteredProductVariants = filteredProductVariants.stream()
                     .filter(productVariant -> productVariant.getProduct().getCategory() != null
-                            && Integer.valueOf(productVariant.getProduct().getCategory().getId()).equals(categoryId))
+                            && isCategoryOrChild(productVariant.getProduct().getCategory(), categoryId))
                     .collect(Collectors.toList());
         }
 
@@ -116,13 +114,14 @@ public class ProductVariantServiceImpl implements ProductVariantService {
         List<ProductFile> files = productFileService.getResponseByProductVariantId(productVariant.getId());
         List<ListCommentResponse> comments = commentService.getCommentsByProductVariantId(productVariant.getId());
         List<ListProductSizeResponse> productSizes = productSizeService.getProductSizesByProductVariantId(productVariant.getId());
-
+        ListCategoryResponse category = categoryService.getCategoryHierarchy(productVariant.getProduct().getCategory().getId());
         double averageRating = calculateAverageRating(comments);
         int totalComments = calculateTotalComments(comments);
 
         ListProductVariantResponse response = ProductVariantMapper.INSTANCE.listResponseFromProductVariant(productVariant, files, comments, productSizes);
         response.setRating(averageRating);
         response.setRatingCount(totalComments);
+        response.setCategory(category);
         return response;
     }
 
@@ -142,6 +141,21 @@ public class ProductVariantServiceImpl implements ProductVariantService {
 
     private int calculateTotalComments(List<ListCommentResponse> comments) {
         return comments.size();
+    }
+
+    private boolean isCategoryOrChild(Category category, Integer categoryId) {
+        if (Integer.valueOf(category.getId()).equals(categoryId)) {
+            return true;
+        }
+
+        Category parent = category.getParent();
+        while (parent != null) {
+            if (Integer.valueOf(parent.getId()).equals(categoryId)) {
+                return true;
+            }
+            parent = parent.getParent();
+        }
+        return false;
     }
 
 }

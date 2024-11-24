@@ -53,7 +53,7 @@ public class ProductVariantController extends BaseController{
         List<ListProductVariantResponse> filteredProducts = productVariantService.filterProducts(brandId, colorId, categoryId, sizeValue);
 
         if (filteredProducts.isEmpty()) {
-            return sendResponse(HttpStatus.NO_CONTENT, Messages.Error.CUSTOM_PRODUCT_NOT_FOUND, null);
+            return sendResponse(HttpStatus.NOT_FOUND, Messages.Error.CUSTOM_PRODUCT_NOT_FOUND, null);
         }
 
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, filteredProducts);

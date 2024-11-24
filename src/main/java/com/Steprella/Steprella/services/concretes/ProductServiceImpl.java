@@ -7,6 +7,7 @@ import com.Steprella.Steprella.services.abstracts.ProductService;
 import com.Steprella.Steprella.services.abstracts.ShoeModelService;
 import com.Steprella.Steprella.services.dtos.requests.products.AddProductRequest;
 import com.Steprella.Steprella.services.dtos.requests.products.UpdateProductRequest;
+import com.Steprella.Steprella.services.dtos.responses.categories.ListCategoryResponse;
 import com.Steprella.Steprella.services.dtos.responses.products.AddProductResponse;
 import com.Steprella.Steprella.services.dtos.responses.products.ListProductResponse;
 import com.Steprella.Steprella.services.dtos.responses.products.UpdateProductResponse;
@@ -29,15 +30,15 @@ public class ProductServiceImpl implements ProductService {
     public List<ListProductResponse> getAll() {
         List<Product> products = productRepository.findAll();
 
-        return products.stream().map(
-          ProductMapper.INSTANCE::listResponseFromProduct
-        ).collect(Collectors.toList());
+        return products.stream().map(this::createProductResponse)
+                .collect(Collectors.toList());
     }
 
     @Override
     public ListProductResponse getById(int id) {
         Product product = productRepository.findById(id).orElse(null);
-        return ProductMapper.INSTANCE.listResponseFromProduct(product);
+
+        return createProductResponse(product);
     }
 
     @Override
@@ -64,5 +65,13 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public boolean isDistrictBelongsToCity(int modelId, int brandId) {
         return shoeModelService.getById(modelId).getBrandId() != brandId;
+    }
+
+    private ListProductResponse createProductResponse(Product product){
+        ListCategoryResponse category = categoryService.getCategoryHierarchy(product.getCategory().getId());
+        ListProductResponse response = ProductMapper.INSTANCE.listResponseFromProduct(product);
+        response.setCategory(category);
+
+        return response;
     }
 }

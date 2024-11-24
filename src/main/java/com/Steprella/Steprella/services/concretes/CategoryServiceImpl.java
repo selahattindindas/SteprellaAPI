@@ -12,7 +12,9 @@ import com.Steprella.Steprella.services.mappers.CategoryMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,7 +25,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<ListCategoryResponse> getAll() {
-        List<Category> rootCategories = categoryRepository.findRootCategories();
+        List<Category> rootCategories = categoryRepository.findByParentIsNull();
         return rootCategories.stream()
                 .map(CategoryMapper.INSTANCE::listResponseFromCategory)
                 .collect(Collectors.toList());
@@ -67,8 +69,31 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryRepository.findById(id).orElse(null);
     }
 
+
     @Override
-    public List<ListCategoryResponse> getCategoryHierarchy(int id) {
-        return null;
+    public ListCategoryResponse getCategoryHierarchy(int id) {
+        Optional<Category> categoryOpt = categoryRepository.findById(id);
+
+        if (categoryOpt.isPresent()) {
+            Category category = categoryOpt.get();
+            return buildCategoryHierarchy(category);
+        } else {
+            return null;
+        }
+    }
+
+    private ListCategoryResponse buildCategoryHierarchy(Category category) {
+        ListCategoryResponse response = CategoryMapper.INSTANCE.listResponseFromCategory(category);
+
+        if (category.getParent() != null) {
+            response.setParentId(category.getParent().getId());
+            response.setChildren(new ArrayList<>());
+            ListCategoryResponse parentResponse = buildCategoryHierarchy(category.getParent());
+            response.getChildren().add(parentResponse);
+        } else {
+            response.setChildren(new ArrayList<>());
+        }
+
+        return response;
     }
 }

@@ -88,4 +88,9 @@ public class CategoryController extends BaseController{
         categoryService.delete(id);
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, null);
     }
+
+    @GetMapping("/categories/{id}/hierarchy")
+    public ListCategoryResponse getCategoryHierarchy(@PathVariable int id) {
+        return categoryService.getCategoryHierarchy(id);
+    }
 }
