@@ -1,4 +1,4 @@
-package com.Steprella.Steprella.services.dtos.responses.favorites;
+package com.Steprella.Steprella.services.dtos.responses.carts;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,9 +9,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ListFavoriteResponse {
+public class AddCartResponse {
 
     private int id;
 
-    private ListFavoriteProductResponse productVariant;
+    private int userId;
 }

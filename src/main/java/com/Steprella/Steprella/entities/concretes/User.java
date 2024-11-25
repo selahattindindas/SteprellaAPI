@@ -51,6 +51,9 @@ public class User extends BaseEntity implements UserDetails {
     @OneToMany(mappedBy= "user", cascade = CascadeType.ALL)
     private List<Favorite> favorites;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Cart cart;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of();

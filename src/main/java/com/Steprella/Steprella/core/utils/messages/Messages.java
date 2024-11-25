@@ -14,8 +14,9 @@ public class Messages {
         public static final String CUSTOM_SHOE_MODEL_NOT_FOUND = "Böyle bir ayakkabı modeli bulunamadı.";
         public static final String CUSTOM_COLOR_NOT_FOUND = "Böyle bir renk bulunamadı";
         public static final String CUSTOM_PRODUCT_SIZE_NOT_FOUND = "Böyle bir ürün ayakkabısı bulunamadı";
-        public static final String CUSTOM_USER_DETAIL_NOT_FOUND = "Böyle bir kullanıcı detayı bulunamadı";
         public static final String CUSTOM_ADDRESS_NOT_FOUND = "Böyle bir adres bulunamadı";
+        public static final String CUSTOM_CART_NOT_FOUND = "Böyle bir sepet bulunamadı.";
+        public static final String CUSTOM_CART_ITEM_NOT_FOUND = "Böyle bir sepet öğesi bulunamadı.";
         public static final String CUSTOM_USER_NOT_FOUND = "Böyle bir kullanıcı bulunamadı.";
         public static final String CUSTOM_PRODUCT_NOT_FOUND = "Böyle bir ürün bulunamadı.";
         public static final String FILE_SIZE_EXCEEDED = "Dosya boyutu, izin verilen maksimum boyutu (%s) aşıyor.";

@@ -1,0 +1,81 @@
+package com.Steprella.Steprella.controllers;
+
+import com.Steprella.Steprella.core.utils.messages.Messages;
+import com.Steprella.Steprella.services.abstracts.CartItemService;
+import com.Steprella.Steprella.services.abstracts.CartService;
+import com.Steprella.Steprella.services.abstracts.ProductVariantService;
+import com.Steprella.Steprella.services.dtos.requests.cartitems.AddCartItemRequest;
+import com.Steprella.Steprella.services.dtos.requests.cartitems.UpdateCartItemRequest;
+import com.Steprella.Steprella.services.dtos.responses.BaseResponse;
+import com.Steprella.Steprella.services.dtos.responses.cart_items.AddCartItemResponse;
+import com.Steprella.Steprella.services.dtos.responses.cart_items.ListCartItemResponse;
+import com.Steprella.Steprella.services.dtos.responses.cart_items.UpdateCartItemResponse;
+import com.Steprella.Steprella.services.dtos.responses.carts.ListCartResponse;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/cart-items")
+@RequiredArgsConstructor
+public class CartItemController extends BaseController {
+
+    private final CartItemService cartItemService;
+    private final CartService cartService;
+    private final ProductVariantService productVariantService;
+
+    @GetMapping("/by-cart-id/{cartId}")
+    public ResponseEntity<BaseResponse<List<ListCartItemResponse>>> getItemsByCartId(@PathVariable int cartId){
+        ListCartResponse cart = cartService.getById(cartId);
+        if (cart == null) {
+            return sendResponse(HttpStatus.NOT_FOUND, Messages.Error.CUSTOM_USER_NOT_FOUND, null);
+        }
+
+        List<ListCartItemResponse> cartItems = cartItemService.getItemsByCartId(cartId);
+        return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, cartItems);
+    }
+
+    @PostMapping("/create-address")
+    public ResponseEntity<BaseResponse<AddCartItemResponse>> add(@RequestBody @Valid AddCartItemRequest request, BindingResult bindingResult) {
+        if (bindingResult.hasErrors())
+            return sendResponse(HttpStatus.BAD_REQUEST, Messages.Error.CUSTOM_BAD_REQUEST, null);
+
+        if (cartService.getById(request.getCartId()) == null)
+            return sendResponse(HttpStatus.NOT_FOUND, Messages.Error.CUSTOM_CART_NOT_FOUND, null);
+
+        if (productVariantService.getById(request.getProductVariantId()) == null)
+            return sendResponse(HttpStatus.NOT_FOUND, Messages.Error.CUSTOM_PRODUCT_NOT_FOUND, null);
+
+        AddCartItemResponse cartItem = cartItemService.add(request);
+        return sendResponse(HttpStatus.CREATED, Messages.Success.CUSTOM_SUCCESSFULLY, cartItem);
+    }
+
+    @PutMapping("/update-address")
+    public ResponseEntity<BaseResponse<UpdateCartItemResponse>> update(@RequestBody @Valid UpdateCartItemRequest request, BindingResult bindingResult) {
+        if (bindingResult.hasErrors())
+            return sendResponse(HttpStatus.BAD_REQUEST, Messages.Error.CUSTOM_BAD_REQUEST, null);
+        if(cartItemService.getById(request.getId()) == null)
+            return sendResponse(HttpStatus.NOT_FOUND, Messages.Error.CUSTOM_CART_ITEM_NOT_FOUND, null);
+
+        if (cartService.getById(request.getCartId()) == null)
+            return sendResponse(HttpStatus.NOT_FOUND, Messages.Error.CUSTOM_CART_NOT_FOUND, null);
+
+        if (productVariantService.getById(request.getProductVariantId()) == null)
+            return sendResponse(HttpStatus.NOT_FOUND, Messages.Error.CUSTOM_PRODUCT_NOT_FOUND, null);
+
+
+        UpdateCartItemResponse cartItem = cartItemService.update(request);
+        return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, cartItem);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<BaseResponse<Void>>delete(@PathVariable int id) {
+        cartItemService.delete(id);
+        return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, null);
+    }
+}

@@ -6,6 +6,7 @@ import com.Steprella.Steprella.services.dtos.responses.productvariants.AddProduc
 import com.Steprella.Steprella.services.dtos.responses.productvariants.ListProductVariantResponse;
 import com.Steprella.Steprella.services.dtos.responses.productvariants.UpdateProductVariantResponse;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface ProductVariantService {
@@ -23,4 +24,6 @@ public interface ProductVariantService {
     void delete(int id);
 
     boolean isProductVariantExist(int colorId, int productId);
+
+    BigDecimal getUnitPriceByProductVariantId(int productVariantId);
 }

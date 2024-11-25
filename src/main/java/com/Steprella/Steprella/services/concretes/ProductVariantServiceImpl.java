@@ -16,6 +16,7 @@ import com.Steprella.Steprella.services.mappers.ProductVariantMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -108,6 +109,13 @@ public class ProductVariantServiceImpl implements ProductVariantService {
 
     public boolean isProductVariantExist(int colorId, int productId) {
         return productVariantRepository.existsByColorIdAndProductId(colorId, productId);
+    }
+
+    @Override
+    public BigDecimal getUnitPriceByProductVariantId(int productVariantId) {
+        ProductVariant productVariant = productVariantRepository.findById(productVariantId)
+                .orElseThrow(() -> new RuntimeException("Product variant not found"));
+        return productVariant.getProduct().getPrice();
     }
 
     private ListProductVariantResponse createProductVariantResponse(ProductVariant productVariant) {
