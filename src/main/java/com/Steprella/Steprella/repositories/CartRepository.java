@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 public interface CartRepository extends BaseRepository<Cart, Integer>{
 
     Cart findByUserId(int userId);
+
+    boolean existsByUserId(int userId);
 }

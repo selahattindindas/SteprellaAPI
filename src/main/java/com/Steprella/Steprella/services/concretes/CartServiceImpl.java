@@ -1,9 +1,13 @@
 package com.Steprella.Steprella.services.concretes;
 
+import com.Steprella.Steprella.core.utils.exceptions.types.BusinessException;
+import com.Steprella.Steprella.core.utils.exceptions.types.NotFoundException;
+import com.Steprella.Steprella.core.utils.messages.Messages;
 import com.Steprella.Steprella.entities.concretes.Cart;
 import com.Steprella.Steprella.repositories.CartRepository;
 import com.Steprella.Steprella.services.abstracts.CartItemService;
 import com.Steprella.Steprella.services.abstracts.CartService;
+import com.Steprella.Steprella.services.abstracts.UserService;
 import com.Steprella.Steprella.services.dtos.requests.carts.AddCartRequest;
 import com.Steprella.Steprella.services.dtos.responses.cart_items.ListCartItemResponse;
 import com.Steprella.Steprella.services.dtos.responses.carts.AddCartResponse;
@@ -21,20 +25,19 @@ public class CartServiceImpl implements CartService {
 
     private final CartRepository cartRepository;
     private final CartItemService cartItemService;
+    private final UserService userService;
 
     @Override
     public ListCartResponse getCartByUserId(int userId) {
+        userService.getById(userId);
         Cart cart = cartRepository.findByUserId(userId);
 
         List<ListCartItemResponse> cartItems = cartItemService.getItemsByCartId(cart.getId());
 
-        int totalItems = 0;
-        BigDecimal totalPrice = BigDecimal.ZERO;
-
-        for (ListCartItemResponse cartItem : cartItems) {
-            totalItems += cartItem.getQuantity();
-            totalPrice = totalPrice.add(cartItem.getTotalPrice());
-        }
+        int totalItems = cartItems.stream().mapToInt(ListCartItemResponse::getQuantity).sum();
+        BigDecimal totalPrice = cartItems.stream()
+                .map(ListCartItemResponse::getTotalPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         ListCartResponse response = CartMapper.INSTANCE.listResponseFromCart(cart);
         response.setCartItems(cartItems);
@@ -45,13 +48,20 @@ public class CartServiceImpl implements CartService {
     }
     @Override
     public ListCartResponse getById(int id) {
-        Cart cart = cartRepository.findById(id).orElse(null);
+        Cart cart = cartRepository.findById(id).orElseThrow(() ->
+                new NotFoundException(Messages.Error.CUSTOM_CART_NOT_FOUND));
 
         return CartMapper.INSTANCE.listResponseFromCart(cart);
     }
 
     @Override
     public AddCartResponse add(AddCartRequest request) {
+        userService.getById(request.getUserId());
+
+        if (cartRepository.existsByUserId(request.getUserId())) {
+            throw new BusinessException(Messages.Error.CART_ALREADY_EXISTS);
+        }
+
         Cart addCart = CartMapper.INSTANCE.cartFromAddRequest(request);
         Cart savedCart = cartRepository.save(addCart);
 
@@ -60,8 +70,8 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public void delete(int id) {
-        Cart cart = cartRepository.findById(id).orElse(null);
-        assert cart != null;
+        Cart cart = cartRepository.findById(id).orElseThrow(() ->
+                new NotFoundException(Messages.Error.CUSTOM_CART_NOT_FOUND));
         cartRepository.delete(cart);
     }
 }

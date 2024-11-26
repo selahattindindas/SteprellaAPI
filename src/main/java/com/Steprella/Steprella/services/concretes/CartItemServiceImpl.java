@@ -1,8 +1,12 @@
 package com.Steprella.Steprella.services.concretes;
 
+import com.Steprella.Steprella.core.utils.exceptions.types.BusinessException;
+import com.Steprella.Steprella.core.utils.exceptions.types.NotFoundException;
+import com.Steprella.Steprella.core.utils.messages.Messages;
 import com.Steprella.Steprella.entities.concretes.CartItem;
 import com.Steprella.Steprella.repositories.CartItemRepository;
 import com.Steprella.Steprella.services.abstracts.CartItemService;
+import com.Steprella.Steprella.services.abstracts.CartService;
 import com.Steprella.Steprella.services.abstracts.ProductVariantService;
 import com.Steprella.Steprella.services.dtos.requests.cartitems.AddCartItemRequest;
 import com.Steprella.Steprella.services.dtos.requests.cartitems.UpdateCartItemRequest;
@@ -25,9 +29,12 @@ public class CartItemServiceImpl implements CartItemService {
 
     private final CartItemRepository cartItemRepository;
     private final ProductVariantService productVariantService;
+    private final CartService cartService;
 
     @Override
     public List<ListCartItemResponse> getItemsByCartId(int cartId) {
+        cartService.getById(cartId);
+
         List<CartItem> cartItems = cartItemRepository.findByCartId(cartId);
 
         return cartItems.stream().map(cartItem -> {
@@ -42,13 +49,16 @@ public class CartItemServiceImpl implements CartItemService {
 
     @Override
     public ListCartItemResponse getById(int id) {
-        CartItem cartItem = cartItemRepository.findById(id).orElse(null);
+        CartItem cartItem = cartItemRepository.findById(id).orElseThrow(() ->
+                new NotFoundException(Messages.Error.CUSTOM_CART_ITEM_NOT_FOUND));
 
         return CartItemMapper.INSTANCE.listFromCartItem(cartItem);
     }
 
     @Override
     public AddCartItemResponse add(AddCartItemRequest request) {
+        cartService.getById(request.getCartId());
+        productVariantService.getById(request.getProductVariantId());
         checkProductVariantAvailability(request.getProductVariantId(), request.getProductVariantSizeId(), request.getQuantity());
         BigDecimal unitPrice = productVariantService.getUnitPriceByProductVariantId(request.getProductVariantId());
         BigDecimal totalPrice = calculateTotalPrice(unitPrice, request.getQuantity());
@@ -64,6 +74,9 @@ public class CartItemServiceImpl implements CartItemService {
 
     @Override
     public UpdateCartItemResponse update(UpdateCartItemRequest request) {
+        getById(request.getId());
+        cartService.getById(request.getCartId());
+        productVariantService.getById(request.getProductVariantId());
         checkProductVariantAvailability(request.getProductVariantId(), request.getProductVariantSizeId(), request.getQuantity());
         BigDecimal unitPrice = productVariantService.getUnitPriceByProductVariantId(request.getProductVariantId());
         BigDecimal totalPrice = calculateTotalPrice(unitPrice, request.getQuantity());
@@ -79,8 +92,9 @@ public class CartItemServiceImpl implements CartItemService {
 
     @Override
     public void delete(int id) {
-        CartItem cartItem = cartItemRepository.findById(id).orElse(null);
-        assert cartItem != null;
+        CartItem cartItem = cartItemRepository.findById(id).orElseThrow(() ->
+                new NotFoundException(Messages.Error.CUSTOM_CART_ITEM_NOT_FOUND));
+
         cartItemRepository.delete(cartItem);
     }
 
@@ -91,11 +105,11 @@ public class CartItemServiceImpl implements CartItemService {
         ListProductSizeResponse productSize = productVariant.getProductSizes().stream()
                 .filter(size -> size.getId() == productVariantSizeId)
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Geçersiz boyut numarası! Bu varyant için geçerli boyut değil."));
+                .orElseThrow(() -> new NotFoundException(Messages.Error.INVALID_SIZE_FOR_VARIANT));
 
         int availableStock = productSize.getStockQuantity();
         if (availableStock < requestedQuantity) {
-            throw new IllegalArgumentException("Yeterli stok bulunmamaktadır. Talep edilen miktar: " + requestedQuantity);
+            throw new BusinessException(String.format(Messages.Error.INSUFFICIENT_STOCK, requestedQuantity));
         }
     }
 

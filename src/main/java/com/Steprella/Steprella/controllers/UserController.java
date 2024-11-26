@@ -30,9 +30,6 @@ public class UserController extends BaseController{
     @GetMapping("/{id}")
     public ResponseEntity<BaseResponse<ListUserResponse>> getById(@PathVariable int id) {
         ListUserResponse user = userService.getResponseById(id);
-        if (user == null){
-            return sendResponse(HttpStatus.NOT_FOUND, Messages.Error.CUSTOM_USER_NOT_FOUND, null);
-        }
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, user);
     }
 }

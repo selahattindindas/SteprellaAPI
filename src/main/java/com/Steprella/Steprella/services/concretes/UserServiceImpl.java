@@ -1,5 +1,7 @@
 package com.Steprella.Steprella.services.concretes;
 
+import com.Steprella.Steprella.core.utils.exceptions.types.NotFoundException;
+import com.Steprella.Steprella.core.utils.messages.Messages;
 import com.Steprella.Steprella.entities.concretes.User;
 import com.Steprella.Steprella.repositories.UserRepository;
 import com.Steprella.Steprella.services.abstracts.AddressService;
@@ -32,14 +34,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ListUserResponse getResponseById(int id) {
-        User user = userRepository.findById(id).orElse(null);
+        User user = userRepository.findById(id).orElseThrow(() ->
+                new NotFoundException(Messages.Error.CUSTOM_USER_NOT_FOUND));
         List<ListAddressResponse> addresses = addressService.getAddressesByUserId(user.getId());
         return UserMapper.INSTANCE.listResponseFromUser(user, addresses);
     }
 
     @Override
     public User getById(int id) {
-        return userRepository.findById(id).orElse(null);
+        return userRepository.findById(id).orElseThrow(() ->
+                new NotFoundException(Messages.Error.CUSTOM_USER_NOT_FOUND));
     }
 
     @Override

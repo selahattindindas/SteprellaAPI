@@ -4,6 +4,7 @@ public class Messages {
 
     public static class Error {
         public static final String CUSTOM_BAD_REQUEST = "Sunucu hatası. Lütfen daha sonra tekrar deneyiniz!";
+        public static final String CUSTOM_NOT_FOUND = "Verilen bilgiye ait kaynak bulunamadı.";
         public static final String CUSTOM_PARENT_NOT_FOUND = "Böyle bir parent bulunamadı.";
         public static final String CUSTOM_CATEGORY_NOT_FOUND = "Böyle bir kategori bulunamadı.";
         public static final String CUSTOM_CITY_NOT_FOUND = "Böyle bir şehir bulunamadı.";
@@ -23,6 +24,9 @@ public class Messages {
         public static final String FILE_UPLOAD_FAILED = "Dosya yüklenirken bir hata oluştu: %s";
         public static final String FILE_DELETION_FAILED = "Dosya silinirken bir hata oluştu: %";
         public static final String USER_WITH_SAME_EMAIL_EXISTS = "Böyle bir e-posta adresi mevcuttur.";
+        public static final String INVALID_SIZE_FOR_VARIANT = "Geçersiz boyut numarası! Bu varyant için geçerli boyut değil.";
+        public static final String INSUFFICIENT_STOCK = "Yeterli stok bulunmamaktadır. Talep edilen miktar: %s";
+        public static final String CART_ALREADY_EXISTS = "Bu kullanıcıya ait bir sepet bulunmaktadır.";
     }
 
     public static class Success {
