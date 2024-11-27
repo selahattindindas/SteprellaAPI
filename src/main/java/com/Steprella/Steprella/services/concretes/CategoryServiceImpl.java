@@ -1,5 +1,7 @@
 package com.Steprella.Steprella.services.concretes;
 
+import com.Steprella.Steprella.core.utils.exceptions.types.NotFoundException;
+import com.Steprella.Steprella.core.utils.messages.Messages;
 import com.Steprella.Steprella.entities.concretes.Category;
 import com.Steprella.Steprella.repositories.CategoryRepository;
 import com.Steprella.Steprella.services.abstracts.CategoryService;
@@ -21,7 +23,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
 
-    private CategoryRepository categoryRepository;
+    private final CategoryRepository categoryRepository;
 
     @Override
     public List<ListCategoryResponse> getAll() {
@@ -33,42 +35,53 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public ListCategoryResponse getById(int id) {
-        Category category = categoryRepository.findById(id).orElse(null);
+        Category category = findCategoryById(id);
         return CategoryMapper.INSTANCE.listResponseFromCategory(category);
     }
 
     @Override
-    public AddCategoryResponse add(AddCategoryRequest request, Category parentCategory) {
-        Category newCategory = CategoryMapper.INSTANCE.categoryFromAddRequest(request, parentCategory);
-        Category savedCategory = categoryRepository.save(newCategory);
+    public AddCategoryResponse add(AddCategoryRequest request) {
+        Category parentCategory = null;
+
+        if (request.getParentId() != null) {
+            if (request.getParentId() == 0) {
+                parentCategory = null;
+            } else {
+                parentCategory = findCategoryById(request.getParentId());
+            }
+        }
+
+        Category addCategory = CategoryMapper.INSTANCE.categoryFromAddRequest(request, parentCategory);
+        Category savedCategory = categoryRepository.save(addCategory);
 
         return CategoryMapper.INSTANCE.addResponseCategory(savedCategory);
     }
 
     @Override
-    public UpdateCategoryResponse update(UpdateCategoryRequest request, Category category) {
-        Category updatedCategory = CategoryMapper.INSTANCE.categoryFromUpdateRequest(request, category);
+    public UpdateCategoryResponse update(UpdateCategoryRequest request) {
+        Category category = findCategoryById(request.getId());
 
-        Category savedCategory = categoryRepository.save(updatedCategory);
+        Category parentCategory = null;
+        if (request.getParentId() != null) {
+            if (request.getParentId() == 0) {
+                parentCategory = null;
+            } else {
+                parentCategory = findCategoryById(request.getParentId());
+            }
+        }
+
+        Category updateCategory = CategoryMapper.INSTANCE.categoryFromUpdateRequest(request, category);
+        Category savedCategory = categoryRepository.save(updateCategory);
+        updateCategory.setParent(parentCategory);
 
         return CategoryMapper.INSTANCE.updateResponseFromCategory(savedCategory);
     }
 
     @Override
     public void delete(int id) {
-        Category category = categoryRepository.findById(id).orElse(null);
-        assert category != null;
+        Category category = findCategoryById(id);
         categoryRepository.delete(category);
     }
-
-    public Category getCategoryByParentId(Integer parentId) {
-        return categoryRepository.findById(parentId).orElse(null);
-    }
-
-    public Category getCategoryById(int id) {
-        return categoryRepository.findById(id).orElse(null);
-    }
-
 
     @Override
     public ListCategoryResponse getCategoryHierarchy(int id) {
@@ -95,5 +108,10 @@ public class CategoryServiceImpl implements CategoryService {
         }
 
         return response;
+    }
+
+    private Category findCategoryById(int id) {
+        return categoryRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(Messages.Error.CUSTOM_CATEGORY_NOT_FOUND));
     }
 }

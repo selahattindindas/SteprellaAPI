@@ -9,7 +9,7 @@ import com.Steprella.Steprella.services.dtos.responses.brands.AddBrandResponse;
 import com.Steprella.Steprella.services.dtos.responses.brands.ListBrandResponse;
 import com.Steprella.Steprella.services.dtos.responses.brands.UpdateBrandResponse;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -19,10 +19,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/brands")
-@RequiredArgsConstructor
 public class BrandController extends BaseController{
 
     private final BrandService brandService;
+
+    public BrandController(@Lazy BrandService brandService) {
+        this.brandService = brandService;
+    }
 
     @GetMapping("/get-all")
     public ResponseEntity<BaseResponse<List<ListBrandResponse>>> getAll(){
@@ -33,10 +36,7 @@ public class BrandController extends BaseController{
     @GetMapping("/{id}")
     public ResponseEntity<BaseResponse<ListBrandResponse>> getById(@PathVariable int id){
         ListBrandResponse brand = brandService.getById(id);
-        if(brand == null)
-            return sendResponse(HttpStatus.NOT_FOUND, Messages.Error.CUSTOM_BRAND_NOT_FOUND, null);
-        else
-            return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, brand);
+        return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, brand);
     }
 
     @PostMapping("/create-brand")
@@ -54,10 +54,6 @@ public class BrandController extends BaseController{
     public ResponseEntity<BaseResponse<UpdateBrandResponse>> update(@RequestBody @Valid UpdateBrandRequest request, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return sendResponse(HttpStatus.BAD_REQUEST, Messages.Error.CUSTOM_BAD_REQUEST, null);
-        }
-
-        if(brandService.getById(request.getId()) == null){
-                return sendResponse(HttpStatus.NOT_FOUND, Messages.Error.CUSTOM_BRAND_NOT_FOUND, null);
         }
 
         UpdateBrandResponse updateBrandResponse = brandService.update(request);

@@ -16,7 +16,8 @@ import com.Steprella.Steprella.services.dtos.responses.cart_items.UpdateCartItem
 import com.Steprella.Steprella.services.dtos.responses.productsizes.ListProductSizeResponse;
 import com.Steprella.Steprella.services.dtos.responses.productvariants.ListProductVariantResponse;
 import com.Steprella.Steprella.services.mappers.CartItemMapper;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -24,12 +25,20 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor
 public class CartItemServiceImpl implements CartItemService {
 
     private final CartItemRepository cartItemRepository;
     private final ProductVariantService productVariantService;
     private final CartService cartService;
+
+    @Autowired
+    public CartItemServiceImpl(CartItemRepository cartItemRepository,
+                               @Lazy ProductVariantService productVariantService,
+                               @Lazy CartService cartService) {
+        this.cartItemRepository = cartItemRepository;
+        this.productVariantService = productVariantService;
+        this.cartService = cartService;
+    }
 
     @Override
     public List<ListCartItemResponse> getItemsByCartId(int cartId) {
@@ -49,9 +58,7 @@ public class CartItemServiceImpl implements CartItemService {
 
     @Override
     public ListCartItemResponse getById(int id) {
-        CartItem cartItem = cartItemRepository.findById(id).orElseThrow(() ->
-                new NotFoundException(Messages.Error.CUSTOM_CART_ITEM_NOT_FOUND));
-
+        CartItem cartItem = findCartItemById(id);
         return CartItemMapper.INSTANCE.listFromCartItem(cartItem);
     }
 
@@ -60,6 +67,7 @@ public class CartItemServiceImpl implements CartItemService {
         cartService.getById(request.getCartId());
         productVariantService.getById(request.getProductVariantId());
         checkProductVariantAvailability(request.getProductVariantId(), request.getProductVariantSizeId(), request.getQuantity());
+
         BigDecimal unitPrice = productVariantService.getUnitPriceByProductVariantId(request.getProductVariantId());
         BigDecimal totalPrice = calculateTotalPrice(unitPrice, request.getQuantity());
 
@@ -74,10 +82,11 @@ public class CartItemServiceImpl implements CartItemService {
 
     @Override
     public UpdateCartItemResponse update(UpdateCartItemRequest request) {
-        getById(request.getId());
+        findCartItemById(request.getId());
         cartService.getById(request.getCartId());
         productVariantService.getById(request.getProductVariantId());
         checkProductVariantAvailability(request.getProductVariantId(), request.getProductVariantSizeId(), request.getQuantity());
+
         BigDecimal unitPrice = productVariantService.getUnitPriceByProductVariantId(request.getProductVariantId());
         BigDecimal totalPrice = calculateTotalPrice(unitPrice, request.getQuantity());
 
@@ -92,9 +101,7 @@ public class CartItemServiceImpl implements CartItemService {
 
     @Override
     public void delete(int id) {
-        CartItem cartItem = cartItemRepository.findById(id).orElseThrow(() ->
-                new NotFoundException(Messages.Error.CUSTOM_CART_ITEM_NOT_FOUND));
-
+        CartItem cartItem = findCartItemById(id);
         cartItemRepository.delete(cartItem);
     }
 
@@ -115,5 +122,10 @@ public class CartItemServiceImpl implements CartItemService {
 
     private BigDecimal calculateTotalPrice(BigDecimal unitPrice, int quantity) {
         return unitPrice.multiply(BigDecimal.valueOf(quantity));
+    }
+
+    private CartItem findCartItemById(int id) {
+        return cartItemRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(Messages.Error.CUSTOM_CART_ITEM_NOT_FOUND));
     }
 }

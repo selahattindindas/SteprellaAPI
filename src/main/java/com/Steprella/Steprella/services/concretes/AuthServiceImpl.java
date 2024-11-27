@@ -18,15 +18,19 @@ public class AuthServiceImpl implements AuthService {
 
     private final UserRules userRules;
     private final PasswordEncoder passwordEncoder;
-    private final UserService userService;
+    private UserService userService;
 
     @Override
     public AddUserResponse register(AddUserRequest request) {
         userRules.userWithSameEmailShouldNotExist(request.getEmail());
+
         User newUser = AuthMapper.INSTANCE.userFromAddRequest(request);
+
         newUser.setPassword(passwordEncoder.encode(request.getPassword()));
         newUser.setRole(Role.CUSTOMER);
+
         User savedUser = userService.add(newUser);
+
         return AuthMapper.INSTANCE.addResponseFromUser(savedUser);
     }
 }

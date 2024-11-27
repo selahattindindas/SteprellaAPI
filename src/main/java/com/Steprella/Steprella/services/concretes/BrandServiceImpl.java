@@ -1,5 +1,7 @@
 package com.Steprella.Steprella.services.concretes;
 
+import com.Steprella.Steprella.core.utils.exceptions.types.NotFoundException;
+import com.Steprella.Steprella.core.utils.messages.Messages;
 import com.Steprella.Steprella.entities.concretes.Brand;
 import com.Steprella.Steprella.repositories.BrandRepository;
 import com.Steprella.Steprella.services.abstracts.BrandService;
@@ -19,7 +21,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class BrandServiceImpl implements BrandService {
 
-    private BrandRepository brandRepository;
+    private final BrandRepository brandRepository;
 
     @Override
     public List<ListBrandResponse> getAll() {
@@ -30,31 +32,36 @@ public class BrandServiceImpl implements BrandService {
 
     @Override
     public ListBrandResponse getById(int id) {
-        Brand brand = brandRepository.findById(id).orElse(null);
-
+        Brand brand = findBrandById(id);
         return BrandMapper.INSTANCE.listResponseFromBrand(brand);
     }
 
     @Override
     public AddBrandResponse add(AddBrandRequest request) {
         Brand newBrand = BrandMapper.INSTANCE.brandFromAddRequest(request);
-        Brand saveBrand = brandRepository.save(newBrand);
+        Brand savedBrand = brandRepository.save(newBrand);
 
-        return BrandMapper.INSTANCE.addResponseBrand(saveBrand);
+        return BrandMapper.INSTANCE.addResponseBrand(savedBrand);
     }
 
     @Override
     public UpdateBrandResponse update(UpdateBrandRequest request) {
-        Brand updateBrand = BrandMapper.INSTANCE.brandFromUpdateRequest(request);
-        Brand saveBrand = brandRepository.save(updateBrand);
+        findBrandById(request.getId());
 
-        return BrandMapper.INSTANCE.updateResponseBrand(saveBrand);
+        Brand updateBrand = BrandMapper.INSTANCE.brandFromUpdateRequest(request);
+        Brand savedBrand = brandRepository.save(updateBrand);
+
+        return BrandMapper.INSTANCE.updateResponseBrand(savedBrand);
     }
 
     @Override
     public void delete(int id) {
-        Brand brand = brandRepository.findById(id).orElse(null);
-        assert brand != null;
+        Brand brand = findBrandById(id);
         brandRepository.delete(brand);
+    }
+
+    private Brand findBrandById(int id) {
+        return brandRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(Messages.Error.CUSTOM_BRAND_NOT_FOUND));
     }
 }

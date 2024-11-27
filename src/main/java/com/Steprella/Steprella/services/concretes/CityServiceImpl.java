@@ -1,5 +1,7 @@
 package com.Steprella.Steprella.services.concretes;
 
+import com.Steprella.Steprella.core.utils.exceptions.types.NotFoundException;
+import com.Steprella.Steprella.core.utils.messages.Messages;
 import com.Steprella.Steprella.entities.concretes.City;
 import com.Steprella.Steprella.repositories.CityRepository;
 import com.Steprella.Steprella.services.abstracts.CityService;
@@ -25,7 +27,9 @@ public class CityServiceImpl implements CityService {
 
     @Override
     public ListCityResponse getById(int id) {
-        City city = cityRepository.findById(id).orElse(null);
+        City city = cityRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(Messages.Error.CUSTOM_CITY_NOT_FOUND));
+
         return CityMapper.INSTANCE.listResponseFromCity(city);
     }
 }

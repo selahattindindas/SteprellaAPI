@@ -23,7 +23,5 @@ public interface ProductVariantService {
 
     void delete(int id);
 
-    boolean isProductVariantExist(int colorId, int productId);
-
     BigDecimal getUnitPriceByProductVariantId(int productVariantId);
 }

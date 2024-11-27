@@ -1,30 +1,50 @@
 package com.Steprella.Steprella.services.concretes;
 
+import com.Steprella.Steprella.core.utils.exceptions.types.BusinessException;
+import com.Steprella.Steprella.core.utils.exceptions.types.NotFoundException;
+import com.Steprella.Steprella.core.utils.messages.Messages;
 import com.Steprella.Steprella.entities.concretes.Address;
 import com.Steprella.Steprella.repositories.AddressRepository;
 import com.Steprella.Steprella.services.abstracts.AddressService;
+import com.Steprella.Steprella.services.abstracts.CityService;
 import com.Steprella.Steprella.services.abstracts.DistrictService;
+import com.Steprella.Steprella.services.abstracts.UserService;
 import com.Steprella.Steprella.services.dtos.requests.addresses.AddAddressRequest;
 import com.Steprella.Steprella.services.dtos.requests.addresses.UpdateAddressRequest;
 import com.Steprella.Steprella.services.dtos.responses.addresses.AddAddressResponse;
 import com.Steprella.Steprella.services.dtos.responses.addresses.ListAddressResponse;
 import com.Steprella.Steprella.services.dtos.responses.addresses.UpdateAddressResponse;
 import com.Steprella.Steprella.services.mappers.AddressMapper;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor
 public class AddressServiceImpl implements AddressService {
 
     private final AddressRepository addressRepository;
     private final DistrictService districtService;
+    private final CityService cityService;
+    @Lazy
+    private final UserService userService;
+
+    @Autowired
+    public AddressServiceImpl(AddressRepository addressRepository,
+                              DistrictService districtService,
+                              CityService cityService,
+                              @Lazy UserService userService) {
+        this.addressRepository = addressRepository;
+        this.districtService = districtService;
+        this.cityService = cityService;
+        this.userService = userService;
+    }
 
     @Override
     public List<ListAddressResponse> getAddressesByUserId(int userId) {
+        userService.getResponseById(userId);
         List<Address> addresses = addressRepository.findAddressByUserId(userId);
 
         return addresses.stream().map(AddressMapper.INSTANCE::listResponseFromAddress).collect(Collectors.toList());
@@ -32,21 +52,27 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public ListAddressResponse getById(int id) {
-        Address address = addressRepository.findById(id).orElse(null);
-
+        Address address = findAddressById(id);
         return AddressMapper.INSTANCE.listResponseFromAddress(address);
     }
 
     @Override
     public AddAddressResponse add(AddAddressRequest request) {
-        Address addAddress = AddressMapper.INSTANCE.addressFromAddRequest(request);
-        Address saveAddress = addressRepository.save(addAddress);
+        validateAddressRequest(request.getCityId(), request.getDistrictId(), request.getUserId());
+        isDistrictBelongsToCity(request.getDistrictId(), request.getCityId());
 
-        return AddressMapper.INSTANCE.addResponseFromAddress(saveAddress);
+        Address addAddress = AddressMapper.INSTANCE.addressFromAddRequest(request);
+        Address savedAddress = addressRepository.save(addAddress);
+
+        return AddressMapper.INSTANCE.addResponseFromAddress(savedAddress);
     }
 
     @Override
     public UpdateAddressResponse update(UpdateAddressRequest request) {
+        findAddressById(request.getId());
+        validateAddressRequest(request.getCityId(), request.getDistrictId(), request.getUserId());
+        isDistrictBelongsToCity(request.getDistrictId(), request.getCityId());
+
         Address updateAddress = AddressMapper.INSTANCE.addressFromUpdateRequest(request);
         Address saveAddress = addressRepository.save(updateAddress);
 
@@ -55,13 +81,26 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public void delete(int id) {
-        Address address = addressRepository.findById(id).orElse(null);
-        assert address != null;
+        Address address = findAddressById(id);
         addressRepository.delete(address);
     }
 
-    @Override
-    public boolean isDistrictBelongsToCity(int districtId, int cityId) {
-        return districtService.getById(districtId).getCityId() != cityId;
+    private Address findAddressById(int id) {
+        return addressRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(Messages.Error.CUSTOM_ADDRESS_NOT_FOUND));
+    }
+
+    private void validateAddressRequest(int cityId, int districtId, int userId) {
+        cityService.getById(cityId);
+        districtService.getById(districtId);
+        userService.getResponseById(userId);
+    }
+
+    private void isDistrictBelongsToCity(int districtId, int cityId) {
+        int districtCityId = districtService.getById(districtId).getCityId();
+
+        if (districtCityId != cityId) {
+            throw new BusinessException(Messages.Error.INVALID_DISTRICT_CITY_RELATION);
+        }
     }
 }

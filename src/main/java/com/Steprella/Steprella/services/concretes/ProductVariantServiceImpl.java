@@ -1,4 +1,7 @@
 package com.Steprella.Steprella.services.concretes;
+import com.Steprella.Steprella.core.utils.exceptions.types.BusinessException;
+import com.Steprella.Steprella.core.utils.exceptions.types.NotFoundException;
+import com.Steprella.Steprella.core.utils.messages.Messages;
 import com.Steprella.Steprella.entities.concretes.Category;
 import com.Steprella.Steprella.entities.concretes.ProductFile;
 import com.Steprella.Steprella.entities.concretes.ProductVariant;
@@ -13,7 +16,8 @@ import com.Steprella.Steprella.services.dtos.responses.productvariants.AddProduc
 import com.Steprella.Steprella.services.dtos.responses.productvariants.ListProductVariantResponse;
 import com.Steprella.Steprella.services.dtos.responses.productvariants.UpdateProductVariantResponse;
 import com.Steprella.Steprella.services.mappers.ProductVariantMapper;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -22,14 +26,32 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor
 public class ProductVariantServiceImpl implements ProductVariantService {
 
     private final ProductVariantRepository productVariantRepository;
     private final ProductFileService productFileService;
+    private final ProductService productService;
+    private final ColorService colorService;
     private final ProductSizeService productSizeService;
     private final CategoryService categoryService;
     private final CommentService commentService;
+
+    @Autowired
+    public ProductVariantServiceImpl(@Lazy ProductFileService productFileService,
+                                     ProductService productService,
+                                     ColorService colorService,
+                                     CategoryService categoryService,
+                                     CommentService commentService,
+                                     ProductSizeService productSizeService,
+                                     ProductVariantRepository productVariantRepository){
+        this.productVariantRepository = productVariantRepository;
+        this.productFileService = productFileService;
+        this.colorService = colorService;
+        this.productService = productService;
+        this.productSizeService = productSizeService;
+        this.categoryService = categoryService;
+        this.commentService = commentService;
+    }
 
     @Override
     public List<ListProductVariantResponse> getAll() {
@@ -40,8 +62,7 @@ public class ProductVariantServiceImpl implements ProductVariantService {
 
     @Override
     public ListProductVariantResponse getById(int id) {
-        ProductVariant productVariant = productVariantRepository.findById(id).orElse(null);
-
+        ProductVariant productVariant = findProductVariantById(id);
         return createProductVariantResponse(productVariant);
     }
 
@@ -78,6 +99,10 @@ public class ProductVariantServiceImpl implements ProductVariantService {
                     .collect(Collectors.toList());
         }
 
+        if (filteredProductVariants.isEmpty()) {
+            throw new NotFoundException(Messages.Error.CUSTOM_FILTER_PRODUCT_NOT_FOUND);
+        }
+
         return filteredProductVariants.stream()
                 .map(this::createProductVariantResponse)
                 .collect(Collectors.toList());
@@ -86,35 +111,36 @@ public class ProductVariantServiceImpl implements ProductVariantService {
 
     @Override
     public AddProductVariantResponse add(AddProductVariantRequest request) {
-        ProductVariant addProductVariant = ProductVariantMapper.INSTANCE.productVariantFromAddRequest(request);
-        ProductVariant saveProductVariant = productVariantRepository.save(addProductVariant);
+        validateProductVariantDependencies(request.getProductId(), request.getColorId());
+        validateProductVariantExistence(request.getColorId(), request.getProductId());
 
-        return ProductVariantMapper.INSTANCE.addResponseFromProductVariant(saveProductVariant);
+        ProductVariant addProductVariant = ProductVariantMapper.INSTANCE.productVariantFromAddRequest(request);
+        ProductVariant savedProductVariant = productVariantRepository.save(addProductVariant);
+
+        return ProductVariantMapper.INSTANCE.addResponseFromProductVariant(savedProductVariant);
     }
 
     @Override
     public UpdateProductVariantResponse update(UpdateProductVariantRequest request) {
-        ProductVariant updateProductVariant = ProductVariantMapper.INSTANCE.productVariantFromUpdateRequest(request);
-        ProductVariant saveProductVariant = productVariantRepository.save(updateProductVariant);
+        findProductVariantById(request.getId());
+        validateProductVariantDependencies(request.getProductId(), request.getColorId());
+        validateProductVariantExistence(request.getColorId(), request.getProductId());
 
-        return ProductVariantMapper.INSTANCE.updateResponseFromProductVariant(saveProductVariant);
+        ProductVariant updateProductVariant = ProductVariantMapper.INSTANCE.productVariantFromUpdateRequest(request);
+        ProductVariant savedProductVariant = productVariantRepository.save(updateProductVariant);
+
+        return ProductVariantMapper.INSTANCE.updateResponseFromProductVariant(savedProductVariant);
     }
 
     @Override
     public void delete(int id) {
-        ProductVariant productVariant = productVariantRepository.findById(id).orElse(null);
-        assert productVariant != null;
+        ProductVariant productVariant = findProductVariantById(id);
         productVariantRepository.delete(productVariant);
-    }
-
-    public boolean isProductVariantExist(int colorId, int productId) {
-        return productVariantRepository.existsByColorIdAndProductId(colorId, productId);
     }
 
     @Override
     public BigDecimal getUnitPriceByProductVariantId(int productVariantId) {
-        ProductVariant productVariant = productVariantRepository.findById(productVariantId)
-                .orElseThrow(() -> new RuntimeException("Product variant not found"));
+        ProductVariant productVariant = findProductVariantById(productVariantId);
         return productVariant.getProduct().getPrice();
     }
 
@@ -131,6 +157,23 @@ public class ProductVariantServiceImpl implements ProductVariantService {
         response.setRatingCount(totalComments);
         response.setCategory(category);
         return response;
+    }
+
+    private ProductVariant findProductVariantById(int id) {
+        return productVariantRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(Messages.Error.CUSTOM_PRODUCT_NOT_FOUND));
+    }
+
+    private void validateProductVariantExistence(int colorId, int productId) {
+        boolean exists = productVariantRepository.existsByColorIdAndProductId(colorId, productId);
+        if (exists) {
+            throw new BusinessException(Messages.Error.PRODUCT_VARIANT_ALREADY_EXISTS);
+        }
+    }
+
+    private void validateProductVariantDependencies(int productId, int colorId) {
+        productService.getById(productId);
+        colorService.getById(colorId);
     }
 
     private double calculateAverageRating(List<ListCommentResponse> comments) {

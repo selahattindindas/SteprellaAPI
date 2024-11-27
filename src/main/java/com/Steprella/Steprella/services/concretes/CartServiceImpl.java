@@ -24,8 +24,8 @@ import java.util.List;
 public class CartServiceImpl implements CartService {
 
     private final CartRepository cartRepository;
-    private final CartItemService cartItemService;
-    private final UserService userService;
+    private CartItemService cartItemService;
+    private UserService userService;
 
     @Override
     public ListCartResponse getCartByUserId(int userId) {
@@ -48,15 +48,13 @@ public class CartServiceImpl implements CartService {
     }
     @Override
     public ListCartResponse getById(int id) {
-        Cart cart = cartRepository.findById(id).orElseThrow(() ->
-                new NotFoundException(Messages.Error.CUSTOM_CART_NOT_FOUND));
-
+        Cart cart = findCartById(id);
         return CartMapper.INSTANCE.listResponseFromCart(cart);
     }
 
     @Override
     public AddCartResponse add(AddCartRequest request) {
-        userService.getById(request.getUserId());
+        userService.getResponseById(request.getUserId());
 
         if (cartRepository.existsByUserId(request.getUserId())) {
             throw new BusinessException(Messages.Error.CART_ALREADY_EXISTS);
@@ -70,8 +68,12 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public void delete(int id) {
-        Cart cart = cartRepository.findById(id).orElseThrow(() ->
-                new NotFoundException(Messages.Error.CUSTOM_CART_NOT_FOUND));
+        Cart cart = findCartById(id);
         cartRepository.delete(cart);
+    }
+
+    private Cart findCartById(int id) {
+        return cartRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(Messages.Error.CUSTOM_CART_NOT_FOUND));
     }
 }
