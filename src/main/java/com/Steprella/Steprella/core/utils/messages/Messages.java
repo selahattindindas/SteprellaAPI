@@ -5,7 +5,6 @@ public class Messages {
     public static class Error {
         public static final String CUSTOM_BAD_REQUEST = "Geçersiz istek. Lütfen gönderdiğiniz verileri kontrol edin.";
         public static final String CUSTOM_INTERNAL_SERVER_ERROR = "Beklenmedik bir sunucu hatası oluştu. Lütfen sonra tekrar deneyiniz.";
-        public static final String CUSTOM_NOT_FOUND = "Verilen bilgiye ait kaynak bulunamadı.";
         public static final String CUSTOM_CATEGORY_NOT_FOUND = "Böyle bir kategori bulunamadı.";
         public static final String CUSTOM_CITY_NOT_FOUND = "Böyle bir şehir bulunamadı.";
         public static final String CUSTOM_DISTRICT_NOT_FOUND = "Böyle bir ilçe bulunamadı";
@@ -30,6 +29,7 @@ public class Messages {
         public static final String INSUFFICIENT_STOCK = "Yeterli stok bulunmamaktadır. Talep edilen miktar: %s";
         public static final String CART_ALREADY_EXISTS = "Bu kullanıcıya ait bir sepet bulunmaktadır.";
         public static final String PRODUCT_VARIANT_ALREADY_EXISTS = "Bu renge sahip ürün bulunmaktadır.";
+        public static final String CUSTOM_EMAIL_ALREADY_EXISTS = "Bu e-posta adresi zaten kullanılıyor!";
     }
 
     public static class Success {

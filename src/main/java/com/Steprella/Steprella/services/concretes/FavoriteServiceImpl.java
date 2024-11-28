@@ -1,7 +1,9 @@
 package com.Steprella.Steprella.services.concretes;
 
+import com.Steprella.Steprella.core.utils.RatingUtils;
 import com.Steprella.Steprella.core.utils.exceptions.types.NotFoundException;
 import com.Steprella.Steprella.core.utils.messages.Messages;
+import com.Steprella.Steprella.entities.concretes.Comment;
 import com.Steprella.Steprella.entities.concretes.Favorite;
 import com.Steprella.Steprella.repositories.FavoriteRepository;
 import com.Steprella.Steprella.services.abstracts.FavoriteService;
@@ -30,10 +32,21 @@ public class FavoriteServiceImpl implements FavoriteService {
         userService.getResponseById(userId);
         List<Favorite> favorites = favoriteRepository.findByUserId(userId);
 
-        return favorites.stream().map(FavoriteMapper.INSTANCE::listResponseFromFavorite)
+        return favorites.stream()
+                .map(favorite -> {
+                    List<Comment> comments = favorite.getProductVariant().getComments();
+                    double averageRating = RatingUtils.calculateAverageRating(comments);
+                    int totalComments = RatingUtils.calculateTotalComments(comments);
+
+                    ListFavoriteResponse response = FavoriteMapper.INSTANCE.listResponseFromFavorite(favorite);
+                    response.getProductVariant().setRating(averageRating);
+                    response.getProductVariant().setRatingCount(totalComments);
+
+                    return response;
+                })
                 .collect(Collectors.toList());
     }
-
+    
     @Override
     public AddFavoriteResponse add(AddFavoriteRequest request) {
         validateFavoriteDependencies(request.getProductVariantId(), request.getUserId());

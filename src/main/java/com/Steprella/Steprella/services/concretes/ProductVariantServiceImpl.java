@@ -1,9 +1,9 @@
 package com.Steprella.Steprella.services.concretes;
+import com.Steprella.Steprella.core.utils.RatingUtils;
 import com.Steprella.Steprella.core.utils.exceptions.types.BusinessException;
 import com.Steprella.Steprella.core.utils.exceptions.types.NotFoundException;
 import com.Steprella.Steprella.core.utils.messages.Messages;
 import com.Steprella.Steprella.entities.concretes.Category;
-import com.Steprella.Steprella.entities.concretes.Comment;
 import com.Steprella.Steprella.entities.concretes.ProductVariant;
 import com.Steprella.Steprella.repositories.ProductVariantRepository;
 import com.Steprella.Steprella.services.abstracts.*;
@@ -17,7 +17,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -122,16 +121,13 @@ public class ProductVariantServiceImpl implements ProductVariantService {
     }
 
     private ListProductVariantResponse productVariantResponse(ProductVariant productVariant) {
-        List<Comment> comments = productVariant.getComments();
-        double averageRating = calculateAverageRating(comments);
-        int totalComments = calculateTotalComments(comments);
+        double averageRating = RatingUtils.calculateAverageRating(productVariant.getComments());
+        int totalComments = RatingUtils.calculateTotalComments(productVariant.getComments());
 
         ListProductVariantResponse response = ProductVariantMapper.INSTANCE.listResponseFromProductVariant(productVariant);
-
-        response.setCategory(ProductVariantMapper.INSTANCE.getCategoryHierarchy(productVariant.getProduct().getCategory()));
-        response.setProductComments(ProductVariantMapper.INSTANCE.mapCommentsToDTO(productVariant.getComments()));
         response.setRating(averageRating);
         response.setRatingCount(totalComments);
+
         return response;
     }
 
@@ -150,24 +146,6 @@ public class ProductVariantServiceImpl implements ProductVariantService {
     private void validateProductVariantDependencies(int productId, int colorId) {
         productService.getById(productId);
         colorService.getById(colorId);
-    }
-
-    private double calculateAverageRating(List<Comment> comments) {
-        if (comments.isEmpty()) {
-            return 0.0;
-        }
-        double average = comments.stream().mapToInt(Comment::getRating).average().orElse(0.0);
-
-        DecimalFormat df = new DecimalFormat("#.##");
-        String formatted = df.format(average);
-
-        formatted = formatted.replace(',', '.');
-
-        return Double.parseDouble(formatted);
-    }
-
-    private int calculateTotalComments(List<Comment> comments) {
-        return comments.size();
     }
 
     private boolean isCategoryOrChild(Category category, Integer categoryId) {
