@@ -1,6 +1,6 @@
 package com.Steprella.Steprella.services.concretes;
 
-import com.Steprella.Steprella.core.utils.exceptions.types.BusinessException;
+import com.Steprella.Steprella.core.utils.EntityValidator;
 import com.Steprella.Steprella.core.utils.exceptions.types.NotFoundException;
 import com.Steprella.Steprella.core.utils.messages.Messages;
 import com.Steprella.Steprella.entities.concretes.Product;
@@ -27,9 +27,10 @@ import java.util.stream.Collectors;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
-    private CategoryService categoryService;
-    private ShoeModelService shoeModelService;
-    private BrandService brandService;
+    private final CategoryService categoryService;
+    private final ShoeModelService shoeModelService;
+    private final BrandService brandService;
+    private final EntityValidator entityValidator;
 
     @Override
     public List<ListProductResponse> getAll() {
@@ -48,7 +49,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public AddProductResponse add(AddProductRequest request) {
         validateProductDependencies(request.getShoeModelId(), request.getCategoryId(), request.getBrandId());
-        validateShoeModelBrand(request.getShoeModelId(), request.getBrandId());
+        entityValidator.validateShoeModelBrand(request.getShoeModelId(), request.getBrandId());
 
         Product addProduct = ProductMapper.INSTANCE.productFromAddRequest(request);
         Product savedProduct = productRepository.save(addProduct);
@@ -60,7 +61,7 @@ public class ProductServiceImpl implements ProductService {
     public UpdateProductResponse update(UpdateProductRequest request) {
         findProductById(request.getId());
         validateProductDependencies(request.getShoeModelId(), request.getCategoryId(), request.getBrandId());
-        validateShoeModelBrand(request.getShoeModelId(), request.getBrandId());
+        entityValidator.validateShoeModelBrand(request.getShoeModelId(), request.getBrandId());
 
         Product updateProduct = ProductMapper.INSTANCE.productFromUpdateRequest(request);
         Product savedProduct = productRepository.save(updateProduct);
@@ -72,13 +73,6 @@ public class ProductServiceImpl implements ProductService {
     public void delete(int id) {
         Product product = findProductById(id);
         productRepository.delete(product);
-    }
-
-    private void validateShoeModelBrand(int modelId, int brandId) {
-        int modelBrandId = shoeModelService.getById(modelId).getBrandId();
-        if (modelBrandId != brandId) {
-            throw new BusinessException(Messages.Error.CUSTOM_BAD_REQUEST);
-        }
     }
 
     private ListProductResponse createProductResponse(Product product) {

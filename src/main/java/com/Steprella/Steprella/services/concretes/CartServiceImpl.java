@@ -32,10 +32,8 @@ public class CartServiceImpl implements CartService {
 
         List<CartItem> cartItems = cart.getCartItems();
 
-        int totalItems = cartItems.stream().mapToInt(CartItem::getQuantity).sum();
-        BigDecimal totalPrice = cartItems.stream()
-                .map(CartItem::getTotalPrice)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        int totalItems = calculateTotalItems(cartItems);
+        BigDecimal totalPrice = calculateTotalPrice(cartItems);
 
         ListCartResponse response = CartMapper.INSTANCE.listResponseFromCart(cart);
         response.setTotalPrice(totalPrice);
@@ -43,6 +41,7 @@ public class CartServiceImpl implements CartService {
 
         return response;
     }
+
     @Override
     public ListCartResponse getById(int id) {
         Cart cart = findCartById(id);
@@ -72,5 +71,15 @@ public class CartServiceImpl implements CartService {
     private Cart findCartById(int id) {
         return cartRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(Messages.Error.CUSTOM_CART_NOT_FOUND));
+    }
+
+    private BigDecimal calculateTotalPrice(List<CartItem> cartItems) {
+        return cartItems.stream()
+                .map(CartItem::getTotalPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    private int calculateTotalItems(List<CartItem> cartItems) {
+        return cartItems.stream().mapToInt(CartItem::getQuantity).sum();
     }
 }

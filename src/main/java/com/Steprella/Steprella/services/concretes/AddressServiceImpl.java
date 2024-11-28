@@ -1,6 +1,6 @@
 package com.Steprella.Steprella.services.concretes;
 
-import com.Steprella.Steprella.core.utils.exceptions.types.BusinessException;
+import com.Steprella.Steprella.core.utils.EntityValidator;
 import com.Steprella.Steprella.core.utils.exceptions.types.NotFoundException;
 import com.Steprella.Steprella.core.utils.messages.Messages;
 import com.Steprella.Steprella.entities.concretes.Address;
@@ -29,6 +29,7 @@ public class AddressServiceImpl implements AddressService{
     private final DistrictService districtService;
     private final CityService cityService;
     private final UserService userService;
+    private final EntityValidator entityValidator;
 
     @Override
     public List<ListAddressResponse> getAddressesByUserId(int userId) {
@@ -47,7 +48,7 @@ public class AddressServiceImpl implements AddressService{
     @Override
     public AddAddressResponse add(AddAddressRequest request) {
         validateAddressRequest(request.getCityId(), request.getDistrictId(), request.getUserId());
-        isDistrictBelongsToCity(request.getDistrictId(), request.getCityId());
+        entityValidator.validateCityDistrictRelation(request.getDistrictId(), request.getCityId());
 
         Address addAddress = AddressMapper.INSTANCE.addressFromAddRequest(request);
         Address savedAddress = addressRepository.save(addAddress);
@@ -59,7 +60,7 @@ public class AddressServiceImpl implements AddressService{
     public UpdateAddressResponse update(UpdateAddressRequest request) {
         findAddressById(request.getId());
         validateAddressRequest(request.getCityId(), request.getDistrictId(), request.getUserId());
-        isDistrictBelongsToCity(request.getDistrictId(), request.getCityId());
+        entityValidator.validateCityDistrictRelation(request.getDistrictId(), request.getCityId());
 
         Address updateAddress = AddressMapper.INSTANCE.addressFromUpdateRequest(request);
         Address saveAddress = addressRepository.save(updateAddress);
@@ -82,13 +83,5 @@ public class AddressServiceImpl implements AddressService{
         cityService.getById(cityId);
         districtService.getById(districtId);
         userService.getResponseById(userId);
-    }
-
-    private void isDistrictBelongsToCity(int districtId, int cityId) {
-        int districtCityId = districtService.getById(districtId).getCityId();
-
-        if (districtCityId != cityId) {
-            throw new BusinessException(Messages.Error.INVALID_DISTRICT_CITY_RELATION);
-        }
     }
 }
