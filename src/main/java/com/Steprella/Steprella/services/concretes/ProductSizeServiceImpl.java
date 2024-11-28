@@ -12,25 +12,18 @@ import com.Steprella.Steprella.services.dtos.responses.productsizes.AddProductSi
 import com.Steprella.Steprella.services.dtos.responses.productsizes.ListProductSizeResponse;
 import com.Steprella.Steprella.services.dtos.responses.productsizes.UpdateProductSizeResponse;
 import com.Steprella.Steprella.services.mappers.ProductSizeMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class ProductSizeServiceImpl implements ProductSizeService {
 
     private final ProductSizeRepository productSizeRepository;
     private final ProductVariantService productVariantService;
-
-    @Autowired
-    public ProductSizeServiceImpl(@Lazy ProductVariantService productVariantService,
-                                  ProductSizeRepository productSizeRepository){
-        this.productVariantService = productVariantService;
-        this.productSizeRepository = productSizeRepository;
-    }
 
     @Override
     public List<ListProductSizeResponse> getProductSizesByProductVariantId(int productVariantId) {

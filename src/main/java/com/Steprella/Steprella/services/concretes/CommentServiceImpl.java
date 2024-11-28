@@ -13,28 +13,19 @@ import com.Steprella.Steprella.services.dtos.responses.comments.AddCommentRespon
 import com.Steprella.Steprella.services.dtos.responses.comments.ListCommentResponse;
 import com.Steprella.Steprella.services.dtos.responses.comments.UpdateCommentResponse;
 import com.Steprella.Steprella.services.mappers.CommentMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
     private final UserService userService;
     private final ProductVariantService productVariantService;
-
-    @Autowired
-    public CommentServiceImpl(@Lazy UserService userService,
-                              @Lazy ProductVariantService productVariantService,
-                              CommentRepository commentRepository){
-        this.userService = userService;
-        this.productVariantService = productVariantService;
-        this.commentRepository = commentRepository;
-    }
 
     @Override
     public List<ListCommentResponse> getCommentsByProductVariantId(int productVariantId) {

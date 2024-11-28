@@ -9,7 +9,7 @@ import com.Steprella.Steprella.services.dtos.responses.shoemodels.AddShoeModelRe
 import com.Steprella.Steprella.services.dtos.responses.shoemodels.ListShoeModelResponse;
 import com.Steprella.Steprella.services.dtos.responses.shoemodels.UpdateShoeModelResponse;
 import jakarta.validation.Valid;
-import org.springframework.context.annotation.Lazy;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -19,13 +19,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/shoe-models")
+@AllArgsConstructor
 public class ShoeModelController extends BaseController{
 
     private final ShoeModelService shoeModelService;
-
-    public ShoeModelController(@Lazy ShoeModelService shoeModelService) {
-        this.shoeModelService = shoeModelService;
-    }
 
     @GetMapping("/get-all")
     public ResponseEntity<BaseResponse<List<ListShoeModelResponse>>> getAll(){

@@ -16,8 +16,7 @@ import com.Steprella.Steprella.services.dtos.responses.cart_items.UpdateCartItem
 import com.Steprella.Steprella.services.dtos.responses.productsizes.ListProductSizeResponse;
 import com.Steprella.Steprella.services.dtos.responses.productvariants.ListProductVariantResponse;
 import com.Steprella.Steprella.services.mappers.CartItemMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -25,20 +24,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class CartItemServiceImpl implements CartItemService {
 
     private final CartItemRepository cartItemRepository;
     private final ProductVariantService productVariantService;
     private final CartService cartService;
-
-    @Autowired
-    public CartItemServiceImpl(CartItemRepository cartItemRepository,
-                               @Lazy ProductVariantService productVariantService,
-                               @Lazy CartService cartService) {
-        this.cartItemRepository = cartItemRepository;
-        this.productVariantService = productVariantService;
-        this.cartService = cartService;
-    }
 
     @Override
     public List<ListCartItemResponse> getItemsByCartId(int cartId) {

@@ -6,7 +6,7 @@ import com.Steprella.Steprella.services.dtos.requests.productfiles.AddProductFil
 import com.Steprella.Steprella.services.dtos.responses.BaseResponse;
 import com.Steprella.Steprella.services.dtos.responses.productfiles.AddProductFileResponse;
 import com.Steprella.Steprella.services.dtos.responses.productfiles.ListProductFileResponse;
-import org.springframework.context.annotation.Lazy;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,13 +18,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/product-files")
+@AllArgsConstructor
 public class ProductFileController extends BaseController{
 
     private final ProductFileService productFileService;
-
-    public ProductFileController(@Lazy ProductFileService productFileService) {
-        this.productFileService = productFileService;
-    }
 
     @GetMapping("/by-product-variant-id/{productVariantId}")
     public ResponseEntity<BaseResponse<ListProductFileResponse>> getByRoomTypeId(@PathVariable("productVariantId") int productVariantId){

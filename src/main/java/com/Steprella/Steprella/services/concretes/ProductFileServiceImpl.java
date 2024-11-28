@@ -13,8 +13,7 @@ import com.Steprella.Steprella.services.dtos.responses.files.ListFileResponse;
 import com.Steprella.Steprella.services.dtos.responses.productfiles.AddProductFileResponse;
 import com.Steprella.Steprella.services.dtos.responses.productfiles.ListProductFileResponse;
 import com.Steprella.Steprella.services.mappers.ProductFileMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,20 +22,12 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @Service
+@AllArgsConstructor
 public class ProductFileServiceImpl implements ProductFileService {
 
     private final ProductFileRepository productFileRepository;
     private final FileService fileService;
     private final ProductVariantService productVariantService;
-
-    @Autowired
-    public ProductFileServiceImpl(@Lazy ProductVariantService productVariantService,
-                                  FileService fileService,
-                                  ProductFileRepository productFileRepository){
-        this.productVariantService = productVariantService;
-        this.fileService = fileService;
-        this.productFileRepository = productFileRepository;
-    }
 
     @Override
     public ListProductFileResponse getByProductVariantId(int productVariantId) {

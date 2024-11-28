@@ -9,7 +9,7 @@ import com.Steprella.Steprella.services.dtos.responses.addresses.AddAddressRespo
 import com.Steprella.Steprella.services.dtos.responses.addresses.ListAddressResponse;
 import com.Steprella.Steprella.services.dtos.responses.addresses.UpdateAddressResponse;
 import jakarta.validation.Valid;
-import org.springframework.context.annotation.Lazy;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -19,13 +19,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/addresses")
+@AllArgsConstructor
 public class AddressController extends BaseController {
 
     private final AddressService addressService;
-
-    public AddressController(@Lazy AddressService addressService) {
-        this.addressService = addressService;
-    }
 
     @GetMapping("/by-user-id/{userId}")
     public ResponseEntity<BaseResponse<List<ListAddressResponse>>> getAddressesByUserId(@PathVariable int userId){

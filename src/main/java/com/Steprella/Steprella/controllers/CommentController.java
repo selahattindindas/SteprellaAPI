@@ -9,7 +9,7 @@ import com.Steprella.Steprella.services.dtos.responses.comments.AddCommentRespon
 import com.Steprella.Steprella.services.dtos.responses.comments.ListCommentResponse;
 import com.Steprella.Steprella.services.dtos.responses.comments.UpdateCommentResponse;
 import jakarta.validation.Valid;
-import org.springframework.context.annotation.Lazy;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -19,13 +19,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/comments")
+@AllArgsConstructor
 public class CommentController extends BaseController{
 
     private final CommentService commentService;
-
-    public CommentController(@Lazy CommentService commentService) {
-        this.commentService = commentService;
-    }
 
     @GetMapping("/by-product-id/{productVariantId}")
     public ResponseEntity<BaseResponse<List<ListCommentResponse>>> getCommentByProductVariantId(@PathVariable int productVariantId){

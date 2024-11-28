@@ -7,7 +7,7 @@ import com.Steprella.Steprella.services.dtos.responses.BaseResponse;
 import com.Steprella.Steprella.services.dtos.responses.carts.AddCartResponse;
 import com.Steprella.Steprella.services.dtos.responses.carts.ListCartResponse;
 import jakarta.validation.Valid;
-import org.springframework.context.annotation.Lazy;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -15,13 +15,10 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/carts")
+@AllArgsConstructor
 public class CartController extends BaseController{
 
     private final CartService cartService;
-
-    public CartController(@Lazy CartService cartService) {
-        this.cartService = cartService;
-    }
 
     @GetMapping("/by-user-id/{userId}")
     public ResponseEntity<BaseResponse<ListCartResponse>> getCartByUserId(@PathVariable int userId){

@@ -11,28 +11,19 @@ import com.Steprella.Steprella.services.dtos.requests.favorites.AddFavoriteReque
 import com.Steprella.Steprella.services.dtos.responses.favorites.AddFavoriteResponse;
 import com.Steprella.Steprella.services.dtos.responses.favorites.ListFavoriteResponse;
 import com.Steprella.Steprella.services.mappers.FavoriteMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class FavoriteServiceImpl implements FavoriteService {
 
     private final FavoriteRepository favoriteRepository;
     private final ProductVariantService productVariantService;
     private final UserService userService;
-
-    @Autowired
-    public FavoriteServiceImpl(@Lazy ProductVariantService productVariantService,
-                               @Lazy UserService userService,
-                               FavoriteRepository favoriteRepository){
-        this.productVariantService = productVariantService;
-        this.userService = userService;
-        this.favoriteRepository = favoriteRepository;
-    }
 
     @Override
     public List<ListFavoriteResponse> getFavoritesByUserId(int userId) {

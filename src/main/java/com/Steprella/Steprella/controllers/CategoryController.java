@@ -9,7 +9,7 @@ import com.Steprella.Steprella.services.dtos.responses.categories.AddCategoryRes
 import com.Steprella.Steprella.services.dtos.responses.categories.ListCategoryResponse;
 import com.Steprella.Steprella.services.dtos.responses.categories.UpdateCategoryResponse;
 import jakarta.validation.Valid;
-import org.springframework.context.annotation.Lazy;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -19,13 +19,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/categories")
+@AllArgsConstructor
 public class CategoryController extends BaseController{
 
     private final CategoryService categoryService;
-
-    public CategoryController(@Lazy CategoryService categoryService) {
-        this.categoryService = categoryService;
-    }
 
     @GetMapping("/get-all")
     public ResponseEntity<BaseResponse<List<ListCategoryResponse>>> getAll(){

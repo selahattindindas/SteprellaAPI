@@ -9,7 +9,7 @@ import com.Steprella.Steprella.services.dtos.responses.products.AddProductRespon
 import com.Steprella.Steprella.services.dtos.responses.products.ListProductResponse;
 import com.Steprella.Steprella.services.dtos.responses.products.UpdateProductResponse;
 import jakarta.validation.Valid;
-import org.springframework.context.annotation.Lazy;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -19,13 +19,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/products")
+@AllArgsConstructor
 public class ProductController extends BaseController{
 
     private final ProductService productService;
-
-    public ProductController(@Lazy ProductService productService) {
-        this.productService = productService;
-    }
 
     @GetMapping("/get-all")
     public ResponseEntity<BaseResponse<List<ListProductResponse>>> getAll(){

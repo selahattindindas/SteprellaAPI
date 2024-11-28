@@ -9,7 +9,7 @@ import com.Steprella.Steprella.services.dtos.responses.productsizes.AddProductSi
 import com.Steprella.Steprella.services.dtos.responses.productsizes.ListProductSizeResponse;
 import com.Steprella.Steprella.services.dtos.responses.productsizes.UpdateProductSizeResponse;
 import jakarta.validation.Valid;
-import org.springframework.context.annotation.Lazy;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -19,13 +19,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/product-sizes")
+@AllArgsConstructor
 public class ProductSizeController extends BaseController{
 
     private final ProductSizeService productSizeService;
-
-    public ProductSizeController(@Lazy ProductSizeService productSizeService) {
-        this.productSizeService = productSizeService;
-    }
 
     @GetMapping("/by-product-variant-id/{productVariantId}")
     public ResponseEntity<BaseResponse<List<ListProductSizeResponse>>> getProductSizesByProductVariantId(@PathVariable int productVariantId){

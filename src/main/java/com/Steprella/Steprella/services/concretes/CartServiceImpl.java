@@ -4,12 +4,11 @@ import com.Steprella.Steprella.core.utils.exceptions.types.BusinessException;
 import com.Steprella.Steprella.core.utils.exceptions.types.NotFoundException;
 import com.Steprella.Steprella.core.utils.messages.Messages;
 import com.Steprella.Steprella.entities.concretes.Cart;
+import com.Steprella.Steprella.entities.concretes.CartItem;
 import com.Steprella.Steprella.repositories.CartRepository;
-import com.Steprella.Steprella.services.abstracts.CartItemService;
 import com.Steprella.Steprella.services.abstracts.CartService;
 import com.Steprella.Steprella.services.abstracts.UserService;
 import com.Steprella.Steprella.services.dtos.requests.carts.AddCartRequest;
-import com.Steprella.Steprella.services.dtos.responses.cart_items.ListCartItemResponse;
 import com.Steprella.Steprella.services.dtos.responses.carts.AddCartResponse;
 import com.Steprella.Steprella.services.dtos.responses.carts.ListCartResponse;
 import com.Steprella.Steprella.services.mappers.CartMapper;
@@ -24,7 +23,6 @@ import java.util.List;
 public class CartServiceImpl implements CartService {
 
     private final CartRepository cartRepository;
-    private CartItemService cartItemService;
     private UserService userService;
 
     @Override
@@ -32,15 +30,15 @@ public class CartServiceImpl implements CartService {
         userService.getById(userId);
         Cart cart = cartRepository.findByUserId(userId);
 
-        List<ListCartItemResponse> cartItems = cartItemService.getItemsByCartId(cart.getId());
+        List<CartItem> cartItems = cart.getCartItems();
 
-        int totalItems = cartItems.stream().mapToInt(ListCartItemResponse::getQuantity).sum();
+        int totalItems = cartItems.stream().mapToInt(CartItem::getQuantity).sum();
         BigDecimal totalPrice = cartItems.stream()
-                .map(ListCartItemResponse::getTotalPrice)
+                .map(CartItem::getTotalPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         ListCartResponse response = CartMapper.INSTANCE.listResponseFromCart(cart);
-        response.setCartItems(cartItems);
+        response.setCartItems(CartMapper.INSTANCE.mapCartItemsToDTO(cart.getCartItems()));
         response.setTotalPrice(totalPrice);
         response.setTotalItems(totalItems);
 

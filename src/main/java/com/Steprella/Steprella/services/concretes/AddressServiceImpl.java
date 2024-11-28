@@ -15,32 +15,20 @@ import com.Steprella.Steprella.services.dtos.responses.addresses.AddAddressRespo
 import com.Steprella.Steprella.services.dtos.responses.addresses.ListAddressResponse;
 import com.Steprella.Steprella.services.dtos.responses.addresses.UpdateAddressResponse;
 import com.Steprella.Steprella.services.mappers.AddressMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class AddressServiceImpl implements AddressService {
+@AllArgsConstructor
+public class AddressServiceImpl implements AddressService{
 
     private final AddressRepository addressRepository;
     private final DistrictService districtService;
     private final CityService cityService;
-    @Lazy
     private final UserService userService;
-
-    @Autowired
-    public AddressServiceImpl(AddressRepository addressRepository,
-                              DistrictService districtService,
-                              CityService cityService,
-                              @Lazy UserService userService) {
-        this.addressRepository = addressRepository;
-        this.districtService = districtService;
-        this.cityService = cityService;
-        this.userService = userService;
-    }
 
     @Override
     public List<ListAddressResponse> getAddressesByUserId(int userId) {

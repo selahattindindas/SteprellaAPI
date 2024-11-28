@@ -1,11 +1,12 @@
 package com.Steprella.Steprella.services.mappers;
 
-import com.Steprella.Steprella.entities.concretes.ProductFile;
+import com.Steprella.Steprella.entities.concretes.Category;
+import com.Steprella.Steprella.entities.concretes.Comment;
 import com.Steprella.Steprella.entities.concretes.ProductVariant;
 import com.Steprella.Steprella.services.dtos.requests.productvariants.AddProductVariantRequest;
 import com.Steprella.Steprella.services.dtos.requests.productvariants.UpdateProductVariantRequest;
+import com.Steprella.Steprella.services.dtos.responses.categories.ListCategoryResponse;
 import com.Steprella.Steprella.services.dtos.responses.comments.ListCommentResponse;
-import com.Steprella.Steprella.services.dtos.responses.productsizes.ListProductSizeResponse;
 import com.Steprella.Steprella.services.dtos.responses.productvariants.AddProductVariantResponse;
 import com.Steprella.Steprella.services.dtos.responses.productvariants.ListProductVariantResponse;
 import com.Steprella.Steprella.services.dtos.responses.productvariants.UpdateProductVariantResponse;
@@ -13,30 +14,25 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-@Mapper
+@Mapper(uses = {CommentMapper.class, CategoryMapper.class})
 public interface ProductVariantMapper {
 
     ProductVariantMapper INSTANCE = Mappers.getMapper(ProductVariantMapper.class);
 
     @Mapping(target = "productSizes", source = "productSizes")
-    @Mapping(target = "productComments", source = "comments")
     @Mapping(target = "productFiles", source = "productFiles")
-    @Mapping(target = "colorName", source = "productVariant.color.name")
-    @Mapping(target = "createdDate", source = "productVariant.createdDate")
-    @Mapping(target = "updatedDate", source = "productVariant.updatedDate")
-    @Mapping(target = "price", source = "productVariant.product.price")
-    @Mapping(target = "rating", source = "productVariant.rating")
-    @Mapping(target = "ratingCount", source = "productVariant.ratingCount")
-    @Mapping(target = "description", source = "productVariant.product.description")
-    @Mapping(target = "category", source = "productVariant.product.category")
-    @Mapping(target = "brandName", source = "productVariant.product.brand.name")
-    @Mapping(target = "shoeModelName", source = "productVariant.product.shoeModel.modelName")
-    ListProductVariantResponse listResponseFromProductVariant(ProductVariant productVariant,
-                                                              List<ProductFile> productFiles,
-                                                              List<ListCommentResponse> comments,
-                                                              List<ListProductSizeResponse> productSizes);
+    @Mapping(target = "colorName", source = "color.name")
+    @Mapping(target = "price", source = "product.price")
+    @Mapping(target = "rating", source = "rating")
+    @Mapping(target = "ratingCount", source = "ratingCount")
+    @Mapping(target = "description", source = "product.description")
+    @Mapping(target = "brandName", source = "product.brand.name")
+    @Mapping(target = "shoeModelName", source = "product.shoeModel.modelName")
+    ListProductVariantResponse listResponseFromProductVariant(ProductVariant productVariant);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "product.id", source = "productId")
@@ -60,4 +56,27 @@ public interface ProductVariantMapper {
     @Mapping(target = "colorId", source = "color.id")
     @Mapping(target = "updatedDate", source = "updatedDate")
     UpdateProductVariantResponse updateResponseFromProductVariant(ProductVariant productVariant);
+
+    default ListCategoryResponse getCategoryHierarchy(Category category) {
+        ListCategoryResponse response = CategoryMapper.INSTANCE.listResponseFromCategory(category);
+
+        if (category.getParent() != null) {
+            response.setParentId(category.getParent().getId());
+            response.setChildren(new ArrayList<>());
+            ListCategoryResponse parentResponse = getCategoryHierarchy(category.getParent());
+            response.getChildren().add(parentResponse);
+        } else {
+            response.setChildren(new ArrayList<>());
+        }
+
+        return response;
+    }
+
+    default List<ListCommentResponse> mapCommentsToDTO(List<Comment> comments) {
+        return comments.stream()
+                .map(CommentMapper.INSTANCE::listResponseFromComment)
+                .collect(Collectors.toList());
+    }
+
+
 }

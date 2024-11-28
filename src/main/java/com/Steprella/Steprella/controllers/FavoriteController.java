@@ -7,7 +7,7 @@ import com.Steprella.Steprella.services.dtos.responses.BaseResponse;
 import com.Steprella.Steprella.services.dtos.responses.favorites.AddFavoriteResponse;
 import com.Steprella.Steprella.services.dtos.responses.favorites.ListFavoriteResponse;
 import jakarta.validation.Valid;
-import org.springframework.context.annotation.Lazy;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -17,13 +17,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/favorites")
+@AllArgsConstructor
 public class FavoriteController extends BaseController{
 
     private final FavoriteService favoriteService;
-
-    public FavoriteController(@Lazy FavoriteService favoriteService) {
-        this.favoriteService = favoriteService;
-    }
 
     @GetMapping("/by-user-id/{userId}")
     public ResponseEntity<BaseResponse<List<ListFavoriteResponse>>> getFavoritesByUserId(@PathVariable int userId){

@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 public class ShoeModelServiceImpl implements ShoeModelService {
 
     private final ShoeModelRepository shoeModelRepository;
-    private BrandService brandService;
+    private final BrandService brandService;
 
     @Override
     public List<ListShoeModelResponse> getAll() {

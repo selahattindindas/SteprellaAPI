@@ -9,7 +9,7 @@ import com.Steprella.Steprella.services.dtos.responses.cart_items.AddCartItemRes
 import com.Steprella.Steprella.services.dtos.responses.cart_items.ListCartItemResponse;
 import com.Steprella.Steprella.services.dtos.responses.cart_items.UpdateCartItemResponse;
 import jakarta.validation.Valid;
-import org.springframework.context.annotation.Lazy;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -19,13 +19,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/cart-items")
+@AllArgsConstructor
 public class CartItemController extends BaseController {
 
     private final CartItemService cartItemService;
-
-    public CartItemController(@Lazy CartItemService cartItemService) {
-        this.cartItemService = cartItemService;
-    }
 
     @GetMapping("/by-cart-id/{cartId}")
     public ResponseEntity<BaseResponse<List<ListCartItemResponse>>> getItemsByCartId(@PathVariable int cartId){
