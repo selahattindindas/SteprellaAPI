@@ -3,7 +3,8 @@ package com.Steprella.Steprella.core.utils.messages;
 public class Messages {
 
     public static class Error {
-        public static final String CUSTOM_BAD_REQUEST = "Sunucu hatası. Lütfen daha sonra tekrar deneyiniz!";
+        public static final String CUSTOM_BAD_REQUEST = "Geçersiz istek. Lütfen gönderdiğiniz verileri kontrol edin.";
+        public static final String CUSTOM_INTERNAL_SERVER_ERROR = "Beklenmedik bir sunucu hatası oluştu. Lütfen sonra tekrar deneyiniz.";
         public static final String CUSTOM_NOT_FOUND = "Verilen bilgiye ait kaynak bulunamadı.";
         public static final String CUSTOM_CATEGORY_NOT_FOUND = "Böyle bir kategori bulunamadı.";
         public static final String CUSTOM_CITY_NOT_FOUND = "Böyle bir şehir bulunamadı.";
