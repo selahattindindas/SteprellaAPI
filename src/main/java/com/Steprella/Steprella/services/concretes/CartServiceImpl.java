@@ -38,7 +38,6 @@ public class CartServiceImpl implements CartService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         ListCartResponse response = CartMapper.INSTANCE.listResponseFromCart(cart);
-        response.setCartItems(CartMapper.INSTANCE.mapCartItemsToDTO(cart.getCartItems()));
         response.setTotalPrice(totalPrice);
         response.setTotalItems(totalItems);
 

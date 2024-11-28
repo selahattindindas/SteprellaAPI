@@ -19,7 +19,7 @@ public interface CartMapper {
     CartMapper INSTANCE = Mappers.getMapper(CartMapper.class);
 
     @Mapping(target = "userId", source = "user.id")
-    @Mapping(target = "cartItems", source = "cartItems")
+    @Mapping(target = "cartItems", expression = "java(mapCartItems(cart.getCartItems()))")
     ListCartResponse listResponseFromCart(Cart cart);
 
     @Mapping(target = "id", ignore = true)
@@ -29,7 +29,7 @@ public interface CartMapper {
     @Mapping(target = "userId", source = "user.id")
     AddCartResponse addResponseFrom(Cart cart);
 
-    default List<ListCartItemResponse> mapCartItemsToDTO(List<CartItem> cartItems) {
+    default List<ListCartItemResponse> mapCartItems(List<CartItem> cartItems) {
         return cartItems.stream()
                 .map(CartItemMapper.INSTANCE::listFromCartItem)
                 .collect(Collectors.toList());

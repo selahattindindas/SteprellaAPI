@@ -17,9 +17,10 @@ public interface UserMapper {
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
     @Mapping(target = "email", source = "user.email")
+    @Mapping(target = "addresses", expression = "java(mapAddresses(user.getAddresses()))")
     ListUserResponse listResponseFromUser(User user);
 
-    default List<ListAddressResponse> mapAddressesToDTO(List<Address> addresses) {
+    default List<ListAddressResponse> mapAddresses(List<Address> addresses) {
         return addresses.stream()
                 .map(AddressMapper.INSTANCE::listResponseFromAddress)
                 .collect(Collectors.toList());

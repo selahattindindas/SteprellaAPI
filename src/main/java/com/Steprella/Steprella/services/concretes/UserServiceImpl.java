@@ -1,5 +1,6 @@
 package com.Steprella.Steprella.services.concretes;
 
+import com.Steprella.Steprella.core.utils.exceptions.types.BusinessException;
 import com.Steprella.Steprella.core.utils.exceptions.types.NotFoundException;
 import com.Steprella.Steprella.core.utils.messages.Messages;
 import com.Steprella.Steprella.entities.concretes.User;
@@ -25,21 +26,19 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<ListUserResponse> getAll() {
         List<User> users = userRepository.findAll();
-        return users.stream().map(this::mapUserToListUserResponse).collect(Collectors.toList());
+        return users.stream().map(UserMapper.INSTANCE::listResponseFromUser)
+                .collect(Collectors.toList());
     }
 
     @Override
     public ListUserResponse getResponseById(int id) {
-        User user = userRepository.findById(id).orElseThrow(() ->
-                new NotFoundException(Messages.Error.CUSTOM_USER_NOT_FOUND));
-
-        return mapUserToListUserResponse(user);
+        User user = findUserById(id);
+        return UserMapper.INSTANCE.listResponseFromUser(user);
     }
 
     @Override
     public User getById(int id) {
-        return userRepository.findById(id).orElseThrow(() ->
-                new NotFoundException(Messages.Error.CUSTOM_USER_NOT_FOUND));
+        return findUserById(id);
     }
 
     @Override
@@ -56,12 +55,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByEmailIgnoreCase(username)
-                .orElseThrow(() -> new NotFoundException(Messages.Error.CUSTOM_USER_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(Messages.Error.CUSTOM_EMAIL_ALREADY_EXISTS));
     }
 
-    private ListUserResponse mapUserToListUserResponse(User user) {
-        ListUserResponse response = UserMapper.INSTANCE.listResponseFromUser(user);
-        response.setAddresses(UserMapper.INSTANCE.mapAddressesToDTO(user.getAddresses()));
-        return response;
+    private User findUserById(int id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(Messages.Error.CUSTOM_USER_NOT_FOUND));
     }
 }

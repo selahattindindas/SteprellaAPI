@@ -21,9 +21,5 @@ public class ListFavoriteProductResponse extends ListProductResponse {
 
     private String updatedDate;
 
-    private double rating;
-
-    private int ratingCount;
-
     private List<ListFileResponse> productFiles;
 }

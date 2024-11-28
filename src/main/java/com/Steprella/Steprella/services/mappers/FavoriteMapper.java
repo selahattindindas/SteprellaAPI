@@ -8,20 +8,12 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
-@Mapper
+@Mapper(uses = ProductVariantMapper.class)
 public interface FavoriteMapper {
 
     FavoriteMapper INSTANCE = Mappers.getMapper(FavoriteMapper.class);
 
-    @Mapping(target = "productVariant.colorName", source = "productVariant.color.name")
-    @Mapping(target = "productVariant.productFiles", source = "productVariant.productFiles")
-    @Mapping(target = "productVariant.category", source = "productVariant.product.category")
-    @Mapping(target = "productVariant.price", source = "productVariant.product.price")
-    @Mapping(target = "productVariant.description", source = "productVariant.product.description")
-    @Mapping(target = "productVariant.brandName", source = "productVariant.product.brand.name")
-    @Mapping(target = "productVariant.shoeModelName", source = "productVariant.product.shoeModel.modelName")
-    @Mapping(target = "productVariant.rating", source = "productVariant.rating")
-    @Mapping(target = "productVariant.ratingCount", source = "productVariant.ratingCount")
+    @Mapping(target = "productVariant", expression = "java(ProductVariantMapper.INSTANCE.listResponseFromProductVariant(favorite.getProductVariant()))")
     ListFavoriteResponse listResponseFromFavorite(Favorite favorite);
 
     @Mapping(target = "id", ignore = true)

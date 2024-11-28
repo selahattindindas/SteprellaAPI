@@ -32,6 +32,8 @@ public interface ProductVariantMapper {
     @Mapping(target = "description", source = "product.description")
     @Mapping(target = "brandName", source = "product.brand.name")
     @Mapping(target = "shoeModelName", source = "product.shoeModel.modelName")
+    @Mapping(target = "productComments", expression = "java(mapComments(productVariant.getComments()))")
+    @Mapping(target = "category", expression = "java(getCategoryHierarchy(productVariant.getProduct().getCategory()))")
     ListProductVariantResponse listResponseFromProductVariant(ProductVariant productVariant);
 
     @Mapping(target = "id", ignore = true)
@@ -72,7 +74,7 @@ public interface ProductVariantMapper {
         return response;
     }
 
-    default List<ListCommentResponse> mapCommentsToDTO(List<Comment> comments) {
+    default List<ListCommentResponse> mapComments(List<Comment> comments) {
         return comments.stream()
                 .map(CommentMapper.INSTANCE::listResponseFromComment)
                 .collect(Collectors.toList());
