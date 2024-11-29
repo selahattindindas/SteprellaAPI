@@ -23,7 +23,7 @@ public interface CartItemMapper {
     @Mapping(target = "productVariant.brandName", source = "productVariant.product.brand.name")
     @Mapping(target = "productVariant.shoeModelName", source = "productVariant.product.shoeModel.modelName")
     @Mapping(target = "productVariantSizeValue", source = "productSize.sizeValue")
-    ListCartItemResponse listFromCartItem(CartItem cartItem);
+    ListCartItemResponse listResponseFromCartItem(CartItem cartItem);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "cart.id", source = "cartId")

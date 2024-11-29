@@ -31,7 +31,7 @@ public interface CartMapper {
 
     default List<ListCartItemResponse> mapCartItems(List<CartItem> cartItems) {
         return cartItems.stream()
-                .map(CartItemMapper.INSTANCE::listFromCartItem)
+                .map(CartItemMapper.INSTANCE::listResponseFromCartItem)
                 .collect(Collectors.toList());
     }
 }

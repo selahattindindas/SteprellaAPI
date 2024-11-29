@@ -46,6 +46,11 @@ public class AddressServiceImpl implements AddressService{
     }
 
     @Override
+    public Address getResponseById(int id) {
+        return findAddressById(id);
+    }
+
+    @Override
     public AddAddressResponse add(AddAddressRequest request) {
         validateAddressRequest(request.getCityId(), request.getDistrictId(), request.getUserId());
         entityValidator.validateCityDistrictRelation(request.getDistrictId(), request.getCityId());

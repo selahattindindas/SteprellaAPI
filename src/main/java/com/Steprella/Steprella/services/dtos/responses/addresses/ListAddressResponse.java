@@ -18,4 +18,5 @@ public class ListAddressResponse {
     private String districtName;
 
     private String description;
+
 }

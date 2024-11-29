@@ -1,5 +1,6 @@
 package com.Steprella.Steprella.services.abstracts;
 
+import com.Steprella.Steprella.entities.concretes.CartItem;
 import com.Steprella.Steprella.services.dtos.requests.cartitems.AddCartItemRequest;
 import com.Steprella.Steprella.services.dtos.requests.cartitems.UpdateCartItemRequest;
 import com.Steprella.Steprella.services.dtos.responses.cart_items.AddCartItemResponse;
@@ -19,4 +20,6 @@ public interface CartItemService {
     UpdateCartItemResponse update(UpdateCartItemRequest request);
 
     void delete(int id);
+
+    CartItem findByProductVariantIdAndCartId(int productVariantId, int cartId);
 }

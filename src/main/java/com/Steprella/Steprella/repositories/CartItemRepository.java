@@ -9,4 +9,6 @@ import java.util.List;
 public interface CartItemRepository extends BaseRepository<CartItem, Integer> {
 
     List<CartItem> findByCartId(int cartId);
+
+    CartItem findByProductVariantIdAndCartId(int productVariantId, int cartId);
 }

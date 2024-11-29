@@ -1,5 +1,6 @@
 package com.Steprella.Steprella.services.abstracts;
 
+import com.Steprella.Steprella.entities.concretes.Address;
 import com.Steprella.Steprella.services.dtos.requests.addresses.AddAddressRequest;
 import com.Steprella.Steprella.services.dtos.requests.addresses.UpdateAddressRequest;
 import com.Steprella.Steprella.services.dtos.responses.addresses.AddAddressResponse;
@@ -13,6 +14,8 @@ public interface AddressService {
     List<ListAddressResponse> getAddressesByUserId(int userId);
 
     ListAddressResponse getById(int id);
+
+    Address getResponseById(int id);
 
     AddAddressResponse add(AddAddressRequest request);
 

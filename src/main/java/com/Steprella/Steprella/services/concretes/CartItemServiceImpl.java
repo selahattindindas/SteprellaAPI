@@ -1,6 +1,6 @@
 package com.Steprella.Steprella.services.concretes;
 
-import com.Steprella.Steprella.core.utils.exceptions.types.BusinessException;
+import com.Steprella.Steprella.core.utils.EntityValidator;
 import com.Steprella.Steprella.core.utils.exceptions.types.NotFoundException;
 import com.Steprella.Steprella.core.utils.messages.Messages;
 import com.Steprella.Steprella.entities.concretes.CartItem;
@@ -13,8 +13,6 @@ import com.Steprella.Steprella.services.dtos.requests.cartitems.UpdateCartItemRe
 import com.Steprella.Steprella.services.dtos.responses.cart_items.AddCartItemResponse;
 import com.Steprella.Steprella.services.dtos.responses.cart_items.ListCartItemResponse;
 import com.Steprella.Steprella.services.dtos.responses.cart_items.UpdateCartItemResponse;
-import com.Steprella.Steprella.services.dtos.responses.productsizes.ListProductSizeResponse;
-import com.Steprella.Steprella.services.dtos.responses.productvariants.ListProductVariantResponse;
 import com.Steprella.Steprella.services.mappers.CartItemMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,6 +28,7 @@ public class CartItemServiceImpl implements CartItemService {
     private final CartItemRepository cartItemRepository;
     private final ProductVariantService productVariantService;
     private final CartService cartService;
+    private final EntityValidator entityValidator;
 
     @Override
     public List<ListCartItemResponse> getItemsByCartId(int cartId) {
@@ -43,21 +42,21 @@ public class CartItemServiceImpl implements CartItemService {
 
             cartItem.setUnitPrice(unitPrice);
             cartItem.setTotalPrice(totalPrice);
-            return CartItemMapper.INSTANCE.listFromCartItem(cartItem);
+            return CartItemMapper.INSTANCE.listResponseFromCartItem(cartItem);
         }).collect(Collectors.toList());
     }
 
     @Override
     public ListCartItemResponse getById(int id) {
         CartItem cartItem = findCartItemById(id);
-        return CartItemMapper.INSTANCE.listFromCartItem(cartItem);
+        return CartItemMapper.INSTANCE.listResponseFromCartItem(cartItem);
     }
 
     @Override
     public AddCartItemResponse add(AddCartItemRequest request) {
         cartService.getById(request.getCartId());
         productVariantService.getById(request.getProductVariantId());
-        checkProductVariantAvailability(request.getProductVariantId(), request.getProductVariantSizeId(), request.getQuantity());
+        entityValidator.checkProductVariantAvailability(request.getProductVariantId(), request.getProductVariantSizeId(), request.getQuantity());
 
         BigDecimal unitPrice = productVariantService.getUnitPriceByProductVariantId(request.getProductVariantId());
         BigDecimal totalPrice = calculateTotalPrice(unitPrice, request.getQuantity());
@@ -76,7 +75,7 @@ public class CartItemServiceImpl implements CartItemService {
         findCartItemById(request.getId());
         cartService.getById(request.getCartId());
         productVariantService.getById(request.getProductVariantId());
-        checkProductVariantAvailability(request.getProductVariantId(), request.getProductVariantSizeId(), request.getQuantity());
+        entityValidator.checkProductVariantAvailability(request.getProductVariantId(), request.getProductVariantSizeId(), request.getQuantity());
 
         BigDecimal unitPrice = productVariantService.getUnitPriceByProductVariantId(request.getProductVariantId());
         BigDecimal totalPrice = calculateTotalPrice(unitPrice, request.getQuantity());
@@ -96,19 +95,10 @@ public class CartItemServiceImpl implements CartItemService {
         cartItemRepository.delete(cartItem);
     }
 
-    private void checkProductVariantAvailability(int productVariantId, int productVariantSizeId, int requestedQuantity) {
+    @Override
+    public CartItem findByProductVariantIdAndCartId(int productVariantId, int cartId) {
+        return cartItemRepository.findByProductVariantIdAndCartId(productVariantId, cartId);
 
-        ListProductVariantResponse productVariant = productVariantService.getById(productVariantId);
-
-        ListProductSizeResponse productSize = productVariant.getProductSizes().stream()
-                .filter(size -> size.getId() == productVariantSizeId)
-                .findFirst()
-                .orElseThrow(() -> new NotFoundException(Messages.Error.INVALID_SIZE_FOR_VARIANT));
-
-        int availableStock = productSize.getStockQuantity();
-        if (availableStock < requestedQuantity) {
-            throw new BusinessException(String.format(Messages.Error.INSUFFICIENT_STOCK, requestedQuantity));
-        }
     }
 
     private BigDecimal calculateTotalPrice(BigDecimal unitPrice, int quantity) {
