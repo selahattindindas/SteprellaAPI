@@ -98,7 +98,27 @@ public class CartItemServiceImpl implements CartItemService {
     @Override
     public CartItem findByProductVariantIdAndCartId(int productVariantId, int cartId) {
         return cartItemRepository.findByProductVariantIdAndCartId(productVariantId, cartId);
+    }
 
+    public List<CartItem> getCartItemsForUser(int userId, List<Integer> cartItemIds) {
+        return cartItemRepository.findAllById(cartItemIds)
+                .stream()
+                .filter(cartItem -> cartItem.getCart().getUser().getId() == userId)
+                .collect(Collectors.toList());
+    }
+
+    public void deleteCartItemsForOrder(int userId, List<Integer> cartItemIds) {
+        List<CartItem> cartItems = cartItemRepository.findAllById(cartItemIds);
+        cartItems.stream()
+                .filter(cartItem -> cartItem.getCart().getUser().getId() == userId)
+                .forEach(cartItemRepository::delete);
+    }
+
+    @Override
+    public List<Integer> validateCartItems(List<Integer> cartItemIds, int cartId) {
+        return cartItemIds.stream()
+                .filter(cartItemId -> cartItemRepository.findByIdAndCartId(cartItemId, cartId).isEmpty())
+                .collect(Collectors.toList());
     }
 
     private BigDecimal calculateTotalPrice(BigDecimal unitPrice, int quantity) {

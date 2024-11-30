@@ -10,6 +10,7 @@ import com.Steprella.Steprella.services.dtos.requests.orderitems.AddOrderItemReq
 import com.Steprella.Steprella.services.dtos.responses.productsizes.ListProductSizeResponse;
 import com.Steprella.Steprella.services.dtos.responses.productvariants.ListProductVariantResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -22,11 +23,11 @@ public class EntityValidator {
     private final CartItemService cartItemService;
 
     @Autowired
-    public EntityValidator(DistrictService districtService,
-                           ShoeModelService shoeModelService,
-                           AddressService addressService,
-                           ProductVariantService productVariantService,
-                           CartItemService cartItemService) {
+    public EntityValidator(@Lazy DistrictService districtService,
+                           @Lazy ShoeModelService shoeModelService,
+                           @Lazy AddressService addressService,
+                           @Lazy ProductVariantService productVariantService,
+                           @Lazy CartItemService cartItemService) {
         this.districtService = districtService;
         this.shoeModelService = shoeModelService;
         this.addressService = addressService;

@@ -3,11 +3,11 @@ package com.Steprella.Steprella.services.concretes;
 import com.Steprella.Steprella.core.utils.EntityValidator;
 import com.Steprella.Steprella.core.utils.exceptions.types.NotFoundException;
 import com.Steprella.Steprella.core.utils.messages.Messages;
+import com.Steprella.Steprella.entities.concretes.CartItem;
 import com.Steprella.Steprella.entities.concretes.Order;
+import com.Steprella.Steprella.entities.concretes.OrderItem;
 import com.Steprella.Steprella.repositories.OrderRepository;
-import com.Steprella.Steprella.services.abstracts.AddressService;
-import com.Steprella.Steprella.services.abstracts.OrderService;
-import com.Steprella.Steprella.services.abstracts.UserService;
+import com.Steprella.Steprella.services.abstracts.*;
 import com.Steprella.Steprella.services.dtos.requests.orders.AddOrderRequest;
 import com.Steprella.Steprella.services.dtos.requests.orders.UpdateOrderRequest;
 import com.Steprella.Steprella.services.dtos.responses.orders.AddOrderResponse;
@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 
 @Service
@@ -29,7 +30,9 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final UserService userService;
     private final AddressService addressService;
+    private final CartItemService cartItemService;
     private final EntityValidator entityValidator;
+    private final OrderItemService orderItemService;
 
     @Override
     public ListOrderResponse getByUserId(int userId) {
@@ -52,6 +55,7 @@ public class OrderServiceImpl implements OrderService {
         addressService.getById(request.getShippingAddressId());
         entityValidator.validateUserAddress(request.getUserId(), request.getShippingAddressId());
 
+
         String orderNumber = generateOrderNumber();
 
         Order addOrder = OrderMapper.INSTANCE.orderFromAddRequest(request);
@@ -59,6 +63,14 @@ public class OrderServiceImpl implements OrderService {
         addOrder.setStatus(OrderStatus.PENDING);
 
         Order savedOrder = orderRepository.save(addOrder);
+
+        List<CartItem> cartItems = cartItemService.getCartItemsForUser(request.getUserId(), request.getCartItem());
+
+        List<OrderItem> orderItems = orderItemService.convertCartItemsToOrderItems(cartItems, savedOrder);
+
+        orderItemService.saveOrderItems(orderItems);
+
+        cartItemService.deleteCartItemsForOrder(request.getUserId(), request.getCartItem());
 
         return OrderMapper.INSTANCE.addResponseFromOrder(savedOrder);
     }

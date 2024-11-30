@@ -22,4 +22,10 @@ public interface CartItemService {
     void delete(int id);
 
     CartItem findByProductVariantIdAndCartId(int productVariantId, int cartId);
+
+    List<Integer> validateCartItems(List<Integer> cartItemIds, int cartId);
+
+    void deleteCartItemsForOrder(int userId, List<Integer> cartItemIds);
+
+    List<CartItem> getCartItemsForUser(int userId, List<Integer> cartItemIds);
 }

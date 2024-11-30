@@ -1,6 +1,9 @@
 package com.Steprella.Steprella.services.concretes;
 
 import com.Steprella.Steprella.core.utils.EntityValidator;
+import com.Steprella.Steprella.entities.concretes.CartItem;
+import com.Steprella.Steprella.entities.concretes.Order;
+import com.Steprella.Steprella.entities.concretes.OrderItem;
 import com.Steprella.Steprella.repositories.OrderItemRepository;
 import com.Steprella.Steprella.services.abstracts.*;
 import com.Steprella.Steprella.services.dtos.requests.orderitems.AddOrderItemRequest;
@@ -9,15 +12,15 @@ import com.Steprella.Steprella.services.dtos.responses.orderitems.ListOrderItemR
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class OrderItemServiceImpl implements OrderItemService {
 
     private final OrderItemRepository orderItemRepository;
-    private final OrderService orderService;
-    private final ProductVariantService productVariantService;
     private final EntityValidator entityValidator;
 
     @Override
@@ -32,8 +35,6 @@ public class OrderItemServiceImpl implements OrderItemService {
 
     @Override
     public AddOrderItemResponse add(AddOrderItemRequest request) {
-        orderService.getById(request.getOrderId());
-        productVariantService.getById(request.getProductVariantId());
         entityValidator.checkProductVariantAvailability(request.getProductVariantId(), request.getProductVariantSizeId(), request.getQuantity());
         return null;
     }
@@ -41,5 +42,25 @@ public class OrderItemServiceImpl implements OrderItemService {
     @Override
     public void delete(int id) {
 
+    }
+
+
+    public List<OrderItem> convertCartItemsToOrderItems(List<CartItem> cartItems, Order savedOrder) {
+        return cartItems.stream().map(cartItem -> {
+            OrderItem orderItem = new OrderItem();
+
+            orderItem.setQuantity(cartItem.getQuantity());
+            orderItem.setUnitPrice(cartItem.getUnitPrice());
+            orderItem.setTotalPrice(cartItem.getUnitPrice().multiply(BigDecimal.valueOf(cartItem.getQuantity())));
+            orderItem.setOrder(savedOrder);
+            orderItem.setProductVariant(cartItem.getProductVariant());
+            orderItem.setProductSize(cartItem.getProductSize());
+
+            return orderItem;
+        }).collect(Collectors.toList());
+    }
+
+    public void saveOrderItems(List<OrderItem> orderItems) {
+        orderItemRepository.saveAll(orderItems);
     }
 }

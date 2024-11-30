@@ -1,6 +1,4 @@
 package com.Steprella.Steprella.services.dtos.requests.orders;
-
-import com.Steprella.Steprella.services.dtos.requests.orderitems.AddOrderItemRequest;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,5 +19,5 @@ public class AddOrderRequest {
     @NotNull
     private int shippingAddressId;
 
-    private List<AddOrderItemRequest> orderItems;
+    private List<Integer> cartItem;
 }

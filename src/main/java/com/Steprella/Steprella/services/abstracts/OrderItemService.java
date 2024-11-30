@@ -1,5 +1,8 @@
 package com.Steprella.Steprella.services.abstracts;
 
+import com.Steprella.Steprella.entities.concretes.CartItem;
+import com.Steprella.Steprella.entities.concretes.Order;
+import com.Steprella.Steprella.entities.concretes.OrderItem;
 import com.Steprella.Steprella.services.dtos.requests.orderitems.AddOrderItemRequest;
 import com.Steprella.Steprella.services.dtos.responses.orderitems.AddOrderItemResponse;
 import com.Steprella.Steprella.services.dtos.responses.orderitems.ListOrderItemResponse;
@@ -15,4 +18,8 @@ public interface OrderItemService {
     AddOrderItemResponse add(AddOrderItemRequest request);
 
     void delete(int id);
+
+    List<OrderItem> convertCartItemsToOrderItems(List<CartItem> cartItems, Order savedOrder);
+
+    void saveOrderItems(List<OrderItem> orderItems);
 }

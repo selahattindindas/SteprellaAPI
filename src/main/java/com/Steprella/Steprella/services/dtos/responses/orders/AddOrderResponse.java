@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -18,4 +20,6 @@ public class AddOrderResponse {
     private int shippingAddressId;
 
     private String orderNumber;
+
+    private List<Integer> cartItem;
 }
