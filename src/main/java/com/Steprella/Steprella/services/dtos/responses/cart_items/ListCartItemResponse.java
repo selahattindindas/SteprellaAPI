@@ -18,6 +18,8 @@ public class ListCartItemResponse {
 
     private int cartId;
 
+    private boolean inStock;
+
     private int productVariantSizeValue;
 
     private int quantity;

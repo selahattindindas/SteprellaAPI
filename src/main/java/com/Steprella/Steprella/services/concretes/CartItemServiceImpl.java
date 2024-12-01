@@ -4,6 +4,8 @@ import com.Steprella.Steprella.core.utils.EntityValidator;
 import com.Steprella.Steprella.core.utils.exceptions.types.NotFoundException;
 import com.Steprella.Steprella.core.utils.messages.Messages;
 import com.Steprella.Steprella.entities.concretes.CartItem;
+import com.Steprella.Steprella.entities.concretes.ProductSize;
+import com.Steprella.Steprella.entities.concretes.ProductVariant;
 import com.Steprella.Steprella.repositories.CartItemRepository;
 import com.Steprella.Steprella.services.abstracts.CartItemService;
 import com.Steprella.Steprella.services.abstracts.CartService;
@@ -15,6 +17,9 @@ import com.Steprella.Steprella.services.dtos.responses.cart_items.ListCartItemRe
 import com.Steprella.Steprella.services.dtos.responses.cart_items.UpdateCartItemResponse;
 import com.Steprella.Steprella.services.mappers.CartItemMapper;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -31,6 +36,7 @@ public class CartItemServiceImpl implements CartItemService {
     private final EntityValidator entityValidator;
 
     @Override
+    @Cacheable("cartItems")
     public List<ListCartItemResponse> getItemsByCartId(int cartId) {
         cartService.getById(cartId);
 
@@ -42,17 +48,24 @@ public class CartItemServiceImpl implements CartItemService {
 
             cartItem.setUnitPrice(unitPrice);
             cartItem.setTotalPrice(totalPrice);
+
+            boolean isInStock = checkStockAvailabilityForCartItem(cartItem);
+            cartItem.setInStock(isInStock);
+
+
             return CartItemMapper.INSTANCE.listResponseFromCartItem(cartItem);
         }).collect(Collectors.toList());
     }
 
     @Override
+    @Cacheable(value = "cartItems", key = "#id")
     public ListCartItemResponse getById(int id) {
         CartItem cartItem = findCartItemById(id);
         return CartItemMapper.INSTANCE.listResponseFromCartItem(cartItem);
     }
 
     @Override
+    @CachePut(value = "cartItems", key = "#result.id")
     public AddCartItemResponse add(AddCartItemRequest request) {
         cartService.getById(request.getCartId());
         productVariantService.getById(request.getProductVariantId());
@@ -67,10 +80,13 @@ public class CartItemServiceImpl implements CartItemService {
 
         CartItem savedCartItem = cartItemRepository.save(addCartItem);
 
-        return CartItemMapper.INSTANCE.addResponseFromCartItem(savedCartItem);
+        AddCartItemResponse response = CartItemMapper.INSTANCE.addResponseFromCartItem(savedCartItem);
+
+        return response;
     }
 
     @Override
+    @CachePut(value = "cartItems", key = "#request.id")
     public UpdateCartItemResponse update(UpdateCartItemRequest request) {
         findCartItemById(request.getId());
         cartService.getById(request.getCartId());
@@ -90,12 +106,21 @@ public class CartItemServiceImpl implements CartItemService {
     }
 
     @Override
+    @CacheEvict(value = "cartItems", allEntries = true)
     public void delete(int id) {
         CartItem cartItem = findCartItemById(id);
         cartItemRepository.delete(cartItem);
     }
 
     @Override
+    @CacheEvict(value = "cartItems", allEntries = true)
+    public void deleteCartItemsForOrder(int userId, List<Integer> cartItemIds) {
+        List<CartItem> cartItems = cartItemRepository.findAllById(cartItemIds);
+        cartItems.stream()
+                .filter(cartItem -> cartItem.getCart().getUser().getId() == userId)
+                .forEach(cartItemRepository::delete);
+    }
+
     public CartItem findByProductVariantIdAndCartId(int productVariantId, int cartId) {
         return cartItemRepository.findByProductVariantIdAndCartId(productVariantId, cartId);
     }
@@ -107,14 +132,18 @@ public class CartItemServiceImpl implements CartItemService {
                 .collect(Collectors.toList());
     }
 
-    public void deleteCartItemsForOrder(int userId, List<Integer> cartItemIds) {
-        List<CartItem> cartItems = cartItemRepository.findAllById(cartItemIds);
-        cartItems.stream()
-                .filter(cartItem -> cartItem.getCart().getUser().getId() == userId)
-                .forEach(cartItemRepository::delete);
+    public boolean checkStockAvailabilityForCartItem(CartItem cartItem) {
+        ProductVariant productVariant = cartItem.getProductVariant();
+
+        ProductSize size = productVariant.getProductSizes()
+                .stream()
+                .filter(s -> s.getId() == cartItem.getProductSize().getId())
+                .findFirst()
+                .orElse(null);
+
+        return size != null && size.getStockQuantity() >= cartItem.getQuantity();
     }
 
-    @Override
     public List<Integer> validateCartItems(List<Integer> cartItemIds, int cartId) {
         return cartItemIds.stream()
                 .filter(cartItemId -> cartItemRepository.findByIdAndCartId(cartItemId, cartId).isEmpty())

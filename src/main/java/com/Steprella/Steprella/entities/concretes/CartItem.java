@@ -26,6 +26,9 @@ public class CartItem extends AuditEntity {
     @Column(name = "total_price", nullable = false)
     private BigDecimal totalPrice;
 
+    @Column(name="in_stock")
+    private boolean inStock;
+
     @ManyToOne
     @JoinColumn(name = "cart_id", nullable = false)
     private Cart cart;
