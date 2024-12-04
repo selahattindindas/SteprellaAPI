@@ -1,6 +1,7 @@
 package com.Steprella.Steprella.services.concretes;
 
 import com.Steprella.Steprella.core.utils.EntityValidator;
+import com.Steprella.Steprella.core.utils.exceptions.types.BusinessException;
 import com.Steprella.Steprella.core.utils.exceptions.types.NotFoundException;
 import com.Steprella.Steprella.core.utils.messages.Messages;
 import com.Steprella.Steprella.entities.concretes.CartItem;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -70,6 +72,16 @@ public class CartItemServiceImpl implements CartItemService {
         cartService.getById(request.getCartId());
         productVariantService.getById(request.getProductVariantId());
         entityValidator.checkProductVariantAvailability(request.getProductVariantId(), request.getProductVariantSizeId(), request.getQuantity());
+
+        Optional<CartItem> existingCartItem = cartItemRepository.findByCartIdAndProductVariantIdAndProductSizeId(
+                request.getCartId(),
+                request.getProductVariantId(),
+                request.getProductVariantSizeId()
+        );
+
+        if (existingCartItem.isPresent()) {
+            throw new BusinessException(Messages.Error.CUSTOM_PRODUCT_ALREADY_IN_CART);
+        }
 
         BigDecimal unitPrice = productVariantService.getUnitPriceByProductVariantId(request.getProductVariantId());
         BigDecimal totalPrice = calculateTotalPrice(unitPrice, request.getQuantity());
@@ -144,18 +156,18 @@ public class CartItemServiceImpl implements CartItemService {
         return size != null && size.getStockQuantity() >= cartItem.getQuantity();
     }
 
-    public List<Integer> validateCartItems(List<Integer> cartItemIds, int cartId) {
-        return cartItemIds.stream()
-                .filter(cartItemId -> cartItemRepository.findByIdAndCartId(cartItemId, cartId).isEmpty())
-                .collect(Collectors.toList());
-    }
+    public boolean validateCartItems(int userId, List<Integer> cartItemIds) {
+        List<CartItem> userCartItems = getCartItemsForUser(userId, cartItemIds);
 
-    private BigDecimal calculateTotalPrice(BigDecimal unitPrice, int quantity) {
-        return unitPrice.multiply(BigDecimal.valueOf(quantity));
+        return userCartItems.size() == cartItemIds.size();
     }
 
     private CartItem findCartItemById(int id) {
         return cartItemRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(Messages.Error.CUSTOM_CART_ITEM_NOT_FOUND));
+    }
+
+    private BigDecimal calculateTotalPrice(BigDecimal unitPrice, int quantity) {
+        return unitPrice.multiply(BigDecimal.valueOf(quantity));
     }
 }

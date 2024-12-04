@@ -13,5 +13,5 @@ public interface CartItemRepository extends BaseRepository<CartItem, Integer> {
 
     CartItem findByProductVariantIdAndCartId(int productVariantId, int cartId);
 
-    Optional<CartItem> findByIdAndCartId(int cartItemId, int cartId);
+    Optional<CartItem> findByCartIdAndProductVariantIdAndProductSizeId(int cartId, int productVariantId, int productSizeId);
 }

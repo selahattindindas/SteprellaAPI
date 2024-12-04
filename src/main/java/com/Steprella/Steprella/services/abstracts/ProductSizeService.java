@@ -1,5 +1,6 @@
 package com.Steprella.Steprella.services.abstracts;
 
+import com.Steprella.Steprella.entities.concretes.ProductSize;
 import com.Steprella.Steprella.services.dtos.requests.productsizes.AddProductSizeRequest;
 import com.Steprella.Steprella.services.dtos.requests.productsizes.UpdateProductSizeRequest;
 import com.Steprella.Steprella.services.dtos.responses.productsizes.AddProductSizeResponse;
@@ -19,4 +20,6 @@ public interface ProductSizeService {
     UpdateProductSizeResponse update(UpdateProductSizeRequest request);
 
     void delete(int id);
+
+    ProductSize save(ProductSize productSize);
 }

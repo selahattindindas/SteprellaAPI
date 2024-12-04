@@ -23,7 +23,7 @@ public interface CartItemService {
 
     CartItem findByProductVariantIdAndCartId(int productVariantId, int cartId);
 
-    List<Integer> validateCartItems(List<Integer> cartItemIds, int cartId);
+    boolean validateCartItems(int userId, List<Integer> cartItemIds);
 
     void deleteCartItemsForOrder(int userId, List<Integer> cartItemIds);
 

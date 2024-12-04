@@ -2,6 +2,7 @@ package com.Steprella.Steprella.controllers;
 
 import com.Steprella.Steprella.core.utils.messages.Messages;
 import com.Steprella.Steprella.services.abstracts.OrderService;
+import com.Steprella.Steprella.services.abstracts.PaymentService;
 import com.Steprella.Steprella.services.dtos.requests.orders.AddOrderRequest;
 import com.Steprella.Steprella.services.dtos.requests.orders.UpdateOrderRequest;
 import com.Steprella.Steprella.services.dtos.responses.BaseResponse;
@@ -15,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RestController
 @RequestMapping("/api/orders")
@@ -22,11 +25,12 @@ import org.springframework.web.bind.annotation.*;
 public class OrderController extends BaseController{
 
     private OrderService orderService;
+    private PaymentService paymentService;
 
     @GetMapping("/by-user-id/{userId}")
-    public ResponseEntity<BaseResponse<ListOrderResponse>> getByUserId(@PathVariable int userId){
-        ListOrderResponse order = orderService.getByUserId(userId);
-        return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, order);
+    public ResponseEntity<BaseResponse<List<ListOrderResponse>>> getByUserId(@PathVariable int userId){
+        List<ListOrderResponse> orders = orderService.getByUserId(userId);
+        return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, orders);
     }
 
     @PostMapping("/create-order")

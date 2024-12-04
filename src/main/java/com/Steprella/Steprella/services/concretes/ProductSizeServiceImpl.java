@@ -66,6 +66,11 @@ public class ProductSizeServiceImpl implements ProductSizeService {
         productSizeRepository.delete(productSize);
     }
 
+    @Override
+    public ProductSize save(ProductSize productSize) {
+        return productSizeRepository.save(productSize);
+    }
+
     private ProductSize findProductSizeById(int id) {
         return productSizeRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(Messages.Error.CUSTOM_PRODUCT_SIZE_NOT_FOUND));
