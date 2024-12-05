@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,18 +26,21 @@ public class ProductSizeController extends BaseController{
     private final ProductSizeService productSizeService;
 
     @GetMapping("/by-product-variant-id/{productVariantId}")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<BaseResponse<List<ListProductSizeResponse>>> getProductSizesByProductVariantId(@PathVariable int productVariantId){
         List<ListProductSizeResponse> productSizes = productSizeService.getProductSizesByProductVariantId(productVariantId);
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, productSizes);
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<BaseResponse<ListProductSizeResponse>> getById(@PathVariable int id){
         ListProductSizeResponse productSize = productSizeService.getById(id);
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, productSize);
     }
 
     @PostMapping("/create-product-size")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<BaseResponse<AddProductSizeResponse>> add(@RequestBody @Valid AddProductSizeRequest request, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return sendResponse(HttpStatus.BAD_REQUEST, Messages.Error.CUSTOM_BAD_REQUEST, null);
@@ -47,6 +51,7 @@ public class ProductSizeController extends BaseController{
     }
 
     @PutMapping("/update-product-size")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<BaseResponse<UpdateProductSizeResponse>> update(@RequestBody @Valid UpdateProductSizeRequest request, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return sendResponse(HttpStatus.BAD_REQUEST, Messages.Error.CUSTOM_BAD_REQUEST, null);
@@ -57,6 +62,7 @@ public class ProductSizeController extends BaseController{
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<BaseResponse<Void>>delete(@PathVariable int id) {
         productSizeService.delete(id);
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, null);

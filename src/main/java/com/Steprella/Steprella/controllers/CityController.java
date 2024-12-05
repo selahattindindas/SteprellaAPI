@@ -7,6 +7,7 @@ import com.Steprella.Steprella.services.dtos.responses.cities.ListCityResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,12 +23,14 @@ public class CityController extends BaseController{
     private final CityService cityService;
 
     @GetMapping("/get-all")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<BaseResponse<List<ListCityResponse>>> getAll(){
         List<ListCityResponse> cities = cityService.getAll();
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, cities);
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<BaseResponse<ListCityResponse>> getById(@PathVariable int id) {
         ListCityResponse city = cityService.getById(id);
 

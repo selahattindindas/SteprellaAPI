@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,24 +26,28 @@ public class ShoeModelController extends BaseController{
     private final ShoeModelService shoeModelService;
 
     @GetMapping("/get-all")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<BaseResponse<List<ListShoeModelResponse>>> getAll(){
         List<ListShoeModelResponse> models = shoeModelService.getAll();
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, models);
     }
 
     @GetMapping("/by-brand-id/{brandId}")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<BaseResponse<List<ListShoeModelResponse>>> getShoeModelByBrandId(@PathVariable int brandId){
         List<ListShoeModelResponse> models = shoeModelService.getShoeModelsByBrandId(brandId);
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, models);
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<BaseResponse<ListShoeModelResponse>> getById(@PathVariable int id){
         ListShoeModelResponse model = shoeModelService.getById(id);
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, model);
     }
 
     @PostMapping("/create-shoe-model")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<BaseResponse<AddShoeModelResponse>> add(@RequestBody @Valid AddShoeModelRequest request, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return sendResponse(HttpStatus.BAD_REQUEST, Messages.Error.CUSTOM_BAD_REQUEST, null);
@@ -53,6 +58,7 @@ public class ShoeModelController extends BaseController{
     }
 
     @PutMapping("/update-shoe-model")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<BaseResponse<UpdateShoeModelResponse>> update(@RequestBody @Valid UpdateShoeModelRequest request, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return sendResponse(HttpStatus.BAD_REQUEST, Messages.Error.CUSTOM_BAD_REQUEST, null);
@@ -63,6 +69,7 @@ public class ShoeModelController extends BaseController{
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<BaseResponse<Void>>delete(@PathVariable int id) {
         shoeModelService.delete(id);
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, null);

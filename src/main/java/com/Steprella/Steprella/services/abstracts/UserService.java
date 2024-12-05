@@ -17,4 +17,6 @@ public interface UserService extends UserDetailsService {
     User getLoggedInUser();
 
     User add(User user);
+
+    User getByEmail(String email);
 }

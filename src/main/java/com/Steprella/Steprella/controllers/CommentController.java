@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,18 +26,21 @@ public class CommentController extends BaseController{
     private final CommentService commentService;
 
     @GetMapping("/by-product-id/{productVariantId}")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<BaseResponse<List<ListCommentResponse>>> getCommentByProductVariantId(@PathVariable int productVariantId){
         List<ListCommentResponse> comments = commentService.getCommentsByProductVariantId(productVariantId);
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, comments);
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<BaseResponse<ListCommentResponse>> getById(@PathVariable int id){
         ListCommentResponse comment = commentService.getById(id);
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, comment);
     }
 
     @PostMapping("/create-comment")
+    @PreAuthorize("hasRole('ADMIN', 'CUSTOMER')")
     public ResponseEntity<BaseResponse<AddCommentResponse>> add(@RequestBody @Valid AddCommentRequest request, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return sendResponse(HttpStatus.BAD_REQUEST, Messages.Error.CUSTOM_BAD_REQUEST, null);
@@ -48,6 +52,7 @@ public class CommentController extends BaseController{
     }
 
     @PutMapping("/update-comment")
+    @PreAuthorize("hasRole('ADMIN', 'CUSTOMER')")
     public ResponseEntity<BaseResponse<UpdateCommentResponse>> update(@RequestBody @Valid UpdateCommentRequest request, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return sendResponse(HttpStatus.BAD_REQUEST, Messages.Error.CUSTOM_BAD_REQUEST, null);
@@ -58,6 +63,7 @@ public class CommentController extends BaseController{
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN', 'CUSTOMER')")
     public ResponseEntity<BaseResponse<Void>>delete(@PathVariable int id) {
         commentService.delete(id);
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, null);

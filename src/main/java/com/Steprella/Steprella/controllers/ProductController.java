@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,18 +26,21 @@ public class ProductController extends BaseController{
     private final ProductService productService;
 
     @GetMapping("/get-all")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<BaseResponse<List<ListProductResponse>>> getAll(){
         List<ListProductResponse> products = productService.getAll();
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, products);
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<BaseResponse<ListProductResponse>> getById(@PathVariable int id) {
         ListProductResponse product = productService.getById(id);
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, product);
     }
 
     @PostMapping("/create-product")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<BaseResponse<AddProductResponse>> add(@RequestBody @Valid AddProductRequest request, BindingResult bindingResult) {
         if (bindingResult.hasErrors())
             return sendResponse(HttpStatus.BAD_REQUEST, Messages.Error.CUSTOM_BAD_REQUEST, null);
@@ -46,6 +50,7 @@ public class ProductController extends BaseController{
     }
 
     @PutMapping("/update-product")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<BaseResponse<UpdateProductResponse>> update(@RequestBody @Valid UpdateProductRequest request, BindingResult bindingResult) {
         if (bindingResult.hasErrors())
             return sendResponse(HttpStatus.BAD_REQUEST, Messages.Error.CUSTOM_BAD_REQUEST, null);
@@ -55,6 +60,7 @@ public class ProductController extends BaseController{
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<BaseResponse<Void>>delete(@PathVariable int id) {
         productService.delete(id);
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, null);

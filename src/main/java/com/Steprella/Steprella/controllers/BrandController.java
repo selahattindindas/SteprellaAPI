@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,18 +26,21 @@ public class BrandController extends BaseController{
     private final BrandService brandService;
 
     @GetMapping("/get-all")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<BaseResponse<List<ListBrandResponse>>> getAll(){
         List<ListBrandResponse> brands = brandService.getAll();
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, brands);
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<BaseResponse<ListBrandResponse>> getById(@PathVariable int id){
         ListBrandResponse brand = brandService.getById(id);
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, brand);
     }
 
     @PostMapping("/create-brand")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<BaseResponse<AddBrandResponse>> add(@RequestBody @Valid AddBrandRequest request, BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
@@ -48,6 +52,7 @@ public class BrandController extends BaseController{
     }
 
     @PutMapping("/update-brand")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<BaseResponse<UpdateBrandResponse>> update(@RequestBody @Valid UpdateBrandRequest request, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return sendResponse(HttpStatus.BAD_REQUEST, Messages.Error.CUSTOM_BAD_REQUEST, null);
@@ -58,6 +63,7 @@ public class BrandController extends BaseController{
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<BaseResponse<Void>>delete(@PathVariable int id) {
         brandService.delete(id);
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, null);

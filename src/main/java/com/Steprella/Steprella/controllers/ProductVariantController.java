@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,18 +26,21 @@ public class ProductVariantController extends BaseController{
     private final ProductVariantService productVariantService;
 
     @GetMapping("/get-all")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<BaseResponse<List<ListProductVariantResponse>>> getAll(){
         List<ListProductVariantResponse> products = productVariantService.getAll();
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, products);
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<BaseResponse<ListProductVariantResponse>> getById(@PathVariable int id) {
         ListProductVariantResponse product = productVariantService.getById(id);
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, product);
     }
 
     @GetMapping("/filter")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<BaseResponse<List<ListProductVariantResponse>>> filterProducts(
             @RequestParam(required = false) Integer brandId,
             @RequestParam(required = false) Integer colorId,
@@ -48,6 +52,7 @@ public class ProductVariantController extends BaseController{
     }
 
     @PostMapping("/create-product-variant")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<BaseResponse<AddProductVariantResponse>> add(@RequestBody @Valid AddProductVariantRequest request, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return sendResponse(HttpStatus.BAD_REQUEST, Messages.Error.CUSTOM_BAD_REQUEST, null);
@@ -58,6 +63,7 @@ public class ProductVariantController extends BaseController{
     }
 
     @PutMapping("/update-product-variant")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<BaseResponse<UpdateProductVariantResponse>> update(@RequestBody @Valid UpdateProductVariantRequest request, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return sendResponse(HttpStatus.BAD_REQUEST, Messages.Error.CUSTOM_BAD_REQUEST, null);
@@ -68,6 +74,7 @@ public class ProductVariantController extends BaseController{
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<BaseResponse<Void>>delete(@PathVariable int id) {
         productVariantService.delete(id);
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, null);
