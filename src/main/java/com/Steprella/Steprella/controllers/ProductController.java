@@ -40,7 +40,7 @@ public class ProductController extends BaseController{
     }
 
     @PostMapping("/create-product")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<BaseResponse<AddProductResponse>> add(@RequestBody @Valid AddProductRequest request, BindingResult bindingResult) {
         if (bindingResult.hasErrors())
             return sendResponse(HttpStatus.BAD_REQUEST, Messages.Error.CUSTOM_BAD_REQUEST, null);
@@ -50,7 +50,7 @@ public class ProductController extends BaseController{
     }
 
     @PutMapping("/update-product")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<BaseResponse<UpdateProductResponse>> update(@RequestBody @Valid UpdateProductRequest request, BindingResult bindingResult) {
         if (bindingResult.hasErrors())
             return sendResponse(HttpStatus.BAD_REQUEST, Messages.Error.CUSTOM_BAD_REQUEST, null);
@@ -60,7 +60,7 @@ public class ProductController extends BaseController{
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<BaseResponse<Void>>delete(@PathVariable int id) {
         productService.delete(id);
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, null);

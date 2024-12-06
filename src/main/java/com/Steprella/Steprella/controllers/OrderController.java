@@ -27,14 +27,14 @@ public class OrderController extends BaseController{
     private OrderService orderService;
 
     @GetMapping("/by-user-id/{userId}")
-    @PreAuthorize("hasRole('ADMIN', 'CUSTOMER')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CUSTOMER')")
     public ResponseEntity<BaseResponse<List<ListOrderResponse>>> getByUserId(@PathVariable int userId){
         List<ListOrderResponse> orders = orderService.getByUserId(userId);
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, orders);
     }
 
     @PostMapping("/create-order")
-    @PreAuthorize("hasRole('ADMIN', 'CUSTOMER')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CUSTOMER')")
     public ResponseEntity<BaseResponse<AddOrderResponse>> add(@RequestBody @Valid AddOrderRequest request, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return sendResponse(HttpStatus.BAD_REQUEST, Messages.Error.CUSTOM_BAD_REQUEST, null);
@@ -45,7 +45,7 @@ public class OrderController extends BaseController{
     }
 
     @PutMapping("/update-order")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<BaseResponse<UpdateOrderResponse>> update(@RequestBody @Valid UpdateOrderRequest request, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return sendResponse(HttpStatus.BAD_REQUEST, Messages.Error.CUSTOM_BAD_REQUEST, null);
@@ -53,12 +53,5 @@ public class OrderController extends BaseController{
 
         UpdateOrderResponse updatedOrder = orderService.update(request);
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, updatedOrder);
-    }
-
-    @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN', 'CUSTOMER')")
-    public ResponseEntity<BaseResponse<Void>>delete(@PathVariable int id) {
-        orderService.delete(id);
-        return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, null);
     }
 }

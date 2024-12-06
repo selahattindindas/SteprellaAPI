@@ -1,4 +1,4 @@
-package com.Steprella.Steprella.services.dtos.responses.users;
+package com.Steprella.Steprella.services.dtos.requests.tokens;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,11 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoginUserResponse {
-
-    private String accessToken;
+public class RefreshTokenRequest {
 
     private String refreshToken;
-
-    private long accessTokenExpiration;
 }

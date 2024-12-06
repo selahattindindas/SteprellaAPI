@@ -26,6 +26,9 @@ public class JwtService {
     @Value("${security.jwt.expiration-time}")
     private long jwtExpiration;
 
+    @Value("${security.jwt.refresh-token-expiration-time}")
+    private long refreshTokenExpirationTime;
+
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
@@ -35,17 +38,26 @@ public class JwtService {
         return claimsResolver.apply(claims);
     }
 
-    public String generateToken(UserDetails userDetails, String fullName, Role role, String phone) {
+    public String generateAccessToken(UserDetails userDetails, String fullName, Role role, String phone) {
         Map<String, Object> extraClaims = new HashMap<>();
         extraClaims.put("fullName", fullName);
         extraClaims.put("role", role);
         extraClaims.put("phone", phone);
 
-        return generateToken(extraClaims, userDetails);
+        return generateToken(extraClaims, userDetails, jwtExpiration);
     }
 
-    public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
-        return buildToken(extraClaims, userDetails, jwtExpiration);
+    public String generateRefreshToken(UserDetails userDetails, String fullName, Role role, String phone) {
+        Map<String, Object> extraClaims = new HashMap<>();
+        extraClaims.put("fullName", fullName);
+        extraClaims.put("role", role);
+        extraClaims.put("phone", phone);
+
+        return generateToken(extraClaims, userDetails, refreshTokenExpirationTime);
+    }
+
+    private String generateToken(Map<String, Object> extraClaims, UserDetails userDetails, long expirationTime) {
+        return buildToken(extraClaims, userDetails, expirationTime);
     }
 
     public long getExpirationTime() {
@@ -72,7 +84,7 @@ public class JwtService {
         return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
     }
 
-    private boolean isTokenExpired(String token) {
+    public boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
 

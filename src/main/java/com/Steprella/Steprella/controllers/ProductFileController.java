@@ -32,7 +32,7 @@ public class ProductFileController extends BaseController{
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<BaseResponse<AddProductFileResponse>> add(@RequestParam("productVariantId") int productVariantId,
                                                                     @RequestParam("file") List<MultipartFile> files) throws IOException {
 
@@ -45,7 +45,7 @@ public class ProductFileController extends BaseController{
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<BaseResponse<Void>> delete(@PathVariable int id) {
         productFileService.delete(id);
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, null);

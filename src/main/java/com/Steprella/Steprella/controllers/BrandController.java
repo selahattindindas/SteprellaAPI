@@ -40,7 +40,7 @@ public class BrandController extends BaseController{
     }
 
     @PostMapping("/create-brand")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<BaseResponse<AddBrandResponse>> add(@RequestBody @Valid AddBrandRequest request, BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
@@ -52,7 +52,7 @@ public class BrandController extends BaseController{
     }
 
     @PutMapping("/update-brand")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<BaseResponse<UpdateBrandResponse>> update(@RequestBody @Valid UpdateBrandRequest request, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return sendResponse(HttpStatus.BAD_REQUEST, Messages.Error.CUSTOM_BAD_REQUEST, null);
@@ -63,7 +63,7 @@ public class BrandController extends BaseController{
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<BaseResponse<Void>>delete(@PathVariable int id) {
         brandService.delete(id);
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, null);

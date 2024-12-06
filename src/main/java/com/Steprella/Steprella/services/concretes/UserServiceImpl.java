@@ -61,7 +61,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getByEmail(String email){
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new BusinessException(Messages.Error.CUSTOM_EMAIL_ALREADY_EXISTS));
+                .orElseThrow(() -> new BusinessException(Messages.Error.CUSTOM_EMAIL_NOT_FOUND));
     }
 
     private User findUserById(int id) {

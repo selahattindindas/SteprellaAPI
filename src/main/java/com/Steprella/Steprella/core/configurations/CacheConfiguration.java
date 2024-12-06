@@ -10,6 +10,6 @@ public class CacheConfiguration {
 
     @Bean
     public CacheManager cacheManager() {
-        return new ConcurrentMapCacheManager("cartItems", "carts");
+        return new ConcurrentMapCacheManager("carts", "favorites");
     }
 }

@@ -5,6 +5,7 @@ public class Messages {
     public static class Error {
         public static final String CUSTOM_BAD_REQUEST = "Geçersiz istek. Lütfen gönderdiğiniz verileri kontrol edin.";
         public static final String CUSTOM_INTERNAL_SERVER_ERROR = "Beklenmedik bir sunucu hatası oluştu. Lütfen sonra tekrar deneyiniz.";
+        public static final String TOKEN_EXPIRED = "Oturum süreniz dolmuş. Lütfen tekrar giriş yapın.";
         public static final String CUSTOM_CATEGORY_NOT_FOUND = "Böyle bir kategori bulunamadı.";
         public static final String CUSTOM_CITY_NOT_FOUND = "Böyle bir şehir bulunamadı.";
         public static final String CUSTOM_DISTRICT_NOT_FOUND = "Böyle bir ilçe bulunamadı";
@@ -25,6 +26,7 @@ public class Messages {
         public static final String CUSTOM_CART_ITEM_NOT_FOUND = "Böyle bir sepet öğesi bulunamadı.";
         public static final String CUSTOM_USER_NOT_FOUND = "Böyle bir kullanıcı bulunamadı.";
         public static final String CUSTOM_PRODUCT_NOT_FOUND = "Böyle bir ürün bulunamadı.";
+        public static final String CUSTOM_EMAIL_NOT_FOUND = "Böyle bir e-posta adresi bulunamadı.";
         public static final String CUSTOM_FILTER_PRODUCT_NOT_FOUND = "Aranan kriterlere ait ürün bulunamadı.";
         public static final String FILE_SIZE_EXCEEDED = "Dosya boyutu, izin verilen maksimum boyutu (%s) aşıyor.";
         public static final String FILE_UPLOAD_FAILED = "Dosya yüklenirken bir hata oluştu: %s";
@@ -35,6 +37,7 @@ public class Messages {
         public static final String CART_ALREADY_EXISTS = "Bu kullanıcıya ait bir sepet bulunmaktadır.";
         public static final String PRODUCT_VARIANT_ALREADY_EXISTS = "Bu renge sahip ürün bulunmaktadır.";
         public static final String CUSTOM_EMAIL_ALREADY_EXISTS = "Bu e-posta adresi zaten kullanılıyor!";
+        public static final String ACCESS_DENIED = "Bu kaynağa erişim izniniz yok.";
     }
 
     public static class Success {

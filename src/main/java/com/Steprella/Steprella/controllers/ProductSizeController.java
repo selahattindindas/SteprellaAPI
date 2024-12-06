@@ -40,7 +40,7 @@ public class ProductSizeController extends BaseController{
     }
 
     @PostMapping("/create-product-size")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<BaseResponse<AddProductSizeResponse>> add(@RequestBody @Valid AddProductSizeRequest request, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return sendResponse(HttpStatus.BAD_REQUEST, Messages.Error.CUSTOM_BAD_REQUEST, null);
@@ -51,7 +51,7 @@ public class ProductSizeController extends BaseController{
     }
 
     @PutMapping("/update-product-size")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<BaseResponse<UpdateProductSizeResponse>> update(@RequestBody @Valid UpdateProductSizeRequest request, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return sendResponse(HttpStatus.BAD_REQUEST, Messages.Error.CUSTOM_BAD_REQUEST, null);
@@ -62,7 +62,7 @@ public class ProductSizeController extends BaseController{
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<BaseResponse<Void>>delete(@PathVariable int id) {
         productSizeService.delete(id);
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, null);

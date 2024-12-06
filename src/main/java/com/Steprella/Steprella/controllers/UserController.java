@@ -23,14 +23,14 @@ public class UserController extends BaseController{
     private final UserService userService;
 
     @GetMapping("/get-all")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<BaseResponse<List<ListUserResponse>>> getAll(){
         List<ListUserResponse> users = userService.getAll();
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, users);
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<BaseResponse<ListUserResponse>> getById(@PathVariable int id) {
         ListUserResponse user = userService.getResponseById(id);
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, user);

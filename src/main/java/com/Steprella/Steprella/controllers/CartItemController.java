@@ -26,14 +26,14 @@ public class CartItemController extends BaseController {
     private final CartItemService cartItemService;
 
     @GetMapping("/by-cart-id/{cartId}")
-    @PreAuthorize("hasRole('ADMIN', 'CUSTOMER')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CUSTOMER')")
     public ResponseEntity<BaseResponse<List<ListCartItemResponse>>> getItemsByCartId(@PathVariable int cartId){
         List<ListCartItemResponse> cartItems = cartItemService.getItemsByCartId(cartId);
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, cartItems);
     }
 
     @PostMapping("/create-cart-item")
-    @PreAuthorize("hasRole('ADMIN', 'CUSTOMER')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CUSTOMER')")
     public ResponseEntity<BaseResponse<AddCartItemResponse>> add(@RequestBody @Valid AddCartItemRequest request, BindingResult bindingResult) {
         if (bindingResult.hasErrors())
             return sendResponse(HttpStatus.BAD_REQUEST, Messages.Error.CUSTOM_BAD_REQUEST, null);
@@ -43,7 +43,7 @@ public class CartItemController extends BaseController {
     }
 
     @PutMapping("/update-cart-item")
-    @PreAuthorize("hasRole('ADMIN', 'CUSTOMER')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CUSTOMER')")
     public ResponseEntity<BaseResponse<UpdateCartItemResponse>> update(@RequestBody @Valid UpdateCartItemRequest request, BindingResult bindingResult) {
         if (bindingResult.hasErrors())
             return sendResponse(HttpStatus.BAD_REQUEST, Messages.Error.CUSTOM_BAD_REQUEST, null);
@@ -53,7 +53,7 @@ public class CartItemController extends BaseController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN', 'CUSTOMER')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CUSTOMER')")
     public ResponseEntity<BaseResponse<Void>>delete(@PathVariable int id) {
         cartItemService.delete(id);
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, null);

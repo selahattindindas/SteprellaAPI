@@ -22,14 +22,14 @@ public class CartController extends BaseController{
     private final CartService cartService;
 
     @GetMapping("/by-user-id/{userId}")
-    @PreAuthorize("hasRole('ADMIN', 'CUSTOMER')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CUSTOMER')")
     public ResponseEntity<BaseResponse<ListCartResponse>> getCartByUserId(@PathVariable int userId){
         ListCartResponse cart = cartService.getCartByUserId(userId);
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, cart);
     }
 
     @PostMapping("/create-cart")
-    @PreAuthorize("hasRole('ADMIN', 'CUSTOMER')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CUSTOMER')")
     public ResponseEntity<BaseResponse<AddCartResponse>> add(@RequestBody @Valid AddCartRequest request, BindingResult bindingResult) {
         if (bindingResult.hasErrors())
             return sendResponse(HttpStatus.BAD_REQUEST, Messages.Error.CUSTOM_BAD_REQUEST, null);
@@ -39,7 +39,7 @@ public class CartController extends BaseController{
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN', 'CUSTOMER')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CUSTOMER')")
     public ResponseEntity<BaseResponse<Void>>delete(@PathVariable int id) {
         cartService.delete(id);
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, null);

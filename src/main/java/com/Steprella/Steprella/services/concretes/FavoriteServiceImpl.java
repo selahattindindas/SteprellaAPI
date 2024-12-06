@@ -14,6 +14,8 @@ import com.Steprella.Steprella.services.dtos.responses.favorites.AddFavoriteResp
 import com.Steprella.Steprella.services.dtos.responses.favorites.ListFavoriteResponse;
 import com.Steprella.Steprella.services.mappers.FavoriteMapper;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,6 +30,7 @@ public class FavoriteServiceImpl implements FavoriteService {
     private final UserService userService;
 
     @Override
+    @Cacheable(value="favorites", key="#userId")
     public List<ListFavoriteResponse> getFavoritesByUserId(int userId) {
         userService.getResponseById(userId);
         List<Favorite> favorites = favoriteRepository.findByUserId(userId);
@@ -48,6 +51,7 @@ public class FavoriteServiceImpl implements FavoriteService {
     }
     
     @Override
+    @CachePut(value = "favorites", key = "#result.id")
     public AddFavoriteResponse add(AddFavoriteRequest request) {
         validateFavoriteDependencies(request.getProductVariantId(), request.getUserId());
 
@@ -58,6 +62,7 @@ public class FavoriteServiceImpl implements FavoriteService {
     }
 
     @Override
+    @CachePut(value = "favorites", key = "#id")
     public void delete(int id) {
         Favorite favorite = favoriteRepository.findById(id).
                 orElseThrow(() -> new NotFoundException(Messages.Error.CUSTOM_PRODUCT_NOT_FOUND));
