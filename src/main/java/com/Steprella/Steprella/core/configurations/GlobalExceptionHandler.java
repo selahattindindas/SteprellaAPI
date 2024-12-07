@@ -18,19 +18,19 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({ FileUploadException.class })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public FileUploadDetails handleRuntimeException(FileUploadException exception) {
+    public FileUploadDetails handleFileUploadException(FileUploadException exception) {
         return new FileUploadDetails(exception.getMessage());
     }
 
     @ExceptionHandler({ BusinessException.class })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public BusinessProblemDetails handleRuntimeException(BusinessException exception) {
+    public BusinessProblemDetails handleBusinessException(BusinessException exception) {
         return new BusinessProblemDetails(exception.getMessage());
     }
 
     @ExceptionHandler({ NotFoundException.class })
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public NotFoundDetails handleRuntimeException(NotFoundException exception) {
+    public NotFoundDetails handleNotFoundException(NotFoundException exception) {
         return new NotFoundDetails(exception.getMessage());
     }
 

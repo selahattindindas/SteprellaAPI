@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -46,12 +47,24 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.headers(headers ->
-                headers.xssProtection(
-                        xss -> xss.headerValue(XXssProtectionHeaderWriter.HeaderValue.ENABLED_MODE_BLOCK)
-                ).contentSecurityPolicy(
-                        cps -> cps.policyDirectives("script-src 'self'")
-                ));
+        http.headers(headers -> {
+            headers
+                    .xssProtection(xss -> xss.headerValue(XXssProtectionHeaderWriter.HeaderValue.ENABLED_MODE_BLOCK)) // XSS Koruması
+                    .contentSecurityPolicy(cps -> cps.policyDirectives("default-src 'self'; " +
+                            "script-src 'self'; " +
+                            "style-src 'self' 'unsafe-inline'; " +
+                            "img-src 'self' data:; " +
+                            "connect-src 'self'; " +
+                            "font-src 'self' data:; " +
+                            "frame-ancestors 'self';"))
+                    .httpStrictTransportSecurity(hsts -> hsts
+                            .maxAgeInSeconds(31536000)
+                            .includeSubDomains(true))
+                    .referrerPolicy(referrer -> referrer
+                            .policy(org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER))
+                    .frameOptions(HeadersConfigurer.FrameOptionsConfig::deny);
+        });
+
         return http.build();
     }
 

@@ -8,6 +8,7 @@ public class Messages {
         public static final String TOKEN_EXPIRED = "Oturum süreniz dolmuş. Lütfen tekrar giriş yapın.";
         public static final String CUSTOM_CATEGORY_NOT_FOUND = "Böyle bir kategori bulunamadı.";
         public static final String CUSTOM_CITY_NOT_FOUND = "Böyle bir şehir bulunamadı.";
+        public static final String FAVORITE_ALREADY_EXISTS = "Zaten bu ürün favorilerinde bulunuyor.";
         public static final String CUSTOM_DISTRICT_NOT_FOUND = "Böyle bir ilçe bulunamadı";
         public static final String INVALID_DISTRICT_CITY_RELATION = "Bu şehire bağlı böyle bir ilçe yok";
         public static final String ADDRESS_NOT_BELONG_TO_USER = "Bu kullanıcının böyle bir adresi bulunmamaktadır.";

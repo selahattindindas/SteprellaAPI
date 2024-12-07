@@ -8,4 +8,6 @@ import java.util.List;
 @Repository
 public interface FavoriteRepository extends BaseRepository<Favorite, Integer> {
     List<Favorite> findByUserId(int userId);
+
+    boolean existsByUserIdAndProductVariantId(int userId, int productVariantId);
 }

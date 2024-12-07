@@ -1,6 +1,7 @@
 package com.Steprella.Steprella.services.concretes;
 
 import com.Steprella.Steprella.core.utils.RatingUtils;
+import com.Steprella.Steprella.core.utils.exceptions.types.BusinessException;
 import com.Steprella.Steprella.core.utils.exceptions.types.NotFoundException;
 import com.Steprella.Steprella.core.utils.messages.Messages;
 import com.Steprella.Steprella.entities.concretes.Comment;
@@ -14,6 +15,7 @@ import com.Steprella.Steprella.services.dtos.responses.favorites.AddFavoriteResp
 import com.Steprella.Steprella.services.dtos.responses.favorites.ListFavoriteResponse;
 import com.Steprella.Steprella.services.mappers.FavoriteMapper;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -55,6 +57,10 @@ public class FavoriteServiceImpl implements FavoriteService {
     public AddFavoriteResponse add(AddFavoriteRequest request) {
         validateFavoriteDependencies(request.getProductVariantId(), request.getUserId());
 
+        if (favoriteRepository.existsByUserIdAndProductVariantId(request.getUserId(), request.getProductVariantId())) {
+            throw new BusinessException(Messages.Error.FAVORITE_ALREADY_EXISTS);
+        }
+
         Favorite addFavorite = FavoriteMapper.INSTANCE.favoriteFromAddRequest(request);
         Favorite savedFavorite = favoriteRepository.save(addFavorite);
 
@@ -62,7 +68,7 @@ public class FavoriteServiceImpl implements FavoriteService {
     }
 
     @Override
-    @CachePut(value = "favorites", key = "#id")
+    @CacheEvict(value = "favorites", key = "#id")
     public void delete(int id) {
         Favorite favorite = favoriteRepository.findById(id).
                 orElseThrow(() -> new NotFoundException(Messages.Error.CUSTOM_PRODUCT_NOT_FOUND));
