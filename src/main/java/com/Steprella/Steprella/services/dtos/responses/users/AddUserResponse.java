@@ -23,4 +23,6 @@ public class AddUserResponse {
     private String phone;
 
     private Gender gender;
+
+    private boolean isVerified;
 }

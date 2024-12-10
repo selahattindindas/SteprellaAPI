@@ -42,6 +42,9 @@ public class User extends BaseEntity implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
+    @Column(name = "is_verified", nullable = false)
+    private boolean isVerified;
+
     @OneToMany(mappedBy= "user", cascade = CascadeType.ALL)
     private List<Address> addresses;
 

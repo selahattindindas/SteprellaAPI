@@ -21,8 +21,6 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler  {
 
         String errorMessage = Messages.Error.ACCESS_DENIED;
 
-        System.out.println("Access Denied - Handler triggered");
-
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         response.setContentType("application/json");
 

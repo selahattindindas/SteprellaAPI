@@ -64,6 +64,17 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new BusinessException(Messages.Error.CUSTOM_EMAIL_NOT_FOUND));
     }
 
+    @Override
+    public void setVerified(String email) {
+        User user = getByEmail(email);
+        if (user != null) {
+            user.setVerified(true);
+            userRepository.save(user);
+        } else {
+            throw new BusinessException(Messages.Error.CUSTOM_USER_NOT_FOUND);
+        }
+    }
+
     private User findUserById(int id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(Messages.Error.CUSTOM_USER_NOT_FOUND));

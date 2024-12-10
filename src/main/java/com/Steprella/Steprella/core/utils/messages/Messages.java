@@ -39,6 +39,17 @@ public class Messages {
         public static final String PRODUCT_VARIANT_ALREADY_EXISTS = "Bu renge sahip ürün bulunmaktadır.";
         public static final String CUSTOM_EMAIL_ALREADY_EXISTS = "Bu e-posta adresi zaten kullanılıyor!";
         public static final String ACCESS_DENIED = "Bu kaynağa erişim izniniz yok.";
+        public static final String VERIFICATION_CODE_INVALID ="Geçersiz veya süresi dolmuş doğrulama kodu.";
+        public static final String EMAIL_VERIFICATION_REQUIRED = "Erişim için e-posta doğrulaması gerekiyor.";
+        public static final String EMAIL_FILE_UPLOAD_FAILED = "E-posta gönderilirken bir hata oluştu.";
+        public static final String ACCOUNT_NOT_ACTIVATED = "Lütfen önce hesabınızı onaylayın.";
+        public static final String INVALID_VERIFICATION_CODE = "Geçersiz veya süresi dolmuş doğrulama kodu. Lütfen tekrar deneyin.";
+    }
+
+    public static class Info {
+        public static final String VERIFICATION_CODE_TITLE = "Doğrulama Kodu";
+        public static final String VERIFICATION_CODE_SENT = "Doğrulama kodu e-posta adresinize gönderildi.";
+        public static final String ACTIVATION_EMAIL_TITLE = "Steprella Hesap Aktivasyonu";
     }
 
     public static class Success {

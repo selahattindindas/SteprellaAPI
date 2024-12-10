@@ -66,4 +66,14 @@ public class EmailTemplateBuilder {
                 </html>
                 """.formatted(CODE_EXPIRY_MINUTES, code);
     }
+
+    public String buildActivationEmailTemplate(String verificationUrl) {
+        return "<html><body>" +
+                "<h1>Hesabınızı Aktif Hale Getirin</h1>" +
+                "<p>Hesabınızı aktif hale getirmek için aşağıdaki bağlantıya tıklayın:</p>" +
+                "<a href=\"" + verificationUrl + "\" style=\"display: inline-block; " +
+                "padding: 10px 20px; font-size: 16px; text-decoration: none; " +
+                "color: white; background-color: #4CAF50; border-radius: 5px;\">Hesabınızı Doğrulayın</a>" +
+                "</body></html>";
+    }
 }
