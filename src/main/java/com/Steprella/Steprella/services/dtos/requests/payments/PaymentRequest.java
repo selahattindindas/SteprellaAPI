@@ -1,9 +1,7 @@
 package com.Steprella.Steprella.services.dtos.requests.payments;
 
 import com.Steprella.Steprella.services.enums.PaymentMethod;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,9 +16,11 @@ import java.math.BigDecimal;
 public class PaymentRequest {
 
     @NotNull
+    @Min(1)
     private int orderId;
 
     @NotNull
+    @DecimalMin(value = "1.00")
     private BigDecimal amount;
 
     @NotNull

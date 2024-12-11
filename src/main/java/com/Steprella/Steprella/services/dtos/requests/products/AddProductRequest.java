@@ -1,5 +1,7 @@
 package com.Steprella.Steprella.services.dtos.requests.products;
 
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -17,18 +19,22 @@ import java.util.Date;
 public class AddProductRequest {
 
     @NotNull
+    @DecimalMin(value = "1.00")
     private BigDecimal price;
 
     @NotBlank
     private String description;
 
     @NotNull
+    @Min(1)
     private int categoryId;
 
     @NotNull
+    @Min(1)
     private int brandId;
 
     @NotNull
+    @Min(1)
     private int shoeModelId;
 
     private Date createdDate;

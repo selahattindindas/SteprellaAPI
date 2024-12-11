@@ -1,14 +1,10 @@
 package com.Steprella.Steprella.core.configurations;
 
-import com.Steprella.Steprella.core.utils.exceptions.problemdetails.BusinessProblemDetails;
-import com.Steprella.Steprella.core.utils.exceptions.problemdetails.FileUploadDetails;
-import com.Steprella.Steprella.core.utils.exceptions.problemdetails.InternalServerErrorDetails;
-import com.Steprella.Steprella.core.utils.exceptions.problemdetails.NotFoundDetails;
-import com.Steprella.Steprella.core.utils.exceptions.types.BusinessException;
-import com.Steprella.Steprella.core.utils.exceptions.types.FileUploadException;
-import com.Steprella.Steprella.core.utils.exceptions.types.InternalServerErrorException;
-import com.Steprella.Steprella.core.utils.exceptions.types.NotFoundException;
+import com.Steprella.Steprella.core.utils.exceptions.problemdetails.*;
+import com.Steprella.Steprella.core.utils.exceptions.types.*;
+import com.Steprella.Steprella.core.utils.messages.Messages;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -38,5 +34,11 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public InternalServerErrorDetails handleInternalServerError(InternalServerErrorException exception) {
         return new InternalServerErrorDetails(exception.getMessage());
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ForbiddenDetails handleAccessDeniedException(AccessDeniedException exception) {
+        return new ForbiddenDetails(Messages.Error.ACCESS_DENIED);
     }
 }

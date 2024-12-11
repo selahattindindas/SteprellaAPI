@@ -18,15 +18,18 @@ import java.util.Date;
 public class UpdateCommentRequest {
 
     @NotNull
+    @Min(1)
     private int id;
 
     @NotBlank
     private String commentText;
 
     @NotNull
+    @Min(1)
     private int productVariantId;
 
     @NotNull
+    @Min(1)
     private int userId;
 
     @NotNull

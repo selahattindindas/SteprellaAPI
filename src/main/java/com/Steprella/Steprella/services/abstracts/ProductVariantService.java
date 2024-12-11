@@ -21,6 +21,8 @@ public interface ProductVariantService {
 
     List<ListProductVariantResponse> filterProducts(Integer brandId, Integer colorId, Integer categoryId, Integer sizeValue);
 
+    List<ListProductVariantResponse> searchProductVariants(String searchTerm);
+
     void delete(int id);
 
     BigDecimal getUnitPriceByProductVariantId(int productVariantId);

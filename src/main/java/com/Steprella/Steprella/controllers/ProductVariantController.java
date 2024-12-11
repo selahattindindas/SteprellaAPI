@@ -51,6 +51,15 @@ public class ProductVariantController extends BaseController{
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, filteredProducts);
     }
 
+    @GetMapping("/search")
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<BaseResponse<List<ListProductVariantResponse>>> searchProductVariants(
+            @RequestParam String searchTerm) {
+
+        List<ListProductVariantResponse> searchedProducts = productVariantService.searchProductVariants(searchTerm);
+        return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, searchedProducts);
+    }
+
     @PostMapping("/create-product-variant")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<BaseResponse<AddProductVariantResponse>> add(@RequestBody @Valid AddProductVariantRequest request, BindingResult bindingResult) {

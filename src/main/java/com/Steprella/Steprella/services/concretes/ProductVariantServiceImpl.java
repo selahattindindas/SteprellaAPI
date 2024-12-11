@@ -84,6 +84,29 @@ public class ProductVariantServiceImpl implements ProductVariantService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<ListProductVariantResponse> searchProductVariants(String searchTerm) {
+        if (searchTerm == null || searchTerm.trim().isEmpty()) {
+            return getAll();
+        }
+
+        String lowerCaseSearchTerm = searchTerm.toLowerCase();
+
+        List<ProductVariant> filteredProductVariants = productVariantRepository.findAll();
+
+        filteredProductVariants = filteredProductVariants.stream()
+                .filter(productVariant -> isMatch(productVariant, lowerCaseSearchTerm))
+                .toList();
+
+        if (filteredProductVariants.isEmpty()) {
+            throw new NotFoundException(Messages.Error.CUSTOM_FILTER_PRODUCT_NOT_FOUND);
+        }
+
+        return filteredProductVariants.stream()
+                .map(this::productVariantResponse)
+                .collect(Collectors.toList());
+    }
+
 
     @Override
     public AddProductVariantResponse add(AddProductVariantRequest request) {
@@ -161,5 +184,22 @@ public class ProductVariantServiceImpl implements ProductVariantService {
             parent = parent.getParent();
         }
         return false;
+    }
+
+    private boolean isMatch(ProductVariant productVariant, String searchTerm) {
+        String lowerCaseSearchTerm = searchTerm.toLowerCase();
+
+        boolean categoryMatch = productVariant.getProduct().getCategory() != null &&
+                productVariant.getProduct().getCategory().getName().toLowerCase().contains(lowerCaseSearchTerm);
+
+        boolean brandMatch = productVariant.getProduct().getBrand() != null &&
+                productVariant.getProduct().getBrand().getName().toLowerCase().contains(lowerCaseSearchTerm);
+
+        boolean colorMatch = productVariant.getColor() != null &&
+                productVariant.getColor().getName().toLowerCase().contains(lowerCaseSearchTerm);
+
+        boolean shoeModelMatch = productVariant.getProduct().getShoeModel().getModelName().toLowerCase().contains(lowerCaseSearchTerm);
+
+        return categoryMatch || brandMatch || colorMatch || shoeModelMatch;
     }
 }
