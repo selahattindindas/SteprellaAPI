@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface UserService extends UserDetailsService {
 
-    List<ListUserResponse> getAll();
+    List<ListUserResponse> getAll(int page, int size);
 
     ListUserResponse getResponseById(int id);
 
@@ -21,4 +21,6 @@ public interface UserService extends UserDetailsService {
     User getByEmail(String email);
 
     void setVerified(String email);
+
+    int getTotalCount();
 }

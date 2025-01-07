@@ -39,12 +39,12 @@ public interface ProductVariantMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "product.id", source = "productId")
     @Mapping(target = "color.id", source = "colorId")
+    @Mapping(target = "active", constant = "false")
     @Mapping(target = "createdDate", ignore = true)
     @Mapping(target = "updatedDate", ignore = true)
     ProductVariant productVariantFromAddRequest(AddProductVariantRequest request);
 
     @Mapping(target = "product.id", source = "productId")
-    @Mapping(target = "color.id", source = "colorId")
     @Mapping(target = "createdDate", ignore = true)
     @Mapping(target = "updatedDate", ignore = true)
     ProductVariant productVariantFromUpdateRequest(UpdateProductVariantRequest request);

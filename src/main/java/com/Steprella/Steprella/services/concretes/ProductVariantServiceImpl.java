@@ -14,6 +14,9 @@ import com.Steprella.Steprella.services.dtos.responses.productvariants.ListProdu
 import com.Steprella.Steprella.services.dtos.responses.productvariants.UpdateProductVariantResponse;
 import com.Steprella.Steprella.services.mappers.ProductVariantMapper;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -31,6 +34,7 @@ public class ProductVariantServiceImpl implements ProductVariantService {
     @Override
     public List<ListProductVariantResponse> getAll() {
         List<ProductVariant> productVariants = productVariantRepository.findAll();
+
         return productVariants.stream()
                 .map(this::productVariantResponse)
                 .collect(Collectors.toList());
@@ -43,7 +47,31 @@ public class ProductVariantServiceImpl implements ProductVariantService {
     }
 
     @Override
-    public List<ListProductVariantResponse> filterProducts(Integer brandId, Integer colorId, Integer categoryId, Integer sizeValue) {
+    public List<ListProductVariantResponse> getActiveProductVariants(int page, int size) {
+            Pageable pageable = PageRequest.of(page, size);
+            Page<ProductVariant> productVariantsPage = productVariantRepository.findByIsActiveTrue(pageable);
+
+            return productVariantsPage.stream()
+                    .map(this::productVariantResponse)
+                    .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ListProductVariantResponse> getByProductId(int productId) {
+
+        List<ProductVariant> productVariants = productVariantRepository.findByProductId(productId);
+
+        if (productVariants.isEmpty()) {
+            throw new NotFoundException(Messages.Error.CUSTOM_PRODUCT_NOT_FOUND);
+        }
+
+        return productVariants.stream()
+                .map(this::productVariantResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ListProductVariantResponse> filterProducts(Integer brandId, Integer colorId, Integer categoryId, Integer sizeValue, int page, int size) {
         List<ProductVariant> filteredProductVariants = productVariantRepository.findAll();
 
         if (brandId != null) {
@@ -79,17 +107,17 @@ public class ProductVariantServiceImpl implements ProductVariantService {
             throw new NotFoundException(Messages.Error.CUSTOM_FILTER_PRODUCT_NOT_FOUND);
         }
 
+        Pageable pageable = PageRequest.of(page, size);
+
         return filteredProductVariants.stream()
+                .skip(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .map(this::productVariantResponse)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<ListProductVariantResponse> searchProductVariants(String searchTerm) {
-        if (searchTerm == null || searchTerm.trim().isEmpty()) {
-            return getAll();
-        }
-
+    public List<ListProductVariantResponse> searchProductVariants(String searchTerm, int page, int size) {
         String lowerCaseSearchTerm = searchTerm.toLowerCase();
 
         List<ProductVariant> filteredProductVariants = productVariantRepository.findAll();
@@ -102,7 +130,11 @@ public class ProductVariantServiceImpl implements ProductVariantService {
             throw new NotFoundException(Messages.Error.CUSTOM_FILTER_PRODUCT_NOT_FOUND);
         }
 
+        Pageable pageable = PageRequest.of(page, size);
+
         return filteredProductVariants.stream()
+                .skip(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .map(this::productVariantResponse)
                 .collect(Collectors.toList());
     }
@@ -121,11 +153,12 @@ public class ProductVariantServiceImpl implements ProductVariantService {
 
     @Override
     public UpdateProductVariantResponse update(UpdateProductVariantRequest request) {
-        findProductVariantById(request.getId());
-        validateProductVariantDependencies(request.getProductId(), request.getColorId());
-        validateProductVariantExistence(request.getColorId(), request.getProductId());
+        ProductVariant productVariant = findProductVariantById(request.getId());
+        productService.getById(request.getProductId());
 
         ProductVariant updateProductVariant = ProductVariantMapper.INSTANCE.productVariantFromUpdateRequest(request);
+        updateProductVariant.setColor(productVariant.getColor());
+
         ProductVariant savedProductVariant = productVariantRepository.save(updateProductVariant);
 
         return ProductVariantMapper.INSTANCE.updateResponseFromProductVariant(savedProductVariant);
@@ -141,6 +174,11 @@ public class ProductVariantServiceImpl implements ProductVariantService {
     public BigDecimal getUnitPriceByProductVariantId(int productVariantId) {
         ProductVariant productVariant = findProductVariantById(productVariantId);
         return productVariant.getProduct().getPrice();
+    }
+
+    @Override
+    public int getTotalCount() {
+        return (int) productVariantRepository.count();
     }
 
     private ListProductVariantResponse productVariantResponse(ProductVariant productVariant) {

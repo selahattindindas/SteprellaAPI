@@ -15,11 +15,14 @@ import com.Steprella.Steprella.services.dtos.responses.users.AddUserResponse;
 import com.Steprella.Steprella.services.dtos.responses.users.LoginUserResponse;
 import com.Steprella.Steprella.services.enums.Role;
 import com.Steprella.Steprella.services.mappers.AuthMapper;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import org.springframework.security.access.AccessDeniedException;
 
 @Service
 @AllArgsConstructor
@@ -48,12 +51,13 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public LoginUserResponse login(LoginUserRequest request) {
+    public LoginUserResponse login(LoginUserRequest request, HttpServletResponse response) {
         User user = userService.getByEmail(request.getEmail());
 
         if (!user.isVerified()) {
             throw new BusinessException(Messages.Error.ACCOUNT_NOT_ACTIVATED);
         }
+
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
@@ -61,15 +65,37 @@ public class AuthServiceImpl implements AuthService {
                 )
         );
 
-        String accessToken = jwtService.generateAccessToken(user, user.getFullName(), user.getRole(), user.getPhone());
-        String refreshToken = jwtService.generateRefreshToken(user, user.getFullName(), user.getRole(), user.getPhone());
+        String accessToken = jwtService.generateAccessToken(user, user.getFullName(), user.getRole(), user.getPhone(), response);
+        String refreshToken = jwtService.generateRefreshToken(user, user.getFullName(), user.getRole(), user.getPhone(), response);
         long accessTokenExpiration = jwtService.getExpirationTime();
 
         return new LoginUserResponse(accessToken, refreshToken, accessTokenExpiration);
     }
 
     @Override
-    public RefreshTokenResponse refreshToken(RefreshTokenRequest request) {
+    public LoginUserResponse adminLogin(LoginUserRequest request, HttpServletResponse response) {
+        User user = userService.getByEmail(request.getEmail());
+
+        if (user.getRole() != Role.ADMIN) {
+            throw new AccessDeniedException(Messages.Error.ACCESS_DENIED);
+        }
+
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getPassword()
+                )
+        );
+
+        String accessToken = jwtService.generateAccessToken(user, user.getFullName(), user.getRole(), user.getPhone(), response);
+        String refreshToken = jwtService.generateRefreshToken(user, user.getFullName(), user.getRole(), user.getPhone(), response);
+        long accessTokenExpiration = jwtService.getExpirationTime();
+
+        return new LoginUserResponse(accessToken, refreshToken, accessTokenExpiration);
+    }
+
+    @Override
+    public RefreshTokenResponse refreshToken(RefreshTokenRequest request, HttpServletResponse response) {
         String refreshToken = request.getRefreshToken();
 
         if (jwtService.isTokenExpired(refreshToken)) {
@@ -80,8 +106,8 @@ public class AuthServiceImpl implements AuthService {
 
         User user = userService.getByEmail(username);
 
-        String newAccessToken = jwtService.generateAccessToken(user, user.getFullName(), user.getRole(), user.getPhone());
-        String newRefreshToken = jwtService.generateRefreshToken(user, user.getFullName(), user.getRole(), user.getPhone());
+        String newAccessToken = jwtService.generateAccessToken(user, user.getFullName(), user.getRole(), user.getPhone(), response);
+        String newRefreshToken = jwtService.generateRefreshToken(user, user.getFullName(), user.getRole(), user.getPhone(), response);
 
         return new RefreshTokenResponse(newAccessToken, newRefreshToken, jwtService.getExpirationTime());
     }

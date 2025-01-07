@@ -18,6 +18,8 @@ import com.Steprella.Steprella.services.dtos.responses.cart_items.ListCartItemRe
 import com.Steprella.Steprella.services.dtos.responses.cart_items.UpdateCartItemResponse;
 import com.Steprella.Steprella.services.mappers.CartItemMapper;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -35,10 +37,12 @@ public class CartItemServiceImpl implements CartItemService {
     private final EntityValidator entityValidator;
 
     @Override
-    public List<ListCartItemResponse> getItemsByCartId(int cartId) {
+    public List<ListCartItemResponse> getItemsByCartId(int cartId, int page, int size) {
         cartService.getById(cartId);
 
-        List<CartItem> cartItems = cartItemRepository.findByCartId(cartId);
+        Pageable pageable = PageRequest.of(page, size);
+        List<CartItem> cartItems = cartItemRepository.findByCartId(cartId, pageable).getContent();
+
 
         return cartItems.stream().map(cartItem -> {
             BigDecimal unitPrice = productVariantService.getUnitPriceByProductVariantId(cartItem.getProductVariant().getId());
@@ -50,10 +54,10 @@ public class CartItemServiceImpl implements CartItemService {
             boolean isInStock = checkStockAvailabilityForCartItem(cartItem);
             cartItem.setInStock(isInStock);
 
-
             return CartItemMapper.INSTANCE.listResponseFromCartItem(cartItem);
         }).collect(Collectors.toList());
     }
+
 
     @Override
     public ListCartItemResponse getById(int id) {
@@ -120,6 +124,11 @@ public class CartItemServiceImpl implements CartItemService {
         cartItems.stream()
                 .filter(cartItem -> cartItem.getCart().getUser().getId() == userId)
                 .forEach(cartItemRepository::delete);
+    }
+
+    @Override
+    public int getTotalCount() {
+        return (int) cartItemRepository.count();
     }
 
     public CartItem findByProductVariantIdAndCartId(int productVariantId, int cartId) {

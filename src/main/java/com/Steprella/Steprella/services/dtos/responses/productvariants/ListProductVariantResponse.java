@@ -23,6 +23,8 @@ public class ListProductVariantResponse extends ListProductResponse {
 
     private String updatedDate;
 
+    private boolean isActive;
+
     private double rating;
 
     private int ratingCount;

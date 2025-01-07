@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface ProductService {
 
-    List<ListProductResponse> getAll();
+    List<ListProductResponse> getAll(int page, int size);
 
     ListProductResponse getById(int id);
 
@@ -19,4 +19,6 @@ public interface ProductService {
     UpdateProductResponse update(UpdateProductRequest request);
 
     void delete(int id);
+
+    int getTotalCount();
 }

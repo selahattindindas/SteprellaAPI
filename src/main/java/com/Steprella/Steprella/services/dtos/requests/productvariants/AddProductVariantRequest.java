@@ -24,4 +24,6 @@ public class AddProductVariantRequest {
     private int productId;
 
     private Date createdDate;
+
+    private boolean isActive;
 }

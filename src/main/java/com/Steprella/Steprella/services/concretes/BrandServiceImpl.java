@@ -12,6 +12,8 @@ import com.Steprella.Steprella.services.dtos.responses.brands.ListBrandResponse;
 import com.Steprella.Steprella.services.dtos.responses.brands.UpdateBrandResponse;
 import com.Steprella.Steprella.services.mappers.BrandMapper;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,16 +26,30 @@ public class BrandServiceImpl implements BrandService {
     private final BrandRepository brandRepository;
 
     @Override
-    public List<ListBrandResponse> getAll() {
-        List<Brand> brands = brandRepository.findAll();
+    public List<ListBrandResponse> getAll(Integer page, Integer size) {
+        List<Brand> brands;
 
-        return brands.stream().map(BrandMapper.INSTANCE::listResponseFromBrand).collect(Collectors.toList());
+        if (page != null && size != null) {
+            Pageable pageable = PageRequest.of(page, size);
+            brands = brandRepository.findAll(pageable).getContent();
+        } else {
+            brands = brandRepository.findAll();
+        }
+
+        return brands.stream()
+                .map(BrandMapper.INSTANCE::listResponseFromBrand)
+                .collect(Collectors.toList());
     }
 
     @Override
     public ListBrandResponse getById(int id) {
         Brand brand = findBrandById(id);
         return BrandMapper.INSTANCE.listResponseFromBrand(brand);
+    }
+
+    @Override
+    public int getTotalCount() {
+        return (int) brandRepository.count();
     }
 
     @Override

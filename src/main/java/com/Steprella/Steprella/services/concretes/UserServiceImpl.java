@@ -9,6 +9,8 @@ import com.Steprella.Steprella.services.abstracts.UserService;
 import com.Steprella.Steprella.services.dtos.responses.users.ListUserResponse;
 import com.Steprella.Steprella.services.mappers.UserMapper;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,9 +26,12 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
-    public List<ListUserResponse> getAll() {
-        List<User> users = userRepository.findAll();
-        return users.stream().map(UserMapper.INSTANCE::listResponseFromUser)
+    public List<ListUserResponse> getAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        List<User> users = userRepository.findAll(pageable).getContent();
+
+        return users.stream()
+                .map(UserMapper.INSTANCE::listResponseFromUser)
                 .collect(Collectors.toList());
     }
 
@@ -73,6 +78,11 @@ public class UserServiceImpl implements UserService {
         } else {
             throw new BusinessException(Messages.Error.CUSTOM_USER_NOT_FOUND);
         }
+    }
+
+    @Override
+    public int getTotalCount() {
+        return (int) userRepository.count();
     }
 
     private User findUserById(int id) {

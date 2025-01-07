@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface CartItemService {
 
-    List<ListCartItemResponse> getItemsByCartId(int cartId);
+    List<ListCartItemResponse> getItemsByCartId(int cartId, int page, int size);
 
     ListCartItemResponse getById(int id);
 
@@ -28,4 +28,6 @@ public interface CartItemService {
     void deleteCartItemsForOrder(int userId, List<Integer> cartItemIds);
 
     List<CartItem> getCartItemsForUser(int userId, List<Integer> cartItemIds);
+
+    int getTotalCount();
 }

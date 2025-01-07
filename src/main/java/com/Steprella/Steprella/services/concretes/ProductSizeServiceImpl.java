@@ -51,10 +51,12 @@ public class ProductSizeServiceImpl implements ProductSizeService {
 
     @Override
     public UpdateProductSizeResponse update(UpdateProductSizeRequest request) {
-        findProductSizeById(request.getId());
+        ProductSize productSize = findProductSizeById(request.getId());
         productVariantService.getById(request.getProductVariantId());
 
         ProductSize updateProductSize = ProductSizeMapper.INSTANCE.productSizeFromUpdateRequest(request);
+        updateProductSize.setSizeValue(productSize.getSizeValue());
+
         ProductSize savedProductSize = productSizeRepository.save(updateProductSize);
 
         return ProductSizeMapper.INSTANCE.updateResponseFromProductSize(savedProductSize);

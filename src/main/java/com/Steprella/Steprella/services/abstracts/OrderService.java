@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface OrderService {
 
-    List<ListOrderResponse> getByUserId(int userId);
+    List<ListOrderResponse> getByUserId(int userId, int page, int size);
 
     ListOrderResponse getById(int id);
 
@@ -22,4 +22,6 @@ public interface OrderService {
     UpdateOrderResponse update(UpdateOrderRequest request);
 
     void delete(int id);
+
+    int getTotalCount();
 }

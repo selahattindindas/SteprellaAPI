@@ -1,5 +1,6 @@
-package com.Steprella.Steprella.controllers;
+package com.Steprella.Steprella.controllers.ui;
 
+import com.Steprella.Steprella.controllers.BaseController;
 import com.Steprella.Steprella.core.utils.messages.Messages;
 import com.Steprella.Steprella.services.abstracts.CityService;
 import com.Steprella.Steprella.services.dtos.responses.BaseResponse;
@@ -16,24 +17,22 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/cities")
 @AllArgsConstructor
-public class CityController extends BaseController{
+@RequestMapping("/api/cities")
+@PreAuthorize("permitAll()")
+public class CityController extends BaseController {
 
     private final CityService cityService;
 
     @GetMapping("/get-all")
-    @PreAuthorize("permitAll()")
     public ResponseEntity<BaseResponse<List<ListCityResponse>>> getAll(){
         List<ListCityResponse> cities = cityService.getAll();
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, cities);
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("permitAll()")
     public ResponseEntity<BaseResponse<ListCityResponse>> getById(@PathVariable int id) {
         ListCityResponse city = cityService.getById(id);
-
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, city);
     }
 }

@@ -17,6 +17,8 @@ import com.Steprella.Steprella.services.dtos.responses.orders.UpdateOrderRespons
 import com.Steprella.Steprella.services.enums.OrderStatus;
 import com.Steprella.Steprella.services.mappers.OrderMapper;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -39,9 +41,11 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Override
-    public List<ListOrderResponse> getByUserId(int userId) {
+    public List<ListOrderResponse> getByUserId(int userId, int page, int size) {
         userService.getResponseById(userId);
-        List<Order> orders = orderRepository.findOrderByUserId(userId);
+
+        Pageable pageable = PageRequest.of(page, size);
+        List<Order> orders = orderRepository.findOrderByUserId(userId, pageable).getContent();
 
         List<OrderItem> allOrderItems = orders.stream()
                 .flatMap(order -> order.getItems().stream())
@@ -122,6 +126,11 @@ public class OrderServiceImpl implements OrderService {
     public void delete(int id) {
         Order order = findOrderById(id);
         orderRepository.delete(order);
+    }
+
+    @Override
+    public int getTotalCount() {
+        return (int) orderRepository.count();
     }
 
     private Order findOrderById(int id){

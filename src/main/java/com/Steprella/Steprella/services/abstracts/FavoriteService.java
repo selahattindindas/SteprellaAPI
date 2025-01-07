@@ -8,9 +8,11 @@ import java.util.List;
 
 public interface FavoriteService {
 
-    List<ListFavoriteResponse> getFavoritesByUserId(int userId);
+    List<ListFavoriteResponse> getFavoritesByUserId(int userId, int page, int size);
 
     AddFavoriteResponse add(AddFavoriteRequest request);
 
     void delete(int id);
+
+    int getTotalCount();
 }

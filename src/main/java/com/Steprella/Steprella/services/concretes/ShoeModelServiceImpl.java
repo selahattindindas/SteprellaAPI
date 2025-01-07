@@ -13,6 +13,8 @@ import com.Steprella.Steprella.services.dtos.responses.shoemodels.ListShoeModelR
 import com.Steprella.Steprella.services.dtos.responses.shoemodels.UpdateShoeModelResponse;
 import com.Steprella.Steprella.services.mappers.ShoeModelMapper;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,17 +28,37 @@ public class ShoeModelServiceImpl implements ShoeModelService {
     private final BrandService brandService;
 
     @Override
-    public List<ListShoeModelResponse> getAll() {
-        List<ShoeModel> shoeModels = shoeModelRepository.findAll();
-        return shoeModels.stream().map(ShoeModelMapper.INSTANCE::listFromShoeModel).collect(Collectors.toList());
+    public List<ListShoeModelResponse> getAll(Integer page, Integer size) {
+        List<ShoeModel> shoeModels;
+
+        if (page != null && size != null) {
+            Pageable pageable = PageRequest.of(page, size);
+            shoeModels = shoeModelRepository.findAll(pageable).getContent();
+        } else {
+            shoeModels = shoeModelRepository.findAll();
+        }
+
+        return shoeModels.stream()
+                .map(ShoeModelMapper.INSTANCE::listFromShoeModel)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<ListShoeModelResponse> getShoeModelsByBrandId(int brandId) {
+    public List<ListShoeModelResponse> getShoeModelsByBrandId(int brandId, Integer page, Integer size) {
         brandService.getById(brandId);
 
-        List<ShoeModel> shoeModels = shoeModelRepository.findShoeModelByBrandId(brandId);
-        return shoeModels.stream().map(ShoeModelMapper.INSTANCE::listFromShoeModel).collect(Collectors.toList());
+        List<ShoeModel> shoeModels;
+
+        if (page != null && size != null) {
+            Pageable pageable = PageRequest.of(page, size);
+            shoeModels = shoeModelRepository.findShoeModelByBrandId(brandId, pageable).getContent();
+        } else {
+            shoeModels = shoeModelRepository.findShoeModelByBrandId(brandId);
+        }
+
+        return shoeModels.stream()
+                .map(ShoeModelMapper.INSTANCE::listFromShoeModel)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -70,6 +92,11 @@ public class ShoeModelServiceImpl implements ShoeModelService {
     public void delete(int id) {
         ShoeModel model = findShoeModelById(id);
         shoeModelRepository.delete(model);
+    }
+
+    @Override
+    public int getTotalCount() {
+        return (int) shoeModelRepository.count();
     }
 
     private ShoeModel findShoeModelById(int id) {

@@ -17,6 +17,8 @@ import com.Steprella.Steprella.services.dtos.responses.products.ListProductRespo
 import com.Steprella.Steprella.services.dtos.responses.products.UpdateProductResponse;
 import com.Steprella.Steprella.services.mappers.ProductMapper;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,10 +35,12 @@ public class ProductServiceImpl implements ProductService {
     private final EntityValidator entityValidator;
 
     @Override
-    public List<ListProductResponse> getAll() {
-        List<Product> products = productRepository.findAll();
+    public List<ListProductResponse> getAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        List<Product> products  = productRepository.findAll(pageable).getContent();
 
-        return products.stream().map(this::createProductResponse)
+        return products.stream()
+                .map(this::createProductResponse)
                 .collect(Collectors.toList());
     }
 
@@ -73,6 +77,11 @@ public class ProductServiceImpl implements ProductService {
     public void delete(int id) {
         Product product = findProductById(id);
         productRepository.delete(product);
+    }
+
+    @Override
+    public int getTotalCount() {
+        return (int) productRepository.count();
     }
 
     private ListProductResponse createProductResponse(Product product) {

@@ -1,5 +1,6 @@
-package com.Steprella.Steprella.controllers;
+package com.Steprella.Steprella.controllers.ui;
 
+import com.Steprella.Steprella.controllers.BaseController;
 import com.Steprella.Steprella.core.utils.messages.Messages;
 import com.Steprella.Steprella.services.abstracts.OrderItemService;
 import com.Steprella.Steprella.services.dtos.responses.BaseResponse;
@@ -16,9 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/order-items")
 @AllArgsConstructor
-public class OrderItemController extends BaseController{
+@RequestMapping("/api/order-items")
+public class OrderItemController extends BaseController {
 
     private OrderItemService orderItemService;
 
@@ -28,5 +29,4 @@ public class OrderItemController extends BaseController{
         List<ListOrderItemResponse> orderItems = orderItemService.getByOrderId(orderId);
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, orderItems);
     }
-
 }

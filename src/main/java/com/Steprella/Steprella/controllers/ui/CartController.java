@@ -1,5 +1,6 @@
-package com.Steprella.Steprella.controllers;
+package com.Steprella.Steprella.controllers.ui;
 
+import com.Steprella.Steprella.controllers.BaseController;
 import com.Steprella.Steprella.core.utils.messages.Messages;
 import com.Steprella.Steprella.services.abstracts.CartService;
 import com.Steprella.Steprella.services.dtos.requests.carts.AddCartRequest;
@@ -17,19 +18,19 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/carts")
 @AllArgsConstructor
-public class CartController extends BaseController{
+public class CartController extends BaseController {
 
     private final CartService cartService;
 
     @GetMapping("/by-user-id/{userId}")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CUSTOMER')")
+    @PreAuthorize("hasRole('ROLE_CUSTOMER')")
     public ResponseEntity<BaseResponse<ListCartResponse>> getCartByUserId(@PathVariable int userId){
         ListCartResponse cart = cartService.getCartByUserId(userId);
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, cart);
     }
 
     @PostMapping("/create-cart")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CUSTOMER')")
+    @PreAuthorize("hasRole('ROLE_CUSTOMER')")
     public ResponseEntity<BaseResponse<AddCartResponse>> add(@RequestBody @Valid AddCartRequest request, BindingResult bindingResult) {
         if (bindingResult.hasErrors())
             return sendResponse(HttpStatus.BAD_REQUEST, Messages.Error.CUSTOM_BAD_REQUEST, null);
@@ -39,7 +40,7 @@ public class CartController extends BaseController{
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CUSTOMER')")
+    @PreAuthorize("hasRole('ROLE_CUSTOMER')")
     public ResponseEntity<BaseResponse<Void>>delete(@PathVariable int id) {
         cartService.delete(id);
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, null);

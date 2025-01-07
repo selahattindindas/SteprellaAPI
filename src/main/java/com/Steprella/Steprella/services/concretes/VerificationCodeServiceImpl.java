@@ -39,6 +39,7 @@ public class VerificationCodeServiceImpl implements VerificationCodeService {
     public void sendVerificationCode(String email) {
         String code = generateCode();
         String subject = Messages.Info.VERIFICATION_CODE_TITLE;
+
         String body = emailTemplateBuilder.buildVerificationEmailTemplate(code);
 
         sendHtmlEmail(email, subject, body);
@@ -50,17 +51,21 @@ public class VerificationCodeServiceImpl implements VerificationCodeService {
     public boolean isValidCode(String email, String inputCode) {
         VerificationCodeResponse storedCode = verificationCodes.get(email);
 
-        if (storedCode == null || isCodeExpired(storedCode)) {
-            verificationCodes.remove(email);
+        if (storedCode == null) {
             return false;
         }
 
-        if (storedCode.getCode().equals(inputCode)) {
+        if (isCodeExpired(storedCode)) {
             verificationCodes.remove(email);
-            return true;
+            throw new BusinessException(Messages.Error.INVALID_VERIFICATION_CODE);
         }
 
-        return false;
+        if (!storedCode.getCode().equals(inputCode)) {
+            throw new BusinessException(Messages.Error.VERIFICATION_CODE_INVALID);
+        }
+
+        verificationCodes.remove(email);
+        return true;
     }
 
     @Override

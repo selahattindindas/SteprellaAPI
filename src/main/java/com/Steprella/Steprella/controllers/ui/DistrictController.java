@@ -1,5 +1,6 @@
-package com.Steprella.Steprella.controllers;
+package com.Steprella.Steprella.controllers.ui;
 
+import com.Steprella.Steprella.controllers.BaseController;
 import com.Steprella.Steprella.core.utils.messages.Messages;
 import com.Steprella.Steprella.services.abstracts.DistrictService;
 import com.Steprella.Steprella.services.dtos.responses.BaseResponse;
@@ -16,14 +17,14 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/districts")
 @AllArgsConstructor
-public class DistrictController extends BaseController{
+@RequestMapping("/api/districts")
+@PreAuthorize("permitAll()")
+public class DistrictController extends BaseController {
 
     private final DistrictService districtService;
 
     @GetMapping("/by-city-id/{cityId}")
-    @PreAuthorize("permitAll()")
     public ResponseEntity<BaseResponse<List<ListDistrictResponse>>> getResponseByCityId(@PathVariable int cityId) {
         List<ListDistrictResponse> districts = districtService.getDistrictsByCityId(cityId);
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, districts);

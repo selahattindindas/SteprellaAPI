@@ -32,6 +32,9 @@ public class ProductVariant extends AuditEntity {
     @Column(name = "rating_count", nullable = false)
     private int ratingCount = 0;
 
+    @Column(name = "active", nullable = false)
+    private boolean isActive;
+
     @OneToMany(mappedBy = "productVariant", cascade = CascadeType.ALL)
     private List<ProductSize> productSizes = new ArrayList<>();
 

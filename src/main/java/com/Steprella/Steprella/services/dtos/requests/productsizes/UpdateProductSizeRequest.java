@@ -23,9 +23,5 @@ public class UpdateProductSizeRequest {
 
     @NotNull
     @Min(1)
-    private int sizeValue;
-
-    @NotNull
-    @Min(1)
     private int stockQuantity;
 }

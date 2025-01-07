@@ -18,4 +18,6 @@ public class UpdateProductVariantResponse {
     private int productId;
 
     private String updatedDate;
+
+    private boolean isActive;
 }

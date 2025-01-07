@@ -21,11 +21,9 @@ public class UpdateProductVariantRequest {
 
     @NotNull
     @Min(1)
-    private int colorId;
-
-    @NotNull
-    @Min(1)
     private int productId;
 
     private Date updatedDate;
+
+    private boolean isActive;
 }

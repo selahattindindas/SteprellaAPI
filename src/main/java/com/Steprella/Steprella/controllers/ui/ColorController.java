@@ -1,5 +1,6 @@
-package com.Steprella.Steprella.controllers;
+package com.Steprella.Steprella.controllers.ui;
 
+import com.Steprella.Steprella.controllers.BaseController;
 import com.Steprella.Steprella.core.utils.messages.Messages;
 import com.Steprella.Steprella.services.abstracts.ColorService;
 import com.Steprella.Steprella.services.dtos.responses.BaseResponse;
@@ -15,14 +16,14 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/colors")
 @AllArgsConstructor
-public class ColorController extends BaseController{
+@RequestMapping("/api/colors")
+@PreAuthorize("permitAll()")
+public class ColorController extends BaseController {
 
     private final ColorService colorService;
 
     @GetMapping("/get-all")
-    @PreAuthorize("permitAll()")
     public ResponseEntity<BaseResponse<List<ListColorResponse>>> getAll(){
         List<ListColorResponse> colors = colorService.getAll();
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, colors);

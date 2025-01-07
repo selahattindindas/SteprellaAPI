@@ -15,7 +15,7 @@ public class WebSecurityConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/images/**")
+        registry.addResourceHandler("/wwroot/**")
                 .addResourceLocations("file:" + fileDir + "/");
     }
 }

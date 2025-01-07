@@ -18,6 +18,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,9 +35,11 @@ public class FavoriteServiceImpl implements FavoriteService {
 
     @Override
     @Cacheable(value="favorites", key="#userId")
-    public List<ListFavoriteResponse> getFavoritesByUserId(int userId) {
+    public List<ListFavoriteResponse> getFavoritesByUserId(int userId, int page, int size) {
         userService.getResponseById(userId);
-        List<Favorite> favorites = favoriteRepository.findByUserId(userId);
+
+        Pageable pageable = PageRequest.of(page, size);
+        List<Favorite> favorites = favoriteRepository.findByUserId(userId, pageable).getContent();
 
         return favorites.stream()
                 .map(favorite -> {
@@ -73,6 +77,11 @@ public class FavoriteServiceImpl implements FavoriteService {
         Favorite favorite = favoriteRepository.findById(id).
                 orElseThrow(() -> new NotFoundException(Messages.Error.CUSTOM_PRODUCT_NOT_FOUND));
         favoriteRepository.delete(favorite);
+    }
+
+    @Override
+    public int getTotalCount() {
+        return (int) favoriteRepository.count();
     }
 
     private void validateFavoriteDependencies(int productVariantId, int userId) {

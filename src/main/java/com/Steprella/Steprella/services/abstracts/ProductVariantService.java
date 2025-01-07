@@ -15,15 +15,21 @@ public interface ProductVariantService {
 
     ListProductVariantResponse getById(int id);
 
+    List<ListProductVariantResponse> getActiveProductVariants(int page, int size);
+
     AddProductVariantResponse add(AddProductVariantRequest request);
 
     UpdateProductVariantResponse update(UpdateProductVariantRequest request);
 
-    List<ListProductVariantResponse> filterProducts(Integer brandId, Integer colorId, Integer categoryId, Integer sizeValue);
+    List<ListProductVariantResponse> filterProducts(Integer brandId, Integer colorId, Integer categoryId, Integer sizeValue, int page, int size);
 
-    List<ListProductVariantResponse> searchProductVariants(String searchTerm);
+    List<ListProductVariantResponse> searchProductVariants(String searchTerm, int page, int size);
 
     void delete(int id);
 
+    List<ListProductVariantResponse> getByProductId(int productId);
+
     BigDecimal getUnitPriceByProductVariantId(int productVariantId);
+
+    int getTotalCount();
 }

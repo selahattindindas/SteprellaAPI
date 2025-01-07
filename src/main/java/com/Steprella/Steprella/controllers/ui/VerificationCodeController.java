@@ -1,40 +1,46 @@
-package com.Steprella.Steprella.controllers;
+package com.Steprella.Steprella.controllers.ui;
 
+import com.Steprella.Steprella.controllers.BaseController;
 import com.Steprella.Steprella.core.utils.messages.Messages;
 import com.Steprella.Steprella.services.abstracts.UserService;
 import com.Steprella.Steprella.services.abstracts.VerificationCodeService;
 import com.Steprella.Steprella.services.dtos.responses.BaseResponse;
-import jakarta.servlet.http.HttpSession;
-import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/verification-codes")
 @AllArgsConstructor
+@RequestMapping("/api/verification-codes")
+@PreAuthorize("permitAll()")
 public class VerificationCodeController extends BaseController {
 
     private final VerificationCodeService verificationCodeService;
     private final UserService userService;
 
     @PostMapping("/send-code")
-    public ResponseEntity<BaseResponse<String>> sendVerificationCode(@RequestParam @Email String email) {
+    public ResponseEntity<BaseResponse<String>> sendVerificationCode(@RequestParam String email) {
         verificationCodeService.sendVerificationCode(email);
         return sendResponse(HttpStatus.OK, Messages.Info.VERIFICATION_CODE_SENT, null);
     }
 
     @PostMapping("/verify-code")
     public ResponseEntity<BaseResponse<String>> verifyCode(
-            @RequestParam @Email String email, @RequestParam String code, HttpSession session) {
-        boolean valid = verificationCodeService.isValidCode(email, code);
-        if (valid) {
-            session.setAttribute("isVerified", true);
+            @RequestParam String code,
+            @RequestParam String email) {
+        if (verificationCodeService.isValidCode(email, code)) {
+            userService.setVerified(email);
             return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, null);
-        } else {
-            return sendResponse(HttpStatus.UNAUTHORIZED, Messages.Error.VERIFICATION_CODE_INVALID, null);
         }
+        return sendResponse(HttpStatus.BAD_REQUEST, Messages.Error.INVALID_VERIFICATION_CODE, null);
+    }
+
+    @PostMapping("/resend-code")
+    public ResponseEntity<BaseResponse<String>> resendCode(@RequestParam String email) {
+        verificationCodeService.sendVerificationCode(email);
+        return sendResponse(HttpStatus.OK, Messages.Info.VERIFICATION_CODE_SENT, null);
     }
 
     @GetMapping("/verify")

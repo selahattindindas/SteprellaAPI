@@ -1,5 +1,6 @@
 package com.Steprella.Steprella.services.dtos.responses;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,5 +16,8 @@ public class BaseResponse<T> {
 
     private String statusMessage;
 
-    private T result;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Integer totalCount;
+
+    private T data;
 }

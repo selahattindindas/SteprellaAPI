@@ -6,10 +6,11 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-
 
 import java.security.Key;
 import java.util.Date;
@@ -38,22 +39,27 @@ public class JwtService {
         return claimsResolver.apply(claims);
     }
 
-    public String generateAccessToken(UserDetails userDetails, String fullName, Role role, String phone) {
+    public String generateAccessToken(UserDetails userDetails, String fullName, Role role, String phone, HttpServletResponse response) {
         Map<String, Object> extraClaims = new HashMap<>();
         extraClaims.put("fullName", fullName);
-        extraClaims.put("role", role);
+        extraClaims.put("role", role.toString());
         extraClaims.put("phone", phone);
+        extraClaims.put("isVerified", true);
 
-        return generateToken(extraClaims, userDetails, jwtExpiration);
+        String token = generateToken(extraClaims, userDetails, jwtExpiration);
+        addTokenToCookie(response, token, "accessToken", jwtExpiration);
+        return token;
     }
 
-    public String generateRefreshToken(UserDetails userDetails, String fullName, Role role, String phone) {
+    public String generateRefreshToken(UserDetails userDetails, String fullName, Role role, String phone, HttpServletResponse response) {
         Map<String, Object> extraClaims = new HashMap<>();
         extraClaims.put("fullName", fullName);
-        extraClaims.put("role", role);
+        extraClaims.put("role", role.toString());
         extraClaims.put("phone", phone);
 
-        return generateToken(extraClaims, userDetails, refreshTokenExpirationTime);
+        String token = generateToken(extraClaims, userDetails, refreshTokenExpirationTime);
+        addTokenToCookie(response, token, "refreshToken", refreshTokenExpirationTime);
+        return token;
     }
 
     private String generateToken(Map<String, Object> extraClaims, UserDetails userDetails, long expirationTime) {
@@ -64,11 +70,7 @@ public class JwtService {
         return jwtExpiration;
     }
 
-    private String buildToken(
-            Map<String, Object> extraClaims,
-            UserDetails userDetails,
-            long expiration
-    ) {
+    private String buildToken(Map<String, Object> extraClaims, UserDetails userDetails, long expiration) {
         return Jwts
                 .builder()
                 .setClaims(extraClaims)
@@ -104,5 +106,20 @@ public class JwtService {
     private Key getSignInKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
+    }
+
+    private void addTokenToCookie(HttpServletResponse response, String token, String cookieName, long expiration) {
+        Cookie cookie = new Cookie(cookieName, token);
+        cookie.setHttpOnly(false);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        cookie.setDomain("localhost");
+        cookie.setMaxAge((int) (expiration / 1000));
+        
+        response.addCookie(cookie);
+        response.setHeader("Access-Control-Allow-Credentials", "true");
+        response.setHeader("Access-Control-Expose-Headers", "Set-Cookie");
+        
+        System.out.println("Setting cookie: " + cookieName + " = " + token);
     }
 }

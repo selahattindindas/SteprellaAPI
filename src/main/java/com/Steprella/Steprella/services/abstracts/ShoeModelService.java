@@ -10,9 +10,9 @@ import java.util.List;
 
 public interface ShoeModelService {
 
-    List<ListShoeModelResponse> getAll();
+    List<ListShoeModelResponse> getAll(Integer page, Integer size);
 
-    List<ListShoeModelResponse> getShoeModelsByBrandId(int brandId);
+    List<ListShoeModelResponse> getShoeModelsByBrandId(int brandId, Integer page, Integer size);
 
     ListShoeModelResponse getById(int id);
 
@@ -21,4 +21,6 @@ public interface ShoeModelService {
     UpdateShoeModelResponse update(UpdateShoeModelRequest request);
 
     void delete(int id);
+
+    int getTotalCount();
 }

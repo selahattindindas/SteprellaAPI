@@ -10,9 +10,11 @@ import java.util.List;
 
 public interface BrandService {
 
-    List<ListBrandResponse> getAll();
+    List<ListBrandResponse> getAll(Integer page, Integer size);
 
     ListBrandResponse getById(int id);
+
+    int getTotalCount();
 
     AddBrandResponse add(AddBrandRequest request);
 
