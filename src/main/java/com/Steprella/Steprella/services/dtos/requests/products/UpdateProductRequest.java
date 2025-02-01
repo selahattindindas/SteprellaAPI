@@ -11,6 +11,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -40,6 +41,18 @@ public class UpdateProductRequest {
     @NotNull
     @Min(1)
     private int shoeModelId;
+
+    @NotNull
+    @Min(1)
+    private int materialId;
+
+    @NotNull
+    @Min(1)
+    private int usageAreaId;
+
+    @NotNull
+    @Min(1)
+    private List<Integer> featuresId;
 
     private Date updatedDate;
 }

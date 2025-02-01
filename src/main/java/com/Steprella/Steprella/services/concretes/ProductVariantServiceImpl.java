@@ -71,7 +71,19 @@ public class ProductVariantServiceImpl implements ProductVariantService {
     }
 
     @Override
-    public List<ListProductVariantResponse> filterProducts(Integer brandId, Integer colorId, Integer categoryId, Integer sizeValue, int page, int size) {
+    public List<ListProductVariantResponse> filterProducts(
+            Integer brandId, 
+            Integer colorId, 
+            Integer categoryId, 
+            Integer sizeValue,
+            BigDecimal minPrice,
+            BigDecimal maxPrice,
+            Integer materialId,
+            Integer usageAreaId,
+            List<Integer> featureIds,
+            int page, 
+            int size) {
+        
         List<ProductVariant> filteredProductVariants = productVariantRepository.findAll();
 
         if (brandId != null) {
@@ -90,8 +102,12 @@ public class ProductVariantServiceImpl implements ProductVariantService {
 
         if (categoryId != null) {
             filteredProductVariants = filteredProductVariants.stream()
-                    .filter(productVariant -> productVariant.getProduct().getCategory() != null
-                            && isCategoryOrChild(productVariant.getProduct().getCategory(), categoryId))
+                    .filter(productVariant -> {
+                        Category productCategory = productVariant.getProduct().getCategory();
+                        return productCategory != null && 
+                               (isCategoryOrDescendant(productCategory, categoryId) || 
+                                isCategoryOrAncestor(productCategory, categoryId));
+                    })
                     .collect(Collectors.toList());
         }
 
@@ -100,6 +116,42 @@ public class ProductVariantServiceImpl implements ProductVariantService {
                     .filter(productVariant -> productVariant.getProductSizes().stream()
                             .anyMatch(productSize -> Integer.valueOf(productSize.getSizeValue()).equals(sizeValue)
                                     && productSize.isActive()))
+                    .collect(Collectors.toList());
+        }
+
+        // Price range filter
+        if (minPrice != null || maxPrice != null) {
+            filteredProductVariants = filteredProductVariants.stream()
+                    .filter(productVariant -> {
+                        BigDecimal price = productVariant.getProduct().getPrice();
+                        return (minPrice == null || price.compareTo(minPrice) >= 0) &&
+                               (maxPrice == null || price.compareTo(maxPrice) <= 0);
+                    })
+                    .collect(Collectors.toList());
+        }
+
+        // Material filter
+        if (materialId != null) {
+            filteredProductVariants = filteredProductVariants.stream()
+                    .filter(productVariant -> productVariant.getProduct().getMaterial() != null
+                            && Integer.valueOf(productVariant.getProduct().getMaterial().getId()).equals(materialId))
+                    .collect(Collectors.toList());
+        }
+
+        // Usage Area filter
+        if (usageAreaId != null) {
+            filteredProductVariants = filteredProductVariants.stream()
+                    .filter(productVariant -> productVariant.getProduct().getUsageArea() != null
+                            && Integer.valueOf(productVariant.getProduct().getUsageArea().getId()).equals(usageAreaId))
+                    .collect(Collectors.toList());
+        }
+
+        // Features filter
+        if (featureIds != null && !featureIds.isEmpty()) {
+            filteredProductVariants = filteredProductVariants.stream()
+                    .filter(productVariant -> productVariant.getProduct().getFeatures() != null
+                            && productVariant.getProduct().getFeatures().stream()
+                                    .anyMatch(feature -> featureIds.contains(feature.getId())))
                     .collect(Collectors.toList());
         }
 
@@ -209,18 +261,40 @@ public class ProductVariantServiceImpl implements ProductVariantService {
         colorService.getById(colorId);
     }
 
-    private boolean isCategoryOrChild(Category category, Integer categoryId) {
-        if (Integer.valueOf(category.getId()).equals(categoryId)) {
+    private boolean isCategoryOrDescendant(Category category, Integer searchCategoryId) {
+        if (category == null) return false;
+        
+        // Kendisi mi?
+        if (Integer.valueOf(category.getId()).equals(searchCategoryId)) {
             return true;
         }
 
+        // Alt kategorilerde ara
+        if (category.getChildren() != null) {
+            return category.getChildren().stream()
+                    .anyMatch(child -> isCategoryOrDescendant(child, searchCategoryId));
+        }
+
+        return false;
+    }
+
+    private boolean isCategoryOrAncestor(Category category, Integer searchCategoryId) {
+        if (category == null) return false;
+
+        // Kendisi mi?
+        if (Integer.valueOf(category.getId()).equals(searchCategoryId)) {
+            return true;
+        }
+
+        // Üst kategorilerde ara
         Category parent = category.getParent();
         while (parent != null) {
-            if (Integer.valueOf(parent.getId()).equals(categoryId)) {
+            if (Integer.valueOf(parent.getId()).equals(searchCategoryId)) {
                 return true;
             }
             parent = parent.getParent();
         }
+
         return false;
     }
 

@@ -32,6 +32,9 @@ public interface ProductVariantMapper {
     @Mapping(target = "description", source = "product.description")
     @Mapping(target = "brandName", source = "product.brand.name")
     @Mapping(target = "shoeModelName", source = "product.shoeModel.modelName")
+    @Mapping(target = "materialName", source = "product.material.name")
+    @Mapping(target = "usageAreaName", source = "product.usageArea.name")
+    @Mapping(target = "features", source = "product.features")
     @Mapping(target = "productComments", expression = "java(mapComments(productVariant.getComments()))")
     @Mapping(target = "category", expression = "java(getCategoryHierarchy(productVariant.getProduct().getCategory()))")
     ListProductVariantResponse listResponseFromProductVariant(ProductVariant productVariant);

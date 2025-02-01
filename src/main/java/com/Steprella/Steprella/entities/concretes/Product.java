@@ -22,7 +22,7 @@ public class Product extends AuditEntity {
     @Column(name = "price", nullable = false)
     private BigDecimal price;
 
-    @Column(name="description")
+    @Column(name="description", nullable = false)
     private String description;
 
     @ManyToOne
@@ -32,6 +32,22 @@ public class Product extends AuditEntity {
     @ManyToOne
     @JoinColumn(name="brand_id", nullable = false)
     private Brand brand;
+
+    @ManyToMany
+    @JoinTable(
+            name = "product_features",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "feature_id")
+    )
+    private List<Feature> features = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name="material_id", nullable = false)
+    private Material material;
+
+    @ManyToOne
+    @JoinColumn(name="usage_area_id", nullable = false)
+    private UsageArea usageArea;
 
     @ManyToOne
     @JoinColumn(name="shoe_model_id", nullable = false)

@@ -13,6 +13,9 @@ public class Messages {
         public static final String INVALID_DISTRICT_CITY_RELATION = "Bu şehire bağlı böyle bir ilçe yok";
         public static final String ADDRESS_NOT_BELONG_TO_USER = "Bu kullanıcının böyle bir adresi bulunmamaktadır.";
         public static final String CUSTOM_BRAND_NOT_FOUND = "Böyle bir ayakkabı markası bulunamadı.";
+        public static final String CUSTOM_FEATURE_NOT_FOUND = "Böyle bir ek özellik bulunamadı.";
+        public static final String CUSTOM_MATERIAL_NOT_FOUND = "Böyle bir materyal bulunamadı.";
+        public static final String CUSTOM_USAGE_AREA_NOT_FOUND = "Böyle bir kullanım alanı bulunamadı.";
         public static final String CUSTOM_CART_ITEMS_NOT_FOUND = "Belirtilen sepet öğeleri bulunamadı veya kullanıcıya ait değil.";
         public static final String CUSTOM_PRODUCT_ALREADY_IN_CART = "Bu ürün zaten sepetinizde mevcut.";
         public static final String CUSTOM_COMMENT_NOT_FOUND = "Böyle bir yorum bulunamadı.";

@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Getter
 @Setter
@@ -17,11 +18,19 @@ public class AddProductResponse {
 
     private BigDecimal price;
 
+    private String description;
+
     private int categoryId;
 
     private int brandId;
 
     private int shoeModelId;
+
+    private int materialId;
+
+    private int usageAreaId;
+
+    private List<Integer> featuresId;
 
     private String createdDate;
 }

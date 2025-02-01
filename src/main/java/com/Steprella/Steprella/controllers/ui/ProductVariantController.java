@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -50,10 +51,18 @@ public class ProductVariantController extends BaseController {
             @RequestParam(required = false) Integer colorId,
             @RequestParam(required = false) Integer categoryId,
             @RequestParam(required = false) Integer sizeValue,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice,
+            @RequestParam(required = false) Integer materialId,
+            @RequestParam(required = false) Integer usageAreaId,
+            @RequestParam(required = false) List<Integer> featureIds,
             @RequestParam int page,
             @RequestParam int size) {
 
-        List<ListProductVariantResponse> filteredProducts = productVariantService.filterProducts(brandId, colorId, categoryId, sizeValue, page, size);
+        List<ListProductVariantResponse> filteredProducts = productVariantService.filterProducts(
+                brandId, colorId, categoryId, sizeValue,
+                minPrice, maxPrice, materialId, usageAreaId, featureIds,
+                page, size);
         int totalCount = productVariantService.getTotalCount();
 
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, filteredProducts, totalCount);

@@ -21,7 +21,17 @@ public interface ProductVariantService {
 
     UpdateProductVariantResponse update(UpdateProductVariantRequest request);
 
-    List<ListProductVariantResponse> filterProducts(Integer brandId, Integer colorId, Integer categoryId, Integer sizeValue, int page, int size);
+    List<ListProductVariantResponse> filterProducts(Integer brandId,
+                                                    Integer colorId,
+                                                    Integer categoryId,
+                                                    Integer sizeValue,
+                                                    BigDecimal minPrice,
+                                                    BigDecimal maxPrice,
+                                                    Integer materialId,
+                                                    Integer usageAreaId,
+                                                    List<Integer> featureIds,
+                                                    int page,
+                                                    int size);
 
     List<ListProductVariantResponse> searchProductVariants(String searchTerm, int page, int size);
 

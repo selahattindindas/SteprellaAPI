@@ -26,7 +26,6 @@ public class OrderController extends BaseController {
     private OrderService orderService;
 
     @GetMapping("/by-user-id/{userId}")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CUSTOMER')")
     public ResponseEntity<BaseResponse<List<ListOrderResponse>>> getByUserId(
             @PathVariable int userId,
             @RequestParam int page,
