@@ -1,7 +1,9 @@
 package com.Steprella.Steprella.services.dtos.responses.products;
 
 import com.Steprella.Steprella.services.dtos.responses.categories.ListCategoryResponse;
+import com.Steprella.Steprella.services.dtos.responses.comments.ListCommentResponse;
 import com.Steprella.Steprella.services.dtos.responses.features.ListFeatureResponse;
+import com.Steprella.Steprella.services.dtos.responses.productvariants.ListProductVariantDetailResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,6 +22,10 @@ public class ListProductResponse {
 
     private BigDecimal price;
 
+    private double rating;
+
+    private int ratingCount;
+
     private String description;
 
     private String brandName;
@@ -34,7 +40,11 @@ public class ListProductResponse {
 
     private String usageAreaName;
 
+    private ListCategoryResponse category;
+
+    private List<ListCommentResponse> productComments;
+
     private List<ListFeatureResponse> features;
 
-    private ListCategoryResponse category;
+    private List<ListProductVariantDetailResponse> productVariants;
 }

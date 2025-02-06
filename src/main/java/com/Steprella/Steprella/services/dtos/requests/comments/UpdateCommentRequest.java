@@ -26,7 +26,7 @@ public class UpdateCommentRequest {
 
     @NotNull
     @Min(1)
-    private int productVariantId;
+    private int productId;
 
     @NotNull
     @Min(1)

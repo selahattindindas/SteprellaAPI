@@ -27,15 +27,15 @@ public interface ProductVariantMapper {
     @Mapping(target = "productFiles", source = "productFiles")
     @Mapping(target = "colorName", source = "color.name")
     @Mapping(target = "price", source = "product.price")
-    @Mapping(target = "rating", source = "rating")
-    @Mapping(target = "ratingCount", source = "ratingCount")
+    @Mapping(target = "rating", source = "product.rating")
+    @Mapping(target = "ratingCount", source = "product.ratingCount")
     @Mapping(target = "description", source = "product.description")
     @Mapping(target = "brandName", source = "product.brand.name")
     @Mapping(target = "shoeModelName", source = "product.shoeModel.modelName")
     @Mapping(target = "materialName", source = "product.material.name")
     @Mapping(target = "usageAreaName", source = "product.usageArea.name")
     @Mapping(target = "features", source = "product.features")
-    @Mapping(target = "productComments", expression = "java(mapComments(productVariant.getComments()))")
+    @Mapping(target = "productComments", expression = "java(mapComments(productVariant.getProduct().getComments()))")
     @Mapping(target = "category", expression = "java(getCategoryHierarchy(productVariant.getProduct().getCategory()))")
     ListProductVariantResponse listResponseFromProductVariant(ProductVariant productVariant);
 

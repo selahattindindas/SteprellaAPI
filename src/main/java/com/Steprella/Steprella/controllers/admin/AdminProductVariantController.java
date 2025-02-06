@@ -7,7 +7,6 @@ import com.Steprella.Steprella.services.dtos.requests.productvariants.AddProduct
 import com.Steprella.Steprella.services.dtos.requests.productvariants.UpdateProductVariantRequest;
 import com.Steprella.Steprella.services.dtos.responses.BaseResponse;
 import com.Steprella.Steprella.services.dtos.responses.productvariants.AddProductVariantResponse;
-import com.Steprella.Steprella.services.dtos.responses.productvariants.ListProductVariantResponse;
 import com.Steprella.Steprella.services.dtos.responses.productvariants.UpdateProductVariantResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -17,8 +16,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/admin-product-variants")
@@ -26,13 +23,6 @@ import java.util.List;
 public class AdminProductVariantController extends BaseController {
 
     private final ProductVariantService productVariantService;
-
-    @GetMapping("/get-all")
-    public ResponseEntity<BaseResponse<List<ListProductVariantResponse>>> getAll() {
-        List<ListProductVariantResponse> products = productVariantService.getAll();
-
-        return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, products);
-    }
 
     @PostMapping("/create-product-variant")
     public ResponseEntity<BaseResponse<AddProductVariantResponse>> add(@RequestBody @Valid AddProductVariantRequest request, BindingResult bindingResult) {

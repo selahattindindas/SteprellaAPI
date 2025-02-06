@@ -19,6 +19,12 @@ import java.util.List;
 @Table(name = "products")
 public class Product extends AuditEntity {
 
+    @Column(name = "rating", nullable = false)
+    private double rating = 0.0;
+
+    @Column(name = "rating_count", nullable = false)
+    private int ratingCount = 0;
+
     @Column(name = "price", nullable = false)
     private BigDecimal price;
 
@@ -55,4 +61,7 @@ public class Product extends AuditEntity {
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<ProductVariant> productVariants = new ArrayList<>();
+
+    @OneToMany(mappedBy= "product", cascade = CascadeType.ALL)
+    private List<Comment> comments = new ArrayList<>();
 }

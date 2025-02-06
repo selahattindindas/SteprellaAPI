@@ -5,7 +5,7 @@ import com.Steprella.Steprella.core.utils.messages.Messages;
 import com.Steprella.Steprella.entities.concretes.Comment;
 import com.Steprella.Steprella.repositories.CommentRepository;
 import com.Steprella.Steprella.services.abstracts.CommentService;
-import com.Steprella.Steprella.services.abstracts.ProductVariantService;
+import com.Steprella.Steprella.services.abstracts.ProductService;
 import com.Steprella.Steprella.services.abstracts.UserService;
 import com.Steprella.Steprella.services.dtos.requests.comments.AddCommentRequest;
 import com.Steprella.Steprella.services.dtos.requests.comments.UpdateCommentRequest;
@@ -25,13 +25,13 @@ public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
     private final UserService userService;
-    private final ProductVariantService productVariantService;
+    private final ProductService productService;
 
     @Override
-    public List<ListCommentResponse> getCommentsByProductVariantId(int productVariantId) {
-        productVariantService.getById(productVariantId);
+    public List<ListCommentResponse> getCommentsByProductId(int productId) {
+        productService.getById(productId);
 
-        List<Comment> comments = commentRepository.findByProductVariantId(productVariantId);
+        List<Comment> comments = commentRepository.findByProductId(productId);
         return comments.stream().map(CommentMapper.INSTANCE::listResponseFromComment).collect(Collectors.toList());
     }
 
@@ -43,7 +43,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public AddCommentResponse add(AddCommentRequest request) {
-        validateCommentDependencies(request.getProductVariantId(), request.getUserId());
+        validateCommentDependencies(request.getProductId(), request.getUserId());
 
         Comment addComment = CommentMapper.INSTANCE.commentFromAddRequest(request);
         Comment savedComment = commentRepository.save(addComment);
@@ -54,7 +54,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public UpdateCommentResponse update(UpdateCommentRequest request) {
         findCommentById(request.getId());
-        validateCommentDependencies(request.getProductVariantId(), request.getUserId());
+        validateCommentDependencies(request.getProductId(), request.getUserId());
 
         Comment updateComment = CommentMapper.INSTANCE.commentFromUpdateRequest(request);
         Comment savedComment = commentRepository.save(updateComment);
@@ -74,7 +74,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     private void validateCommentDependencies(int productVariantId, int userId) {
-        productVariantService.getById(productVariantId);
+        productService.getById(productVariantId);
         userService.getResponseById(userId);
     }
 }

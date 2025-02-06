@@ -26,10 +26,10 @@ public class CommentController extends BaseController {
 
     private final CommentService commentService;
 
-    @GetMapping("/by-product-id/{productVariantId}")
+    @GetMapping("/by-product-id/{productId}")
     @PreAuthorize("permitAll()")
-    public ResponseEntity<BaseResponse<List<ListCommentResponse>>> getCommentByProductVariantId(@PathVariable int productVariantId){
-        List<ListCommentResponse> comments = commentService.getCommentsByProductVariantId(productVariantId);
+    public ResponseEntity<BaseResponse<List<ListCommentResponse>>> getCommentByProductId(@PathVariable int productId){
+        List<ListCommentResponse> comments = commentService.getCommentsByProductId(productId);
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, comments);
     }
 

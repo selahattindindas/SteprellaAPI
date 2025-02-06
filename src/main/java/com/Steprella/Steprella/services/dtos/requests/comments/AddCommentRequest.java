@@ -22,7 +22,7 @@ public class AddCommentRequest {
 
     @NotNull
     @Min(1)
-    private int productVariantId;
+    private int productId;
 
     @NotNull
     @Min(1)

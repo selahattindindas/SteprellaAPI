@@ -1,7 +1,6 @@
 package com.Steprella.Steprella.services.dtos.responses.productvariants;
 
 import com.Steprella.Steprella.services.dtos.responses.files.ListFileResponse;
-import com.Steprella.Steprella.services.dtos.responses.products.ListProductResponse;
 import com.Steprella.Steprella.services.dtos.responses.productsizes.ListProductSizeResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,7 +13,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ListProductVariantResponse extends ListProductResponse {
+public class ListProductVariantDetailResponse {
 
     private int id;
 

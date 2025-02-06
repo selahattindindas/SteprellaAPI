@@ -1,5 +1,6 @@
 package com.Steprella.Steprella.services.abstracts;
 
+import com.Steprella.Steprella.services.dtos.requests.products.ProductSearchCriteria;
 import com.Steprella.Steprella.services.dtos.requests.productvariants.AddProductVariantRequest;
 import com.Steprella.Steprella.services.dtos.requests.productvariants.UpdateProductVariantRequest;
 import com.Steprella.Steprella.services.dtos.responses.productvariants.AddProductVariantResponse;
@@ -11,35 +12,24 @@ import java.util.List;
 
 public interface ProductVariantService {
 
-    List<ListProductVariantResponse> getAll();
+    List<ListProductVariantResponse> getRandomVariants(int count);
 
     ListProductVariantResponse getById(int id);
-
-    List<ListProductVariantResponse> getActiveProductVariants(int page, int size);
 
     AddProductVariantResponse add(AddProductVariantRequest request);
 
     UpdateProductVariantResponse update(UpdateProductVariantRequest request);
 
-    List<ListProductVariantResponse> filterProducts(Integer brandId,
-                                                    Integer colorId,
-                                                    Integer categoryId,
-                                                    Integer sizeValue,
-                                                    BigDecimal minPrice,
-                                                    BigDecimal maxPrice,
-                                                    Integer materialId,
-                                                    Integer usageAreaId,
-                                                    List<Integer> featureIds,
-                                                    int page,
-                                                    int size);
-
-    List<ListProductVariantResponse> searchProductVariants(String searchTerm, int page, int size);
-
-    void delete(int id);
+    List<ListProductVariantResponse> search(ProductSearchCriteria criteria);
 
     List<ListProductVariantResponse> getByProductId(int productId);
 
     BigDecimal getUnitPriceByProductVariantId(int productVariantId);
 
+    void delete(int id);
+
     int getTotalCount();
+
+    int getTotalCount(ProductSearchCriteria criteria);
 }
+

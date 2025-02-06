@@ -16,8 +16,8 @@ import lombok.Setter;
 public class Comment extends AuditEntity {
 
     @ManyToOne
-    @JoinColumn(name = "product_variant_id")
-    private ProductVariant productVariant;
+    @JoinColumn(name = "product_id")
+    private Product product;
 
     @Column(name="comment_text")
     private String commentText;

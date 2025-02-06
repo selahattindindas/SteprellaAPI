@@ -21,25 +21,25 @@ public interface CommentMapper {
     ListCommentResponse listResponseFromComment(Comment comment);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "productVariant.id", source = "productVariantId")
+    @Mapping(target = "product.id", source = "productId")
     @Mapping(target = "user.id", source = "userId")
     @Mapping(target = "createdDate", ignore = true)
     @Mapping(target = "updatedDate", ignore = true)
     Comment commentFromAddRequest(AddCommentRequest request);
 
     @Mapping(target = "createdDate", source = "createdDate")
-    @Mapping(target = "productVariantId", source = "productVariant.id")
+    @Mapping(target = "productId", source = "product.id")
     @Mapping(target = "userId", source = "user.id")
     AddCommentResponse addResponseComment(Comment comment);
 
     @Mapping(target = "id", source = "id")
-    @Mapping(target = "productVariant.id", source = "productVariantId")
+    @Mapping(target = "product.id", source = "productId")
     @Mapping(target = "user.id", source = "userId")
     @Mapping(target = "createdDate", ignore = true)
     @Mapping(target = "updatedDate", ignore = true)
     Comment commentFromUpdateRequest(UpdateCommentRequest request);
 
-    @Mapping(target = "productVariantId", source = "productVariant.id")
+    @Mapping(target = "productId", source = "product.id")
     @Mapping(target = "userId", source = "user.id")
     UpdateCommentResponse updateResponseComment(Comment comment);
 }

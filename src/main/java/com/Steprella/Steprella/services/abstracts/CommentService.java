@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface CommentService {
 
-    List<ListCommentResponse> getCommentsByProductVariantId(int productVariantId);
+    List<ListCommentResponse> getCommentsByProductId(int productId);
 
     ListCommentResponse getById(int id);
 

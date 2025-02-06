@@ -1,12 +1,11 @@
 package com.Steprella.Steprella.services.concretes;
-import com.Steprella.Steprella.core.utils.RatingUtils;
 import com.Steprella.Steprella.core.utils.exceptions.types.BusinessException;
 import com.Steprella.Steprella.core.utils.exceptions.types.NotFoundException;
 import com.Steprella.Steprella.core.utils.messages.Messages;
-import com.Steprella.Steprella.entities.concretes.Category;
 import com.Steprella.Steprella.entities.concretes.ProductVariant;
 import com.Steprella.Steprella.repositories.ProductVariantRepository;
 import com.Steprella.Steprella.services.abstracts.*;
+import com.Steprella.Steprella.services.dtos.requests.products.ProductSearchCriteria;
 import com.Steprella.Steprella.services.dtos.requests.productvariants.AddProductVariantRequest;
 import com.Steprella.Steprella.services.dtos.requests.productvariants.UpdateProductVariantRequest;
 import com.Steprella.Steprella.services.dtos.responses.productvariants.AddProductVariantResponse;
@@ -14,9 +13,6 @@ import com.Steprella.Steprella.services.dtos.responses.productvariants.ListProdu
 import com.Steprella.Steprella.services.dtos.responses.productvariants.UpdateProductVariantResponse;
 import com.Steprella.Steprella.services.mappers.ProductVariantMapper;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -32,31 +28,6 @@ public class ProductVariantServiceImpl implements ProductVariantService {
     private final ColorService colorService;
 
     @Override
-    public List<ListProductVariantResponse> getAll() {
-        List<ProductVariant> productVariants = productVariantRepository.findAll();
-
-        return productVariants.stream()
-                .map(this::productVariantResponse)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public ListProductVariantResponse getById(int id) {
-        ProductVariant productVariant = findProductVariantById(id);
-        return productVariantResponse(productVariant);
-    }
-
-    @Override
-    public List<ListProductVariantResponse> getActiveProductVariants(int page, int size) {
-            Pageable pageable = PageRequest.of(page, size);
-            Page<ProductVariant> productVariantsPage = productVariantRepository.findByIsActiveTrue(pageable);
-
-            return productVariantsPage.stream()
-                    .map(this::productVariantResponse)
-                    .collect(Collectors.toList());
-    }
-
-    @Override
     public List<ListProductVariantResponse> getByProductId(int productId) {
 
         List<ProductVariant> productVariants = productVariantRepository.findByProductId(productId);
@@ -66,131 +37,20 @@ public class ProductVariantServiceImpl implements ProductVariantService {
         }
 
         return productVariants.stream()
-                .map(this::productVariantResponse)
+                .map(ProductVariantMapper.INSTANCE::listResponseFromProductVariant)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<ListProductVariantResponse> filterProducts(
-            Integer brandId, 
-            Integer colorId, 
-            Integer categoryId, 
-            Integer sizeValue,
-            BigDecimal minPrice,
-            BigDecimal maxPrice,
-            Integer materialId,
-            Integer usageAreaId,
-            List<Integer> featureIds,
-            int page, 
-            int size) {
-        
-        List<ProductVariant> filteredProductVariants = productVariantRepository.findAll();
-
-        if (brandId != null) {
-            filteredProductVariants = filteredProductVariants.stream()
-                    .filter(productVariant -> productVariant.getProduct().getBrand() != null
-                            && Integer.valueOf(productVariant.getProduct().getBrand().getId()).equals(brandId))
-                    .collect(Collectors.toList());
-        }
-
-        if (colorId != null) {
-            filteredProductVariants = filteredProductVariants.stream()
-                    .filter(productVariant -> productVariant.getColor() != null
-                            && Integer.valueOf(productVariant.getColor().getId()).equals(colorId))
-                    .collect(Collectors.toList());
-        }
-
-        if (categoryId != null) {
-            filteredProductVariants = filteredProductVariants.stream()
-                    .filter(productVariant -> {
-                        Category productCategory = productVariant.getProduct().getCategory();
-                        return productCategory != null && 
-                               (isCategoryOrDescendant(productCategory, categoryId) || 
-                                isCategoryOrAncestor(productCategory, categoryId));
-                    })
-                    .collect(Collectors.toList());
-        }
-
-        if (sizeValue != null) {
-            filteredProductVariants = filteredProductVariants.stream()
-                    .filter(productVariant -> productVariant.getProductSizes().stream()
-                            .anyMatch(productSize -> Integer.valueOf(productSize.getSizeValue()).equals(sizeValue)
-                                    && productSize.isActive()))
-                    .collect(Collectors.toList());
-        }
-
-        // Price range filter
-        if (minPrice != null || maxPrice != null) {
-            filteredProductVariants = filteredProductVariants.stream()
-                    .filter(productVariant -> {
-                        BigDecimal price = productVariant.getProduct().getPrice();
-                        return (minPrice == null || price.compareTo(minPrice) >= 0) &&
-                               (maxPrice == null || price.compareTo(maxPrice) <= 0);
-                    })
-                    .collect(Collectors.toList());
-        }
-
-        // Material filter
-        if (materialId != null) {
-            filteredProductVariants = filteredProductVariants.stream()
-                    .filter(productVariant -> productVariant.getProduct().getMaterial() != null
-                            && Integer.valueOf(productVariant.getProduct().getMaterial().getId()).equals(materialId))
-                    .collect(Collectors.toList());
-        }
-
-        // Usage Area filter
-        if (usageAreaId != null) {
-            filteredProductVariants = filteredProductVariants.stream()
-                    .filter(productVariant -> productVariant.getProduct().getUsageArea() != null
-                            && Integer.valueOf(productVariant.getProduct().getUsageArea().getId()).equals(usageAreaId))
-                    .collect(Collectors.toList());
-        }
-
-        // Features filter
-        if (featureIds != null && !featureIds.isEmpty()) {
-            filteredProductVariants = filteredProductVariants.stream()
-                    .filter(productVariant -> productVariant.getProduct().getFeatures() != null
-                            && productVariant.getProduct().getFeatures().stream()
-                                    .anyMatch(feature -> featureIds.contains(feature.getId())))
-                    .collect(Collectors.toList());
-        }
-
-        if (filteredProductVariants.isEmpty()) {
-            throw new NotFoundException(Messages.Error.CUSTOM_FILTER_PRODUCT_NOT_FOUND);
-        }
-
-        Pageable pageable = PageRequest.of(page, size);
-
-        return filteredProductVariants.stream()
-                .skip(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .map(this::productVariantResponse)
-                .collect(Collectors.toList());
+    public List<ListProductVariantResponse> getRandomVariants(int count) {
+        return List.of();
     }
 
     @Override
-    public List<ListProductVariantResponse> searchProductVariants(String searchTerm, int page, int size) {
-        String lowerCaseSearchTerm = searchTerm.toLowerCase();
-
-        List<ProductVariant> filteredProductVariants = productVariantRepository.findAll();
-
-        filteredProductVariants = filteredProductVariants.stream()
-                .filter(productVariant -> isMatch(productVariant, lowerCaseSearchTerm))
-                .toList();
-
-        if (filteredProductVariants.isEmpty()) {
-            throw new NotFoundException(Messages.Error.CUSTOM_FILTER_PRODUCT_NOT_FOUND);
-        }
-
-        Pageable pageable = PageRequest.of(page, size);
-
-        return filteredProductVariants.stream()
-                .skip(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .map(this::productVariantResponse)
-                .collect(Collectors.toList());
+    public ListProductVariantResponse getById(int id) {
+        ProductVariant productVariant = findProductVariantById(id);
+        return ProductVariantMapper.INSTANCE.listResponseFromProductVariant(productVariant);
     }
-
 
     @Override
     public AddProductVariantResponse add(AddProductVariantRequest request) {
@@ -217,9 +77,8 @@ public class ProductVariantServiceImpl implements ProductVariantService {
     }
 
     @Override
-    public void delete(int id) {
-        ProductVariant productVariant = findProductVariantById(id);
-        productVariantRepository.delete(productVariant);
+    public List<ListProductVariantResponse> search(ProductSearchCriteria criteria) {
+        return List.of();
     }
 
     @Override
@@ -229,19 +88,19 @@ public class ProductVariantServiceImpl implements ProductVariantService {
     }
 
     @Override
+    public void delete(int id) {
+        ProductVariant productVariant = findProductVariantById(id);
+        productVariantRepository.delete(productVariant);
+    }
+
+    @Override
     public int getTotalCount() {
         return (int) productVariantRepository.count();
     }
 
-    private ListProductVariantResponse productVariantResponse(ProductVariant productVariant) {
-        double averageRating = RatingUtils.calculateAverageRating(productVariant.getComments());
-        int totalComments = RatingUtils.calculateTotalComments(productVariant.getComments());
-
-        ListProductVariantResponse response = ProductVariantMapper.INSTANCE.listResponseFromProductVariant(productVariant);
-        response.setRating(averageRating);
-        response.setRatingCount(totalComments);
-
-        return response;
+    @Override
+    public int getTotalCount(ProductSearchCriteria criteria) {
+        return 0;
     }
 
     private ProductVariant findProductVariantById(int id) {
@@ -259,59 +118,5 @@ public class ProductVariantServiceImpl implements ProductVariantService {
     private void validateProductVariantDependencies(int productId, int colorId) {
         productService.getById(productId);
         colorService.getById(colorId);
-    }
-
-    private boolean isCategoryOrDescendant(Category category, Integer searchCategoryId) {
-        if (category == null) return false;
-        
-        // Kendisi mi?
-        if (Integer.valueOf(category.getId()).equals(searchCategoryId)) {
-            return true;
-        }
-
-        // Alt kategorilerde ara
-        if (category.getChildren() != null) {
-            return category.getChildren().stream()
-                    .anyMatch(child -> isCategoryOrDescendant(child, searchCategoryId));
-        }
-
-        return false;
-    }
-
-    private boolean isCategoryOrAncestor(Category category, Integer searchCategoryId) {
-        if (category == null) return false;
-
-        // Kendisi mi?
-        if (Integer.valueOf(category.getId()).equals(searchCategoryId)) {
-            return true;
-        }
-
-        // Üst kategorilerde ara
-        Category parent = category.getParent();
-        while (parent != null) {
-            if (Integer.valueOf(parent.getId()).equals(searchCategoryId)) {
-                return true;
-            }
-            parent = parent.getParent();
-        }
-
-        return false;
-    }
-
-    private boolean isMatch(ProductVariant productVariant, String searchTerm) {
-        String lowerCaseSearchTerm = searchTerm.toLowerCase();
-
-        boolean categoryMatch = productVariant.getProduct().getCategory() != null &&
-                productVariant.getProduct().getCategory().getName().toLowerCase().contains(lowerCaseSearchTerm);
-
-        boolean brandMatch = productVariant.getProduct().getBrand() != null &&
-                productVariant.getProduct().getBrand().getName().toLowerCase().contains(lowerCaseSearchTerm);
-
-        boolean colorMatch = productVariant.getColor() != null &&
-                productVariant.getColor().getName().toLowerCase().contains(lowerCaseSearchTerm);
-
-        boolean shoeModelMatch = productVariant.getProduct().getShoeModel().getModelName().toLowerCase().contains(lowerCaseSearchTerm);
-
-        return categoryMatch || brandMatch || colorMatch || shoeModelMatch;
     }
 }
