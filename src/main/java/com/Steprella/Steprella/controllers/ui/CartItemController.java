@@ -22,12 +22,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/cart-items")
 @AllArgsConstructor
+//@PreAuthorize("hasRole('ROLE_CUSTOMER')")
 public class CartItemController extends BaseController {
 
     private final CartItemService cartItemService;
 
     @GetMapping("/by-cart-id/{cartId}")
-    @PreAuthorize("hasRole('ROLE_CUSTOMER')")
     public ResponseEntity<BaseResponse<List<ListCartItemResponse>>> getItemsByCartId(
             @PathVariable int cartId,
             @RequestParam int page,
@@ -40,7 +40,6 @@ public class CartItemController extends BaseController {
     }
 
     @PostMapping("/create-cart-item")
-    @PreAuthorize("hasRole('ROLE_CUSTOMER')")
     public ResponseEntity<BaseResponse<AddCartItemResponse>> add(@RequestBody @Valid AddCartItemRequest request, BindingResult bindingResult) {
         if (bindingResult.hasErrors())
             return sendResponse(HttpStatus.BAD_REQUEST, Messages.Error.CUSTOM_BAD_REQUEST, null);
@@ -50,7 +49,6 @@ public class CartItemController extends BaseController {
     }
 
     @PutMapping("/update-cart-item")
-    @PreAuthorize("hasRole('ROLE_CUSTOMER')")
     public ResponseEntity<BaseResponse<UpdateCartItemResponse>> update(@RequestBody @Valid UpdateCartItemRequest request, BindingResult bindingResult) {
         if (bindingResult.hasErrors())
             return sendResponse(HttpStatus.BAD_REQUEST, Messages.Error.CUSTOM_BAD_REQUEST, null);
@@ -60,7 +58,6 @@ public class CartItemController extends BaseController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_CUSTOMER')")
     public ResponseEntity<BaseResponse<Void>>delete(@PathVariable int id) {
         cartItemService.delete(id);
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, null);

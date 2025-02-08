@@ -19,12 +19,12 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/order-items")
+//@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CUSTOMER')")
 public class OrderItemController extends BaseController {
 
     private OrderItemService orderItemService;
 
     @GetMapping("/by-order-id/{orderId}")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CUSTOMER')")
     public ResponseEntity<BaseResponse<List<ListOrderItemResponse>>> getByOrderId(@PathVariable int orderId){
         List<ListOrderItemResponse> orderItems = orderItemService.getByOrderId(orderId);
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, orderItems);

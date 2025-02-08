@@ -21,6 +21,7 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/orders")
+//@PreAuthorize("hasRole('ROLE_CUSTOMER')")
 public class OrderController extends BaseController {
 
     private OrderService orderService;
@@ -38,7 +39,6 @@ public class OrderController extends BaseController {
     }
 
     @PostMapping("/create-order")
-    @PreAuthorize("hasRole('ROLE_CUSTOMER')")
     public ResponseEntity<BaseResponse<AddOrderResponse>> add(@RequestBody @Valid AddOrderRequest request, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return sendResponse(HttpStatus.BAD_REQUEST, Messages.Error.CUSTOM_BAD_REQUEST, null);

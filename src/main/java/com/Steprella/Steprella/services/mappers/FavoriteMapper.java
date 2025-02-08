@@ -8,12 +8,15 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Mapper(uses = ProductVariantMapper.class)
 public interface FavoriteMapper {
 
     FavoriteMapper INSTANCE = Mappers.getMapper(FavoriteMapper.class);
 
-    @Mapping(target = "productVariant", expression = "java(ProductVariantMapper.INSTANCE.listResponseFromProductVariant(favorite.getProductVariant()))")
+    @Mapping(target = "productVariant", source = "productVariant")
     ListFavoriteResponse listResponseFromFavorite(Favorite favorite);
 
     @Mapping(target = "id", ignore = true)

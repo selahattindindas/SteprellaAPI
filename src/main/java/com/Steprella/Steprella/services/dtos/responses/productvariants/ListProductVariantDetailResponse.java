@@ -1,7 +1,6 @@
 package com.Steprella.Steprella.services.dtos.responses.productvariants;
 
 import com.Steprella.Steprella.services.dtos.responses.files.ListFileResponse;
-import com.Steprella.Steprella.services.dtos.responses.productsizes.ListProductSizeResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,17 +14,23 @@ import java.util.List;
 @NoArgsConstructor
 public class ListProductVariantDetailResponse {
 
-    private int id;
+    private double rating;
+
+    private int ratingCount;
+
+    private String description;
+
+    private String brandName;
+
+    private String shoeModelName;
+
+    private String materialName;
+
+    private String usageAreaName;
 
     private String colorName;
 
-    private String createdDate;
-
-    private String updatedDate;
-
     private boolean isActive;
-
-    private List<ListProductSizeResponse> productSizes;
 
     private List<ListFileResponse> productFiles;
 }

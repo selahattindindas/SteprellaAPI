@@ -1,6 +1,6 @@
 package com.Steprella.Steprella.services.dtos.responses.orderitems;
 
-import com.Steprella.Steprella.services.dtos.responses.favorites.ListFavoriteProductResponse;
+import com.Steprella.Steprella.services.dtos.responses.productvariants.ListProductVariantDetailResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,5 +26,5 @@ public class ListOrderItemResponse {
 
     private BigDecimal totalPrice;
 
-    private ListFavoriteProductResponse productVariant;
+    private ListProductVariantDetailResponse productVariant;
 }

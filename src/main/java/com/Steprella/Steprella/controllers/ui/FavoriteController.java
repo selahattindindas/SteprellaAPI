@@ -20,7 +20,7 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/favorites")
-@PreAuthorize("hasRole('ROLE_CUSTOMER')")
+//@PreAuthorize("hasRole('ROLE_CUSTOMER')")
 public class FavoriteController extends BaseController {
 
     private final FavoriteService favoriteService;

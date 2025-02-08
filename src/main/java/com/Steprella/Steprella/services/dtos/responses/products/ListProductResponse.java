@@ -3,7 +3,7 @@ package com.Steprella.Steprella.services.dtos.responses.products;
 import com.Steprella.Steprella.services.dtos.responses.categories.ListCategoryResponse;
 import com.Steprella.Steprella.services.dtos.responses.comments.ListCommentResponse;
 import com.Steprella.Steprella.services.dtos.responses.features.ListFeatureResponse;
-import com.Steprella.Steprella.services.dtos.responses.productvariants.ListProductVariantDetailResponse;
+import com.Steprella.Steprella.services.dtos.responses.productvariants.ListProductVariantResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -46,5 +46,5 @@ public class ListProductResponse {
 
     private List<ListFeatureResponse> features;
 
-    private List<ListProductVariantDetailResponse> productVariants;
+    private List<ListProductVariantResponse> productVariants;
 }

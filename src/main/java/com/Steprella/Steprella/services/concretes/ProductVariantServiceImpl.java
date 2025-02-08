@@ -5,7 +5,6 @@ import com.Steprella.Steprella.core.utils.messages.Messages;
 import com.Steprella.Steprella.entities.concretes.ProductVariant;
 import com.Steprella.Steprella.repositories.ProductVariantRepository;
 import com.Steprella.Steprella.services.abstracts.*;
-import com.Steprella.Steprella.services.dtos.requests.products.ProductSearchCriteria;
 import com.Steprella.Steprella.services.dtos.requests.productvariants.AddProductVariantRequest;
 import com.Steprella.Steprella.services.dtos.requests.productvariants.UpdateProductVariantRequest;
 import com.Steprella.Steprella.services.dtos.responses.productvariants.AddProductVariantResponse;
@@ -41,15 +40,16 @@ public class ProductVariantServiceImpl implements ProductVariantService {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public List<ListProductVariantResponse> getRandomVariants(int count) {
-        return List.of();
-    }
 
     @Override
     public ListProductVariantResponse getById(int id) {
         ProductVariant productVariant = findProductVariantById(id);
         return ProductVariantMapper.INSTANCE.listResponseFromProductVariant(productVariant);
+    }
+
+    @Override
+    public List<ProductVariant> getAllIsActiveTrue() {
+        return productVariantRepository.findByIsActiveTrue();
     }
 
     @Override
@@ -77,11 +77,6 @@ public class ProductVariantServiceImpl implements ProductVariantService {
     }
 
     @Override
-    public List<ListProductVariantResponse> search(ProductSearchCriteria criteria) {
-        return List.of();
-    }
-
-    @Override
     public BigDecimal getUnitPriceByProductVariantId(int productVariantId) {
         ProductVariant productVariant = findProductVariantById(productVariantId);
         return productVariant.getProduct().getPrice();
@@ -96,11 +91,6 @@ public class ProductVariantServiceImpl implements ProductVariantService {
     @Override
     public int getTotalCount() {
         return (int) productVariantRepository.count();
-    }
-
-    @Override
-    public int getTotalCount(ProductSearchCriteria criteria) {
-        return 0;
     }
 
     private ProductVariant findProductVariantById(int id) {

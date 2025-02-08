@@ -1,14 +1,13 @@
 package com.Steprella.Steprella.services.mappers;
 
-import com.Steprella.Steprella.entities.concretes.Comment;
-import com.Steprella.Steprella.entities.concretes.Feature;
-import com.Steprella.Steprella.entities.concretes.Product;
+import com.Steprella.Steprella.entities.concretes.*;
 import com.Steprella.Steprella.services.dtos.requests.products.AddProductRequest;
 import com.Steprella.Steprella.services.dtos.requests.products.UpdateProductRequest;
 import com.Steprella.Steprella.services.dtos.responses.comments.ListCommentResponse;
 import com.Steprella.Steprella.services.dtos.responses.products.AddProductResponse;
 import com.Steprella.Steprella.services.dtos.responses.products.ListProductResponse;
 import com.Steprella.Steprella.services.dtos.responses.products.UpdateProductResponse;
+import com.Steprella.Steprella.services.dtos.responses.productvariants.ListProductVariantResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -29,7 +28,7 @@ public interface ProductMapper {
     @Mapping(target = "materialName", source = "material.name")
     @Mapping(target = "usageAreaName", source = "usageArea.name")
     @Mapping(target = "features", source = "features")
-    @Mapping(target = "productVariants", source = "productVariants")
+    @Mapping(target = "productVariants", expression = "java(mapProductVariants(product.getProductVariants()))")
     @Mapping(target = "productComments", expression = "java(mapComments(product.getComments()))")
     @Mapping(target = "createdDate", source = "createdDate")
     @Mapping(target = "updatedDate", source = "updatedDate")
@@ -76,6 +75,12 @@ public interface ProductMapper {
     default List<ListCommentResponse> mapComments(List<Comment> comments) {
         return comments.stream()
                 .map(CommentMapper.INSTANCE::listResponseFromComment)
+                .collect(Collectors.toList());
+    }
+
+    default List<ListProductVariantResponse> mapProductVariants(List<ProductVariant> variants) {
+        return variants.stream()
+                .map(ProductVariantMapper.INSTANCE::listResponseFromProductVariant)
                 .collect(Collectors.toList());
     }
 }

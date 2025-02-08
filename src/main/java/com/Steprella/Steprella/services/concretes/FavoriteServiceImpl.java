@@ -62,8 +62,8 @@ public class FavoriteServiceImpl implements FavoriteService {
     @Override
     @CacheEvict(value = "favorites", key = "#id")
     public void delete(int id) {
-        Favorite favorite = favoriteRepository.findById(id).
-                orElseThrow(() -> new NotFoundException(Messages.Error.CUSTOM_PRODUCT_NOT_FOUND));
+        Favorite favorite = favoriteRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(Messages.Error.CUSTOM_PRODUCT_NOT_FOUND));
         favoriteRepository.delete(favorite);
     }
 
