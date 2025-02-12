@@ -1,14 +1,13 @@
 package com.Steprella.Steprella.services.concretes;
 
 import com.Steprella.Steprella.core.utils.EntityValidator;
+import com.Steprella.Steprella.core.utils.exceptions.types.BusinessException;
 import com.Steprella.Steprella.core.utils.exceptions.types.NotFoundException;
 import com.Steprella.Steprella.core.utils.messages.Messages;
 import com.Steprella.Steprella.entities.concretes.Address;
+import com.Steprella.Steprella.entities.concretes.Customer;
 import com.Steprella.Steprella.repositories.AddressRepository;
-import com.Steprella.Steprella.services.abstracts.AddressService;
-import com.Steprella.Steprella.services.abstracts.CityService;
-import com.Steprella.Steprella.services.abstracts.DistrictService;
-import com.Steprella.Steprella.services.abstracts.UserService;
+import com.Steprella.Steprella.services.abstracts.*;
 import com.Steprella.Steprella.services.dtos.requests.addresses.AddAddressRequest;
 import com.Steprella.Steprella.services.dtos.requests.addresses.UpdateAddressRequest;
 import com.Steprella.Steprella.services.dtos.responses.addresses.AddAddressResponse;
@@ -23,70 +22,78 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class AddressServiceImpl implements AddressService{
+public class AddressServiceImpl implements AddressService {
 
     private final AddressRepository addressRepository;
-    private final DistrictService districtService;
+    private final CustomerService customerService;
     private final CityService cityService;
-    private final UserService userService;
+    private final DistrictService districtService;
     private final EntityValidator entityValidator;
 
     @Override
-    public List<ListAddressResponse> getAddressesByUserId(int userId) {
-        userService.getResponseById(userId);
-        List<Address> addresses = addressRepository.findAddressByUserId(userId);
-
-        return addresses.stream().map(AddressMapper.INSTANCE::listResponseFromAddress).collect(Collectors.toList());
+    public List<ListAddressResponse> getAddresses() {
+        Customer customer = customerService.getCustomerOfCurrentUser();
+        List<Address> addresses = addressRepository.findByCustomerId(customer.getId());
+        return addresses.stream()
+                .map(AddressMapper.INSTANCE::listResponseFromAddress)
+                .collect(Collectors.toList());
     }
 
     @Override
     public ListAddressResponse getById(int id) {
-        Address address = findAddressById(id);
+        Address address = findAddressAndValidateOwnership(id);
         return AddressMapper.INSTANCE.listResponseFromAddress(address);
     }
 
     @Override
-    public Address getResponseById(int id) {
-        return findAddressById(id);
+    public Address getAddressById(int id) {
+        return findAddressAndValidateOwnership(id);
     }
 
     @Override
     public AddAddressResponse add(AddAddressRequest request) {
-        validateAddressRequest(request.getCityId(), request.getDistrictId(), request.getUserId());
-        entityValidator.validateCityDistrictRelation(request.getDistrictId(), request.getCityId());
+        Customer customer = customerService.getCustomerOfCurrentUser();
+        validateAddressRequest(request.getCityId(), request.getDistrictId());
 
-        Address addAddress = AddressMapper.INSTANCE.addressFromAddRequest(request);
-        Address savedAddress = addressRepository.save(addAddress);
-
+        Address address = AddressMapper.INSTANCE.addressFromAddRequest(request, customer);
+        Address savedAddress = addressRepository.save(address);
+        
         return AddressMapper.INSTANCE.addResponseFromAddress(savedAddress);
     }
 
     @Override
     public UpdateAddressResponse update(UpdateAddressRequest request) {
-        findAddressById(request.getId());
-        validateAddressRequest(request.getCityId(), request.getDistrictId(), request.getUserId());
-        entityValidator.validateCityDistrictRelation(request.getDistrictId(), request.getCityId());
+        Customer customer = customerService.getCustomerOfCurrentUser();
+        findAddressAndValidateOwnership(request.getId());
+        validateAddressRequest(request.getCityId(), request.getDistrictId());
 
-        Address updateAddress = AddressMapper.INSTANCE.addressFromUpdateRequest(request);
-        Address saveAddress = addressRepository.save(updateAddress);
-
-        return AddressMapper.INSTANCE.updateResponseFromAddress(saveAddress);
+        Address address = AddressMapper.INSTANCE.addressFromUpdateRequest(request, customer);
+        Address savedAddress = addressRepository.save(address);
+        
+        return AddressMapper.INSTANCE.updateResponseFromAddress(savedAddress);
     }
 
     @Override
     public void delete(int id) {
-        Address address = findAddressById(id);
+        Address address = findAddressAndValidateOwnership(id);
         addressRepository.delete(address);
     }
 
-    private Address findAddressById(int id) {
-        return addressRepository.findById(id)
+    private Address findAddressAndValidateOwnership(int id) {
+        Customer customer = customerService.getCustomerOfCurrentUser();
+        Address address = addressRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(Messages.Error.CUSTOM_ADDRESS_NOT_FOUND));
+
+        if (address.getCustomer().getId() != customer.getId()) {
+            throw new BusinessException(Messages.Error.CUSTOM_ADDRESS_ACCESS_DENIED);
+        }
+
+        return address;
     }
 
-    private void validateAddressRequest(int cityId, int districtId, int userId) {
+    private void validateAddressRequest(int cityId, int districtId) {
         cityService.getById(cityId);
         districtService.getById(districtId);
-        userService.getResponseById(userId);
+        entityValidator.validateCityDistrictRelation(districtId, cityId);
     }
 }

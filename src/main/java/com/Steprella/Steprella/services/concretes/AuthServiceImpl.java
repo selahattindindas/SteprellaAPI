@@ -54,8 +54,8 @@ public class AuthServiceImpl implements AuthService {
     public LoginUserResponse login(LoginUserRequest request, HttpServletResponse response) {
         User user = userService.getByEmail(request.getEmail());
 
-        if (!user.isVerified()) {
-            throw new BusinessException(Messages.Error.ACCOUNT_NOT_ACTIVATED);
+        if (user.getRole() != Role.CUSTOMER) {
+            throw new AccessDeniedException(Messages.Error.ACCESS_DENIED);
         }
 
         authenticationManager.authenticate(

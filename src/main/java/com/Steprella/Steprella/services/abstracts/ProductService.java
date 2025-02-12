@@ -1,5 +1,6 @@
 package com.Steprella.Steprella.services.abstracts;
 
+import com.Steprella.Steprella.entities.concretes.Product;
 import com.Steprella.Steprella.services.dtos.requests.products.AddProductRequest;
 import com.Steprella.Steprella.services.dtos.requests.products.ProductSearchCriteria;
 import com.Steprella.Steprella.services.dtos.requests.products.UpdateProductRequest;
@@ -17,9 +18,13 @@ public interface ProductService {
 
     List<ListProductResponse> filter(ProductSearchCriteria criteria);
 
+    Product save(Product product);
+
     List<ListProductResponse> search(String searchTerm);
 
     ListProductResponse getById(int id);
+
+    Product getResponseById(int id);
 
     AddProductResponse add(AddProductRequest request);
 

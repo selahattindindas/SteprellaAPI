@@ -45,17 +45,8 @@ public class User extends BaseEntity implements UserDetails {
     @Column(name = "is_verified", nullable = false)
     private boolean isVerified;
 
-    @OneToMany(mappedBy= "user", cascade = CascadeType.ALL)
-    private List<Address> addresses;
-
-    @OneToMany(mappedBy= "user", cascade = CascadeType.ALL)
-    private List<Comment> comments;
-
-    @OneToMany(mappedBy= "user", cascade = CascadeType.ALL)
-    private List<Favorite> favorites;
-
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Cart cart;
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private Customer customer;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

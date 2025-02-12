@@ -3,11 +3,12 @@ package com.Steprella.Steprella.services.concretes;
 import com.Steprella.Steprella.core.utils.exceptions.types.BusinessException;
 import com.Steprella.Steprella.core.utils.exceptions.types.NotFoundException;
 import com.Steprella.Steprella.core.utils.messages.Messages;
+import com.Steprella.Steprella.entities.concretes.Customer;
 import com.Steprella.Steprella.entities.concretes.Favorite;
 import com.Steprella.Steprella.repositories.FavoriteRepository;
 import com.Steprella.Steprella.services.abstracts.FavoriteService;
+import com.Steprella.Steprella.services.abstracts.CustomerService;
 import com.Steprella.Steprella.services.abstracts.ProductVariantService;
-import com.Steprella.Steprella.services.abstracts.UserService;
 import com.Steprella.Steprella.services.dtos.requests.favorites.AddFavoriteRequest;
 import com.Steprella.Steprella.services.dtos.responses.favorites.AddFavoriteResponse;
 import com.Steprella.Steprella.services.dtos.responses.favorites.ListFavoriteResponse;
@@ -29,15 +30,15 @@ public class FavoriteServiceImpl implements FavoriteService {
 
     private final FavoriteRepository favoriteRepository;
     private final ProductVariantService productVariantService;
-    private final UserService userService;
+    private final CustomerService customerService;
 
     @Override
-    @Cacheable(value="favorites", key="#userId")
-    public List<ListFavoriteResponse> getFavoritesByUserId(int userId, int page, int size) {
-        userService.getResponseById(userId);
-
+    @Cacheable(value="favorites", key="#customer.id")
+    public List<ListFavoriteResponse> getFavorites(int page, int size) {
+        Customer customer = customerService.getCustomerOfCurrentUser();
+        
         Pageable pageable = PageRequest.of(page, size);
-        List<Favorite> favorites = favoriteRepository.findByUserId(userId, pageable).getContent();
+        List<Favorite> favorites = favoriteRepository.findByCustomerId(customer.getId(), pageable).getContent();
 
         return favorites.stream()
                 .map(FavoriteMapper.INSTANCE::listResponseFromFavorite)
@@ -47,33 +48,41 @@ public class FavoriteServiceImpl implements FavoriteService {
     @Override
     @CachePut(value = "favorites", key = "#result.id")
     public AddFavoriteResponse add(AddFavoriteRequest request) {
-        validateFavoriteDependencies(request.getProductVariantId(), request.getUserId());
-
-        if (favoriteRepository.existsByUserIdAndProductVariantId(request.getUserId(), request.getProductVariantId())) {
+        Customer customer = customerService.getCustomerOfCurrentUser();
+        
+        if (favoriteRepository.existsByCustomerIdAndProductVariantId(
+                customer.getId(), request.getProductVariantId())) {
             throw new BusinessException(Messages.Error.FAVORITE_ALREADY_EXISTS);
         }
 
-        Favorite addFavorite = FavoriteMapper.INSTANCE.favoriteFromAddRequest(request);
-        Favorite savedFavorite = favoriteRepository.save(addFavorite);
+        Favorite favorite = FavoriteMapper.INSTANCE.favoriteFromAddRequest(request, customer);
 
+        Favorite savedFavorite = favoriteRepository.save(favorite);
         return FavoriteMapper.INSTANCE.addResponseFromFavorite(savedFavorite);
     }
 
     @Override
     @CacheEvict(value = "favorites", key = "#id")
     public void delete(int id) {
-        Favorite favorite = favoriteRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException(Messages.Error.CUSTOM_PRODUCT_NOT_FOUND));
+        Favorite favorite = findFavoriteAndValidateOwnership(id);
         favoriteRepository.delete(favorite);
     }
 
     @Override
     public int getTotalCount() {
-        return (int) favoriteRepository.count();
+        Customer customer = customerService.getCustomerOfCurrentUser();
+        return favoriteRepository.findByCustomerId(customer.getId()).size();
     }
 
-    private void validateFavoriteDependencies(int productVariantId, int userId) {
-        productVariantService.getById(productVariantId);
-        userService.getResponseById(userId);
+    private Favorite findFavoriteAndValidateOwnership(int id) {
+        Customer customer = customerService.getCustomerOfCurrentUser();
+        Favorite favorite = favoriteRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(Messages.Error.CUSTOM_FAVORITE_NOT_FOUND));
+
+        if (favorite.getCustomer().getId() != customer.getId()) {
+            throw new BusinessException(Messages.Error.CUSTOM_FAVORITE_ACCESS_DENIED);
+        }
+
+        return favorite;
     }
 }

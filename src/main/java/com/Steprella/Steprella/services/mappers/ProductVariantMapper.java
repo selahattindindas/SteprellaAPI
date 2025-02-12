@@ -4,7 +4,6 @@ import com.Steprella.Steprella.entities.concretes.ProductVariant;
 import com.Steprella.Steprella.services.dtos.requests.productvariants.AddProductVariantRequest;
 import com.Steprella.Steprella.services.dtos.requests.productvariants.UpdateProductVariantRequest;
 import com.Steprella.Steprella.services.dtos.responses.productvariants.AddProductVariantResponse;
-import com.Steprella.Steprella.services.dtos.responses.productvariants.ListProductVariantDetailResponse;
 import com.Steprella.Steprella.services.dtos.responses.productvariants.ListProductVariantResponse;
 import com.Steprella.Steprella.services.dtos.responses.productvariants.UpdateProductVariantResponse;
 import org.mapstruct.Mapper;
@@ -43,14 +42,4 @@ public interface ProductVariantMapper {
     @Mapping(target = "colorId", source = "color.id")
     @Mapping(target = "updatedDate", source = "updatedDate")
     UpdateProductVariantResponse updateResponseFromProductVariant(ProductVariant productVariant);
-
-    @Mapping(target = "rating", source = "product.rating")
-    @Mapping(target = "ratingCount", source = "product.ratingCount")
-    @Mapping(target = "description", source = "product.description")
-    @Mapping(target = "brandName", source = "product.brand.name")
-    @Mapping(target = "shoeModelName", source = "product.shoeModel.modelName")
-    @Mapping(target = "materialName", source = "product.material.name")
-    @Mapping(target = "usageAreaName", source = "product.usageArea.name")
-    @Mapping(target = "colorName", source = "color.name")
-    ListProductVariantDetailResponse listResponseFromProductVariantDetail(ProductVariant productVariant);
 }

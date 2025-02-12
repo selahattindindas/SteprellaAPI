@@ -17,8 +17,6 @@ public class ListCartResponse {
 
     private int id;
 
-    private int userId;
-
     private BigDecimal totalPrice;
 
     private int totalItems;

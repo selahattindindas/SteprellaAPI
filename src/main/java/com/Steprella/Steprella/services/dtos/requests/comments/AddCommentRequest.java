@@ -25,10 +25,6 @@ public class AddCommentRequest {
     private int productId;
 
     @NotNull
-    @Min(1)
-    private int userId;
-
-    @NotNull
     @Min(value = 1)
     @Max(value = 5)
     private int rating;

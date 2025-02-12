@@ -10,9 +10,9 @@ import java.util.List;
 @Repository
 public interface FavoriteRepository extends BaseRepository<Favorite, Integer> {
 
-    Page<Favorite> findByUserId(int userId, Pageable pageable);
+    Page<Favorite> findByCustomerId(int customerId, Pageable pageable);
 
-    List<Favorite> findByUserId(int userId);
+    List<Favorite> findByCustomerId(int customerId);
 
-    boolean existsByUserIdAndProductVariantId(int userId, int productVariantId);
+    boolean existsByCustomerIdAndProductVariantId(int customerId, int productVariantId);
 }

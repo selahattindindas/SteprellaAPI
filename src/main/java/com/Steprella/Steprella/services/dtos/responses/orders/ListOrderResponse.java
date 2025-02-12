@@ -19,8 +19,6 @@ public class ListOrderResponse {
 
     private int id;
 
-    private int userId;
-
     private BigDecimal totalPrice;
 
     private String orderNumber;

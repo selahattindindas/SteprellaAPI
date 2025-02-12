@@ -21,13 +21,13 @@ public interface CartItemService {
 
     void delete(int id);
 
-    CartItem findByProductVariantIdAndCartId(int productVariantId, int cartId);
+    void deleteCartItemsForOrder(List<Integer> cartItemIds);
 
-    boolean validateCartItems(int userId, List<Integer> cartItemIds);
+    List<CartItem> getCartItemsForOrder(List<Integer> cartItemIds);
 
-    void deleteCartItemsForOrder(int userId, List<Integer> cartItemIds);
-
-    List<CartItem> getCartItemsForUser(int userId, List<Integer> cartItemIds);
+    boolean validateCartItems(List<Integer> cartItemIds);
 
     int getTotalCount();
+
+    CartItem findByProductVariantIdAndCartId(int productVariantId, int cartId);
 }

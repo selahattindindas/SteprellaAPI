@@ -20,6 +20,4 @@ public class AddCommentResponse {
     private int rating;
 
     private String createdDate;
-
-    private int userId;
 }

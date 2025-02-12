@@ -14,6 +14,4 @@ public class AddFavoriteResponse {
     private int id;
 
     private int productVariantId;
-
-    private int userId;
 }

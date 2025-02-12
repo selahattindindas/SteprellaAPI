@@ -16,10 +16,6 @@ public class AddOrderRequest {
 
     @NotNull
     @Min(1)
-    private int userId;
-
-    @NotNull
-    @Min(1)
     private int shippingAddressId;
 
     @NotNull

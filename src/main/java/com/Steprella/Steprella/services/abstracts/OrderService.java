@@ -11,11 +11,11 @@ import java.util.List;
 
 public interface OrderService {
 
-    List<ListOrderResponse> getByUserId(int userId, int page, int size);
+    List<ListOrderResponse> getOrders(int page, int size);
 
     ListOrderResponse getById(int id);
 
-    Order getByResponseId(int id);
+    Order getOrderById(int id);
 
     AddOrderResponse add(AddOrderRequest request);
 

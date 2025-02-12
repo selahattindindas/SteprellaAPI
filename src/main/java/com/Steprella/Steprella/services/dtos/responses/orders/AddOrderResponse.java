@@ -15,8 +15,6 @@ public class AddOrderResponse {
 
     private int id;
 
-    private int userId;
-
     private int shippingAddressId;
 
     private String orderNumber;

@@ -1,4 +1,4 @@
-package com.Steprella.Steprella.services.dtos.responses.carts;
+package com.Steprella.Steprella.services.dtos.requests.customers;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class AddCartResponse {
+public class AddCustomerRequest {
 
-    private int id;
+    private int userId;
 }

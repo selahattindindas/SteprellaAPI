@@ -1,6 +1,7 @@
 package com.Steprella.Steprella.services.mappers;
 
 import com.Steprella.Steprella.entities.concretes.Address;
+import com.Steprella.Steprella.entities.concretes.Customer;
 import com.Steprella.Steprella.entities.concretes.Order;
 import com.Steprella.Steprella.entities.concretes.OrderItem;
 import com.Steprella.Steprella.services.dtos.requests.orders.AddOrderRequest;
@@ -17,22 +18,20 @@ import org.mapstruct.factory.Mappers;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Mapper(uses = AddressMapper.class)
+@Mapper(uses = {AddressMapper.class, CustomerMapper.class})
 public interface OrderMapper {
 
     OrderMapper INSTANCE = Mappers.getMapper(OrderMapper.class);
 
-    @Mapping(target = "userId", source = "user.id")
     @Mapping(target = "items", expression = "java(mapOrderItems(order.getItems()))")
     @Mapping(target = "shippingAddress", expression = "java(mapAddress(order.getShippingAddress()))")
     ListOrderResponse listResponseFromOrder(Order order);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "user.id", source = "userId")
-    @Mapping(target = "shippingAddress.id", source = "shippingAddressId")
-    Order orderFromAddRequest(AddOrderRequest request);
+    @Mapping(target = "customer", source = "customer")
+    @Mapping(target = "shippingAddress.id", source = "request.shippingAddressId")
+    Order orderFromAddRequest(AddOrderRequest request, Customer customer);
 
-    @Mapping(target = "userId", source = "user.id")
     @Mapping(target = "shippingAddressId", source = "shippingAddress.id")
     AddOrderResponse addResponseFromOrder(Order order);
 

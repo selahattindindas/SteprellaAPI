@@ -19,8 +19,8 @@ public class Address extends BaseEntity {
     private String description;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
 
     @ManyToOne
     @JoinColumn(name = "city_id", nullable = false)

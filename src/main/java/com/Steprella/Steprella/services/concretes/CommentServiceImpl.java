@@ -1,12 +1,15 @@
 package com.Steprella.Steprella.services.concretes;
 
+import com.Steprella.Steprella.core.utils.RatingUtils;
 import com.Steprella.Steprella.core.utils.exceptions.types.NotFoundException;
 import com.Steprella.Steprella.core.utils.messages.Messages;
 import com.Steprella.Steprella.entities.concretes.Comment;
+import com.Steprella.Steprella.entities.concretes.Customer;
+import com.Steprella.Steprella.entities.concretes.Product;
 import com.Steprella.Steprella.repositories.CommentRepository;
 import com.Steprella.Steprella.services.abstracts.CommentService;
+import com.Steprella.Steprella.services.abstracts.CustomerService;
 import com.Steprella.Steprella.services.abstracts.ProductService;
-import com.Steprella.Steprella.services.abstracts.UserService;
 import com.Steprella.Steprella.services.dtos.requests.comments.AddCommentRequest;
 import com.Steprella.Steprella.services.dtos.requests.comments.UpdateCommentRequest;
 import com.Steprella.Steprella.services.dtos.responses.comments.AddCommentResponse;
@@ -15,6 +18,7 @@ import com.Steprella.Steprella.services.dtos.responses.comments.UpdateCommentRes
 import com.Steprella.Steprella.services.mappers.CommentMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,8 +28,9 @@ import java.util.stream.Collectors;
 public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
-    private final UserService userService;
+    private final CustomerService customerService;
     private final ProductService productService;
+    private final RatingUtils ratingUtils;
 
     @Override
     public List<ListCommentResponse> getCommentsByProductId(int productId) {
@@ -42,30 +47,47 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional
     public AddCommentResponse add(AddCommentRequest request) {
-        validateCommentDependencies(request.getProductId(), request.getUserId());
+        Customer customer = customerService.getCustomerOfCurrentUser();
+        Product product = productService.getResponseById(request.getProductId());
 
-        Comment addComment = CommentMapper.INSTANCE.commentFromAddRequest(request);
-        Comment savedComment = commentRepository.save(addComment);
+        Comment comment = CommentMapper.INSTANCE.commentFromAddRequest(request, customer);
+        comment.setCustomer(customer);
+        comment.setProduct(product);
 
-        return CommentMapper.INSTANCE.addResponseComment(savedComment);
+        Comment savedComment = commentRepository.save(comment);
+        ratingUtils.handleCommentOperation(product.getId());
+        
+        return CommentMapper.INSTANCE.addResponseFromComment(savedComment);
     }
 
     @Override
+    @Transactional
     public UpdateCommentResponse update(UpdateCommentRequest request) {
-        findCommentById(request.getId());
-        validateCommentDependencies(request.getProductId(), request.getUserId());
+        Customer customer = customerService.getCustomerOfCurrentUser();
+        Product product = productService.getResponseById(request.getProductId());
+        Comment existingComment = findCommentAndValidateOwnership(request.getId());
+        
+        Comment comment = CommentMapper.INSTANCE.commentFromUpdateRequest(request, customer);
+        comment.setCustomer(existingComment.getCustomer());
+        comment.setProduct(product);
+        comment.setCreatedDate(existingComment.getCreatedDate());
 
-        Comment updateComment = CommentMapper.INSTANCE.commentFromUpdateRequest(request);
-        Comment savedComment = commentRepository.save(updateComment);
-
-        return CommentMapper.INSTANCE.updateResponseComment(savedComment);
+        Comment savedComment = commentRepository.save(comment);
+        ratingUtils.handleCommentOperation(savedComment.getProduct().getId());
+        
+        return CommentMapper.INSTANCE.updateResponseFromComment(savedComment);
     }
 
     @Override
+    @Transactional
     public void delete(int id) {
-        Comment comment = findCommentById(id);
+        Comment comment = findCommentAndValidateOwnership(id);
+        int productId = comment.getProduct().getId();
+        
         commentRepository.delete(comment);
+        ratingUtils.handleCommentOperation(productId);
     }
 
     private Comment findCommentById(int id) {
@@ -73,8 +95,7 @@ public class CommentServiceImpl implements CommentService {
                 .orElseThrow(() -> new NotFoundException(Messages.Error.CUSTOM_COMMENT_NOT_FOUND));
     }
 
-    private void validateCommentDependencies(int productVariantId, int userId) {
-        productService.getById(productVariantId);
-        userService.getResponseById(userId);
+    private Comment findCommentAndValidateOwnership(int id) {
+        return findCommentById(id);
     }
 }

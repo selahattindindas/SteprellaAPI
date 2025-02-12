@@ -5,6 +5,7 @@ import com.Steprella.Steprella.core.utils.EntityValidator;
 import com.Steprella.Steprella.core.utils.exceptions.types.NotFoundException;
 import com.Steprella.Steprella.core.utils.messages.Messages;
 import com.Steprella.Steprella.entities.concretes.CartItem;
+import com.Steprella.Steprella.entities.concretes.Customer;
 import com.Steprella.Steprella.entities.concretes.Order;
 import com.Steprella.Steprella.entities.concretes.OrderItem;
 import com.Steprella.Steprella.repositories.OrderRepository;
@@ -33,19 +34,18 @@ import java.util.stream.Collectors;
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
-    private final UserService userService;
-    private final AddressService addressService;
+    private final CustomerService customerService;
     private final CartItemService cartItemService;
     private final EntityValidator entityValidator;
     private final OrderItemService orderItemService;
 
 
     @Override
-    public List<ListOrderResponse> getByUserId(int userId, int page, int size) {
-        userService.getResponseById(userId);
-
+    public List<ListOrderResponse> getOrders(int page, int size) {
+        Customer customer = customerService.getCustomerOfCurrentUser();
+        
         Pageable pageable = PageRequest.of(page, size);
-        List<Order> orders = orderRepository.findOrderByUserId(userId, pageable).getContent();
+        List<Order> orders = orderRepository.findByCustomerId(customer.getId(), pageable).getContent();
 
         List<OrderItem> allOrderItems = orders.stream()
                 .flatMap(order -> order.getItems().stream())
@@ -53,88 +53,78 @@ public class OrderServiceImpl implements OrderService {
 
         return orders.stream().map(order -> {
             ListOrderResponse response = OrderMapper.INSTANCE.listResponseFromOrder(order);
-
             BigDecimal totalPriceForOrder = CalculationUtils.calculateTotalPrice(
                     allOrderItems,
                     orderItem -> orderItem.getOrder().getId(),
                     OrderItem::getTotalPrice,
                     order.getId()
             );
-
             response.setTotalPrice(totalPriceForOrder);
-
             return response;
         }).collect(Collectors.toList());
     }
 
     @Override
     public ListOrderResponse getById(int id) {
-        Order order = findOrderById(id);
+        Order order = findOrderAndValidateOwnership(id);
         return OrderMapper.INSTANCE.listResponseFromOrder(order);
     }
 
     @Override
-    public Order getByResponseId(int id) {
-        return findOrderById(id);
+    public Order getOrderById(int id) {
+        return findOrderAndValidateOwnership(id);
     }
 
     @Override
     public AddOrderResponse add(AddOrderRequest request) {
-        userService.getResponseById(request.getUserId());
-        addressService.getById(request.getShippingAddressId());
-        entityValidator.validateUserAddress(request.getUserId(), request.getShippingAddressId());
+        Customer customer = customerService.getCustomerOfCurrentUser();
+        entityValidator.validateCustomerAddress(request.getShippingAddressId());
 
-        boolean isValidCartItems = cartItemService.validateCartItems(request.getUserId(), request.getCartItem());
+        boolean isValidCartItems = cartItemService.validateCartItems(request.getCartItem());
         if (!isValidCartItems) {
             throw new NotFoundException(Messages.Error.CUSTOM_CART_ITEMS_NOT_FOUND);
         }
 
-        String orderNumber = generateOrderNumber();
+        List<CartItem> cartItems = cartItemService.getCartItemsForOrder(request.getCartItem());
+        
+        cartItems.forEach(entityValidator::validateProductAvailabilityForOrder);
 
-        Order addOrder = OrderMapper.INSTANCE.orderFromAddRequest(request);
-        addOrder.setOrderNumber(orderNumber);
+        Order addOrder = OrderMapper.INSTANCE.orderFromAddRequest(request, customer);
+        addOrder.setOrderNumber(generateOrderNumber());
         addOrder.setStatus(OrderStatus.PENDING);
 
         Order savedOrder = orderRepository.save(addOrder);
 
-        List<CartItem> cartItems = cartItemService.getCartItemsForUser(request.getUserId(), request.getCartItem());
-
         List<OrderItem> orderItems = orderItemService.convertCartItemsToOrderItems(cartItems, savedOrder);
-
         orderItemService.saveOrderItems(orderItems);
+        cartItemService.deleteCartItemsForOrder(request.getCartItem());
 
-        cartItemService.deleteCartItemsForOrder(request.getUserId(), request.getCartItem());
-
-        AddOrderResponse response = OrderMapper.INSTANCE.addResponseFromOrder(savedOrder);
-        response.setCartItem(request.getCartItem());
-
-        return response;
+        return OrderMapper.INSTANCE.addResponseFromOrder(savedOrder);
     }
 
     @Override
     public UpdateOrderResponse update(UpdateOrderRequest request) {
-        Order order = findOrderById(request.getId());
-
+        Order order = findOrderAndValidateOwnership(request.getId());
         order.setStatus(request.getStatus());
-
         Order savedOrder = orderRepository.save(order);
-
         return OrderMapper.INSTANCE.updateResponseFromOrder(savedOrder);
     }
 
     @Override
     public void delete(int id) {
-        Order order = findOrderById(id);
+        Order order = findOrderAndValidateOwnership(id);
         orderRepository.delete(order);
     }
 
     @Override
     public int getTotalCount() {
-        return (int) orderRepository.count();
+        Customer customer = customerService.getCustomerOfCurrentUser();
+        return orderRepository.findByCustomerId(customer.getId()).size();
     }
 
-    private Order findOrderById(int id){
-        return orderRepository.findById(id)
+    private Order findOrderAndValidateOwnership(int id) {
+        Customer customer = customerService.getCustomerOfCurrentUser();
+        return orderRepository.findByIdAndCustomerId(id, customer.getId())
                 .orElseThrow(() -> new NotFoundException(Messages.Error.CUSTOM_ORDER_NOT_FOUND));
     }
 

@@ -14,7 +14,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,39 +26,33 @@ public class AddressController extends BaseController {
 
     private final AddressService addressService;
 
-    @GetMapping("/by-user-id/{userId}")
-    public ResponseEntity<BaseResponse<List<ListAddressResponse>>> getAddressesByUserId(@PathVariable int userId){
-        List<ListAddressResponse> addresses = addressService.getAddressesByUserId(userId);
-        return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, addresses, null);
+    @GetMapping
+    public ResponseEntity<BaseResponse<List<ListAddressResponse>>> getAddresses() {
+        List<ListAddressResponse> addresses = addressService.getAddresses();
+        return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, addresses);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BaseResponse<ListAddressResponse>> getById(@PathVariable int id){
+    public ResponseEntity<BaseResponse<ListAddressResponse>> getById(@PathVariable int id) {
         ListAddressResponse address = addressService.getById(id);
-        return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, address, null);
+        return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, address);
     }
 
-    @PostMapping("/create-address")
-    public ResponseEntity<BaseResponse<AddAddressResponse>> add(@RequestBody @Valid AddAddressRequest request, BindingResult bindingResult) {
-        if (bindingResult.hasErrors())
-            return sendResponse(HttpStatus.BAD_REQUEST, Messages.Error.CUSTOM_BAD_REQUEST, null, null);
-
+    @PostMapping
+    public ResponseEntity<BaseResponse<AddAddressResponse>> add(@RequestBody @Valid AddAddressRequest request) {
         AddAddressResponse address = addressService.add(request);
-        return sendResponse(HttpStatus.CREATED, Messages.Success.CUSTOM_SUCCESSFULLY, address, null);
+        return sendResponse(HttpStatus.CREATED, Messages.Success.CUSTOM_SUCCESSFULLY, address);
     }
 
-    @PutMapping("/update-address")
-    public ResponseEntity<BaseResponse<UpdateAddressResponse>> update(@RequestBody @Valid UpdateAddressRequest request, BindingResult bindingResult) {
-        if (bindingResult.hasErrors())
-            return sendResponse(HttpStatus.BAD_REQUEST, Messages.Error.CUSTOM_BAD_REQUEST, null, null);
-
+    @PutMapping
+    public ResponseEntity<BaseResponse<UpdateAddressResponse>> update(@RequestBody @Valid UpdateAddressRequest request) {
         UpdateAddressResponse address = addressService.update(request);
-        return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, address, null);
+        return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, address);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<BaseResponse<Void>>delete(@PathVariable int id) {
+    public ResponseEntity<BaseResponse<Void>> delete(@PathVariable int id) {
         addressService.delete(id);
-        return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, null, null);
+        return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, null);
     }
 }

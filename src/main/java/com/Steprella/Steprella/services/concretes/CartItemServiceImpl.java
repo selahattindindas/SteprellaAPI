@@ -7,10 +7,12 @@ import com.Steprella.Steprella.core.utils.messages.Messages;
 import com.Steprella.Steprella.entities.concretes.CartItem;
 import com.Steprella.Steprella.entities.concretes.ProductSize;
 import com.Steprella.Steprella.entities.concretes.ProductVariant;
+import com.Steprella.Steprella.entities.concretes.Customer;
 import com.Steprella.Steprella.repositories.CartItemRepository;
 import com.Steprella.Steprella.services.abstracts.CartItemService;
 import com.Steprella.Steprella.services.abstracts.CartService;
 import com.Steprella.Steprella.services.abstracts.ProductVariantService;
+import com.Steprella.Steprella.services.abstracts.CustomerService;
 import com.Steprella.Steprella.services.dtos.requests.cartitems.AddCartItemRequest;
 import com.Steprella.Steprella.services.dtos.requests.cartitems.UpdateCartItemRequest;
 import com.Steprella.Steprella.services.dtos.responses.cart_items.AddCartItemResponse;
@@ -35,6 +37,7 @@ public class CartItemServiceImpl implements CartItemService {
     private final ProductVariantService productVariantService;
     private final CartService cartService;
     private final EntityValidator entityValidator;
+    private final CustomerService customerService;
 
     @Override
     public List<ListCartItemResponse> getItemsByCartId(int cartId, int page, int size) {
@@ -119,11 +122,27 @@ public class CartItemServiceImpl implements CartItemService {
     }
 
     @Override
-    public void deleteCartItemsForOrder(int userId, List<Integer> cartItemIds) {
+    public void deleteCartItemsForOrder(List<Integer> cartItemIds) {
+        Customer customer = customerService.getCustomerOfCurrentUser();
         List<CartItem> cartItems = cartItemRepository.findAllById(cartItemIds);
         cartItems.stream()
-                .filter(cartItem -> cartItem.getCart().getUser().getId() == userId)
+                .filter(cartItem -> cartItem.getCart().getCustomer().equals(customer))
                 .forEach(cartItemRepository::delete);
+    }
+
+    @Override
+    public List<CartItem> getCartItemsForOrder(List<Integer> cartItemIds) {
+        Customer customer = customerService.getCustomerOfCurrentUser();
+        return cartItemRepository.findAllById(cartItemIds)
+                .stream()
+                .filter(cartItem -> cartItem.getCart().getCustomer().equals(customer))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean validateCartItems(List<Integer> cartItemIds) {
+        List<CartItem> customerCartItems = getCartItemsForOrder(cartItemIds);
+        return customerCartItems.size() == cartItemIds.size();
     }
 
     @Override
@@ -131,15 +150,9 @@ public class CartItemServiceImpl implements CartItemService {
         return (int) cartItemRepository.count();
     }
 
+    @Override
     public CartItem findByProductVariantIdAndCartId(int productVariantId, int cartId) {
         return cartItemRepository.findByProductVariantIdAndCartId(productVariantId, cartId);
-    }
-
-    public List<CartItem> getCartItemsForUser(int userId, List<Integer> cartItemIds) {
-        return cartItemRepository.findAllById(cartItemIds)
-                .stream()
-                .filter(cartItem -> cartItem.getCart().getUser().getId() == userId)
-                .collect(Collectors.toList());
     }
 
     public boolean checkStockAvailabilityForCartItem(CartItem cartItem) {
@@ -152,12 +165,6 @@ public class CartItemServiceImpl implements CartItemService {
                 .orElse(null);
 
         return size != null && size.getStockQuantity() >= cartItem.getQuantity();
-    }
-
-    public boolean validateCartItems(int userId, List<Integer> cartItemIds) {
-        List<CartItem> userCartItems = getCartItemsForUser(userId, cartItemIds);
-
-        return userCartItems.size() == cartItemIds.size();
     }
 
     private CartItem findCartItemById(int id) {

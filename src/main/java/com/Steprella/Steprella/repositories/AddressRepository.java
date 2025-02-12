@@ -8,5 +8,6 @@ import java.util.List;
 @Repository
 public interface AddressRepository extends BaseRepository<Address, Integer> {
 
-    List<Address> findAddressByUserId(int userId);
+    List<Address> findByCustomerId(int customerId);
+    boolean existsByIdAndCustomerId(int id, int customerId);
 }

@@ -19,7 +19,5 @@ public class UpdateCommentResponse {
 
     private int rating;
 
-    private int userId;
-
     private String updatedDate;
 }

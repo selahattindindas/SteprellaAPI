@@ -9,4 +9,6 @@ import java.util.List;
 public interface CommentRepository extends BaseRepository<Comment, Integer> {
 
     List<Comment> findByProductId(int productId);
+    List<Comment> findByCustomerId(int customerId);
+    boolean existsByIdAndCustomerId(int id, int customerId);
 }

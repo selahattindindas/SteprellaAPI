@@ -1,16 +1,15 @@
 package com.Steprella.Steprella.services.abstracts;
 
-import com.Steprella.Steprella.services.dtos.requests.carts.AddCartRequest;
+import com.Steprella.Steprella.entities.concretes.Cart;
+import com.Steprella.Steprella.entities.concretes.Customer;
 import com.Steprella.Steprella.services.dtos.responses.carts.AddCartResponse;
 import com.Steprella.Steprella.services.dtos.responses.carts.ListCartResponse;
 
 public interface CartService {
 
-    ListCartResponse getCartByUserId(int userId);
+    ListCartResponse getCart();
 
-    ListCartResponse getById(int id);
+    AddCartResponse createCart(Customer customer);
 
-    AddCartResponse add(AddCartRequest request);
-
-    void delete(int id);
+    Cart getById(int id);
 }

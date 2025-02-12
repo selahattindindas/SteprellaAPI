@@ -11,11 +11,11 @@ import java.util.List;
 
 public interface AddressService {
 
-    List<ListAddressResponse> getAddressesByUserId(int userId);
+    List<ListAddressResponse> getAddresses();
 
     ListAddressResponse getById(int id);
 
-    Address getResponseById(int id);
+    Address getAddressById(int id);
 
     AddAddressResponse add(AddAddressRequest request);
 

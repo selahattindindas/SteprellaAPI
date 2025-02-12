@@ -5,7 +5,6 @@ import com.Steprella.Steprella.core.utils.EntityValidator;
 import com.Steprella.Steprella.core.utils.exceptions.types.NotFoundException;
 import com.Steprella.Steprella.core.utils.messages.Messages;
 import com.Steprella.Steprella.entities.concretes.Product;
-import com.Steprella.Steprella.entities.concretes.ProductVariant;
 import com.Steprella.Steprella.repositories.ProductRepository;
 import com.Steprella.Steprella.services.abstracts.*;
 import com.Steprella.Steprella.services.dtos.requests.products.AddProductRequest;
@@ -71,6 +70,7 @@ public class ProductServiceImpl implements ProductService {
                 .limit(count)
                 .collect(Collectors.toList());
     }
+
     @Override
     public List<ListProductResponse> filter(ProductSearchCriteria criteria) {
         Pageable pageable = PageRequest.of(criteria.getPage(), criteria.getSize());
@@ -83,14 +83,26 @@ public class ProductServiceImpl implements ProductService {
         return productPage.getContent().stream()
                 .map(product -> {
                     ListProductResponse response = createProductResponse(product);
-                    List<ListProductVariantResponse> activeVariants = response.getProductVariants().stream()
-                            .filter(ListProductVariantResponse::isActive)
+                    List<ListProductVariantResponse> filteredVariants = response.getProductVariants().stream()
+                            .filter(variant -> {
+                                boolean isActiveMatch = variant.isActive();
+                                boolean isColorMatch = criteria.getColorId() == null ||
+                                        (product.getProductVariants().stream()
+                                                .anyMatch(pv -> pv.getColor().getId() == criteria.getColorId() &&
+                                                        pv.getId() == variant.getId()));
+                                return isActiveMatch && isColorMatch;
+                            })
                             .collect(Collectors.toList());
-                    response.setProductVariants(activeVariants);
-                    return activeVariants.isEmpty() ? null : response;
+                    response.setProductVariants(filteredVariants);
+                    return filteredVariants.isEmpty() ? null : response;
                 })
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Product save(Product product) {
+        return productRepository.save(product);
     }
 
     @Override
@@ -117,6 +129,11 @@ public class ProductServiceImpl implements ProductService {
     public ListProductResponse getById(int id) {
         Product product = findProductById(id);
         return createProductResponse(product);
+    }
+
+    @Override
+    public Product getResponseById(int id) {
+        return findProductById(id);
     }
 
     @Override
@@ -158,7 +175,12 @@ public class ProductServiceImpl implements ProductService {
         return (int) productRepository.findAll(ProductSpecification.getFilteredProducts(criteria))
                 .stream()
                 .flatMap(product -> product.getProductVariants().stream())
-                .filter(ProductVariant::isActive)
+                .filter(variant -> {
+                    boolean isActiveMatch = variant.isActive();
+                    boolean isColorMatch = criteria.getColorId() == null ||
+                            variant.getColor().getId() == criteria.getColorId();
+                    return isActiveMatch && isColorMatch;
+                })
                 .count();
     }
 

@@ -22,7 +22,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public PaymentResponse createPayment(PaymentRequest request) {
-        Order order = orderService.getByResponseId(request.getOrderId());
+        Order order = orderService.getOrderById(request.getOrderId());
 
         BigDecimal totalAmount = calculateOrderTotalAmount(order);
 
