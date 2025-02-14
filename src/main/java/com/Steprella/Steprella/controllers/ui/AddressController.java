@@ -26,7 +26,7 @@ public class AddressController extends BaseController {
 
     private final AddressService addressService;
 
-    @GetMapping
+    @GetMapping("/get-addresses")
     public ResponseEntity<BaseResponse<List<ListAddressResponse>>> getAddresses() {
         List<ListAddressResponse> addresses = addressService.getAddresses();
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, addresses);
@@ -38,13 +38,13 @@ public class AddressController extends BaseController {
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, address);
     }
 
-    @PostMapping
+    @PostMapping("/create-address")
     public ResponseEntity<BaseResponse<AddAddressResponse>> add(@RequestBody @Valid AddAddressRequest request) {
         AddAddressResponse address = addressService.add(request);
         return sendResponse(HttpStatus.CREATED, Messages.Success.CUSTOM_SUCCESSFULLY, address);
     }
 
-    @PutMapping
+    @PutMapping("/update-address")
     public ResponseEntity<BaseResponse<UpdateAddressResponse>> update(@RequestBody @Valid UpdateAddressRequest request) {
         UpdateAddressResponse address = addressService.update(request);
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, address);

@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -24,16 +25,19 @@ public class FavoriteController extends BaseController {
 
     private final FavoriteService favoriteService;
 
-    @GetMapping
+    @GetMapping("/get-favorites")
     public ResponseEntity<BaseResponse<List<ListFavoriteResponse>>> getFavorites(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         List<ListFavoriteResponse> favorites = favoriteService.getFavorites(page, size);
+        if (favorites == null || favorites.isEmpty()) {
+            return sendResponse(HttpStatus.OK, "Favori ürün bulunamadı.", Collections.emptyList(), 0);
+        }
         int totalCount = favoriteService.getTotalCount();
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, favorites, totalCount);
     }
 
-    @PostMapping
+    @PostMapping("/create-favorite")
     public ResponseEntity<BaseResponse<AddFavoriteResponse>> add(@RequestBody @Valid AddFavoriteRequest request) {
         AddFavoriteResponse favorite = favoriteService.add(request);
         return sendResponse(HttpStatus.CREATED, Messages.Success.CUSTOM_SUCCESSFULLY, favorite);

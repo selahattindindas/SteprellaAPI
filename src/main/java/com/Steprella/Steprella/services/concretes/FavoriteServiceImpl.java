@@ -14,9 +14,6 @@ import com.Steprella.Steprella.services.dtos.responses.favorites.AddFavoriteResp
 import com.Steprella.Steprella.services.dtos.responses.favorites.ListFavoriteResponse;
 import com.Steprella.Steprella.services.mappers.FavoriteMapper;
 import lombok.AllArgsConstructor;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -33,7 +30,6 @@ public class FavoriteServiceImpl implements FavoriteService {
     private final CustomerService customerService;
 
     @Override
-    @Cacheable(value="favorites", key="#customer.id")
     public List<ListFavoriteResponse> getFavorites(int page, int size) {
         Customer customer = customerService.getCustomerOfCurrentUser();
         
@@ -46,7 +42,6 @@ public class FavoriteServiceImpl implements FavoriteService {
     }
     
     @Override
-    @CachePut(value = "favorites", key = "#result.id")
     public AddFavoriteResponse add(AddFavoriteRequest request) {
         Customer customer = customerService.getCustomerOfCurrentUser();
         
@@ -62,7 +57,6 @@ public class FavoriteServiceImpl implements FavoriteService {
     }
 
     @Override
-    @CacheEvict(value = "favorites", key = "#id")
     public void delete(int id) {
         Favorite favorite = findFavoriteAndValidateOwnership(id);
         favoriteRepository.delete(favorite);

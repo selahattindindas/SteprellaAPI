@@ -19,7 +19,7 @@ public class CartController extends BaseController {
 
     private final CartService cartService;
 
-    @GetMapping
+    @GetMapping("/get-cart")
     public ResponseEntity<BaseResponse<ListCartResponse>> getCart() {
         ListCartResponse cart = cartService.getCart();
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, cart);

@@ -5,8 +5,10 @@ import com.Steprella.Steprella.core.utils.exceptions.types.BusinessException;
 import com.Steprella.Steprella.core.utils.messages.Messages;
 import com.Steprella.Steprella.entities.concretes.User;
 import com.Steprella.Steprella.services.abstracts.AuthService;
+import com.Steprella.Steprella.services.abstracts.CustomerService;
 import com.Steprella.Steprella.services.abstracts.UserService;
 import com.Steprella.Steprella.services.abstracts.VerificationCodeService;
+import com.Steprella.Steprella.services.dtos.requests.customers.AddCustomerRequest;
 import com.Steprella.Steprella.services.dtos.requests.tokens.RefreshTokenRequest;
 import com.Steprella.Steprella.services.dtos.requests.users.AddUserRequest;
 import com.Steprella.Steprella.services.dtos.requests.users.LoginUserRequest;
@@ -33,10 +35,10 @@ public class AuthServiceImpl implements AuthService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final VerificationCodeService verificationCodeService;
+    private final CustomerService customerService;
 
     @Override
     public AddUserResponse register(AddUserRequest request) {
-
         User newUser = AuthMapper.INSTANCE.userFromAddRequest(request);
 
         newUser.setPassword(passwordEncoder.encode(request.getPassword()));
@@ -44,6 +46,10 @@ public class AuthServiceImpl implements AuthService {
         newUser.setVerified(false);
 
         User savedUser = userService.add(newUser);
+
+        AddCustomerRequest customerRequest = new AddCustomerRequest();
+        customerRequest.setUserId(savedUser.getId());
+        customerService.add(customerRequest);
 
         verificationCodeService.sendActivationEmail(savedUser.getEmail());
 

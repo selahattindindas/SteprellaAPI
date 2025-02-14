@@ -25,7 +25,7 @@ public class OrderController extends BaseController {
 
     private final OrderService orderService;
 
-    @GetMapping
+    @GetMapping("/get-orders")
     public ResponseEntity<BaseResponse<List<ListOrderResponse>>> getOrders(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
@@ -34,7 +34,7 @@ public class OrderController extends BaseController {
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, orders, totalCount);
     }
 
-    @PostMapping
+    @PostMapping("/create-order")
     public ResponseEntity<BaseResponse<AddOrderResponse>> add(@RequestBody @Valid AddOrderRequest request) {
         AddOrderResponse addOrder = orderService.add(request);
         return sendResponse(HttpStatus.CREATED, Messages.Success.CUSTOM_SUCCESSFULLY, addOrder);

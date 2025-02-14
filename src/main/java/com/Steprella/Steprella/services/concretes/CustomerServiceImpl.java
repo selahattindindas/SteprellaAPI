@@ -12,16 +12,26 @@ import com.Steprella.Steprella.services.dtos.requests.customers.AddCustomerReque
 import com.Steprella.Steprella.services.dtos.responses.customers.AddCustomerResponse;
 import com.Steprella.Steprella.services.dtos.responses.customers.ListCustomerResponse;
 import com.Steprella.Steprella.services.mappers.CustomerMapper;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 @Service
-@AllArgsConstructor
 public class CustomerServiceImpl implements CustomerService {
 
     private final CustomerRepository customerRepository;
     private final UserService userService;
     private final CartService cartService;
+
+    @Autowired
+    public CustomerServiceImpl(
+            CustomerRepository customerRepository,
+            UserService userService,
+            @Lazy CartService cartService) {
+        this.customerRepository = customerRepository;
+        this.userService = userService;
+        this.cartService = cartService;
+    }
 
     @Override
     public ListCustomerResponse getById(int id) {
@@ -41,7 +51,7 @@ public class CustomerServiceImpl implements CustomerService {
     public Customer getCustomerOfCurrentUser() {
         int userId = userService.getLoggedInUser().getId();
         return customerRepository.findByUserId(userId)
-                .orElseThrow(() -> new NotFoundException(Messages.Error.CUSTOM_CUSTOMER_NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException("Müşteri bulunamadı."));
     }
 
     @Override

@@ -8,6 +8,8 @@ import com.Steprella.Steprella.services.abstracts.ColorService;
 import com.Steprella.Steprella.services.dtos.responses.colors.ListColorResponse;
 import com.Steprella.Steprella.services.mappers.ColorMapper;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,9 +22,19 @@ public class ColorServiceImpl implements ColorService {
     private ColorRepository colorRepository;
 
     @Override
-    public List<ListColorResponse> getAll() {
-        List<Color> colors = colorRepository.findAll();
-        return colors.stream().map(ColorMapper.INSTANCE::listResponseFromColor).collect(Collectors.toList());
+    public List<ListColorResponse> getAll(Integer page, Integer size) {
+        List<Color> colors;
+
+        if (page != null && size != null) {
+            Pageable pageable = PageRequest.of(page, size);
+            colors = colorRepository.findAll(pageable).getContent();
+        } else {
+            colors = colorRepository.findAll();
+        }
+
+        return colors.stream()
+                .map(ColorMapper.INSTANCE::listResponseFromColor)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -31,5 +43,10 @@ public class ColorServiceImpl implements ColorService {
                 .orElseThrow(() -> new NotFoundException(Messages.Error.CUSTOM_COLOR_NOT_FOUND));
 
         return ColorMapper.INSTANCE.listResponseFromColor(color);
+    }
+
+    @Override
+    public int getTotalCount() {
+        return (int) colorRepository.count();
     }
 }

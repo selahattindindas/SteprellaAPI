@@ -48,8 +48,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getLoggedInUser() {
-        int idOfLoggedInUser = (int) SecurityContextHolder.getContext().getAuthentication().getCredentials();
-        return getById(idOfLoggedInUser);
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof User) {
+            return (User) principal;
+        } else if (principal instanceof UserDetails) {
+            UserDetails userDetails = (UserDetails) principal;
+            return userRepository.findByEmailIgnoreCase(userDetails.getUsername())
+                    .orElseThrow(() -> new BusinessException("Kullanıcı bulunamadı."));
+        }
+        throw new BusinessException("Oturum açmış kullanıcı bilgisi alınamadı.");
     }
 
     @Override

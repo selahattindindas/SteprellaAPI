@@ -6,7 +6,9 @@ import java.util.List;
 
 public interface ColorService {
 
-    List<ListColorResponse> getAll();
+    List<ListColorResponse> getAll(Integer page, Integer size);
 
     ListColorResponse getById(int id);
+
+    int getTotalCount();
 }

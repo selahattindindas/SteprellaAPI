@@ -38,14 +38,14 @@ public class CommentController extends BaseController {
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, comment);
     }
 
-    @PostMapping
+    @PostMapping("/create-comment")
     @PreAuthorize("hasRole('ROLE_CUSTOMER')")
     public ResponseEntity<BaseResponse<AddCommentResponse>> add(@RequestBody @Valid AddCommentRequest request) {
         AddCommentResponse comment = commentService.add(request);
         return sendResponse(HttpStatus.CREATED, Messages.Success.CUSTOM_SUCCESSFULLY, comment);
     }
 
-    @PutMapping
+    @PutMapping("/update-comment")
     @PreAuthorize("hasRole('ROLE_CUSTOMER')")
     public ResponseEntity<BaseResponse<UpdateCommentResponse>> update(@RequestBody @Valid UpdateCommentRequest request) {
         UpdateCommentResponse comment = commentService.update(request);
