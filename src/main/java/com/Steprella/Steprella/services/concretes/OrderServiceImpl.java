@@ -20,6 +20,7 @@ import com.Steprella.Steprella.services.mappers.OrderMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -43,30 +44,19 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<ListOrderResponse> getOrders(int page, int size) {
         Customer customer = customerService.getCustomerOfCurrentUser();
-        
-        Pageable pageable = PageRequest.of(page, size);
-        List<Order> orders = orderRepository.findByCustomerId(customer.getId(), pageable).getContent();
+        return getOrdersForCustomer(customer, page, size);
+    }
 
-        List<OrderItem> allOrderItems = orders.stream()
-                .flatMap(order -> order.getItems().stream())
-                .collect(Collectors.toList());
-
-        return orders.stream().map(order -> {
-            ListOrderResponse response = OrderMapper.INSTANCE.listResponseFromOrder(order);
-            BigDecimal totalPriceForOrder = CalculationUtils.calculateTotalPrice(
-                    allOrderItems,
-                    orderItem -> orderItem.getOrder().getId(),
-                    OrderItem::getTotalPrice,
-                    order.getId()
-            );
-            response.setTotalPrice(totalPriceForOrder);
-            return response;
-        }).collect(Collectors.toList());
+    @Override
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public List<ListOrderResponse> getOrdersByUserId(int userId, int page, int size) {
+        Customer customer = customerService.getCustomerById(userId);
+        return getOrdersForCustomer(customer, page, size);
     }
 
     @Override
     public ListOrderResponse getById(int id) {
-        Order order = findOrderAndValidateOwnership(id);
+        Order order = findByOrderId(id);
         return OrderMapper.INSTANCE.listResponseFromOrder(order);
     }
 
@@ -104,7 +94,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public UpdateOrderResponse update(UpdateOrderRequest request) {
-        Order order = findOrderAndValidateOwnership(request.getId());
+        Order order = findByOrderId(request.getId());
         order.setStatus(request.getStatus());
         Order savedOrder = orderRepository.save(order);
         return OrderMapper.INSTANCE.updateResponseFromOrder(savedOrder);
@@ -112,7 +102,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void delete(int id) {
-        Order order = findOrderAndValidateOwnership(id);
+        Order order = findByOrderId(id);
         orderRepository.delete(order);
     }
 
@@ -122,10 +112,36 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findByCustomerId(customer.getId()).size();
     }
 
+    private Order findByOrderId(int id) {
+        return  orderRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(Messages.Error.CUSTOM_ORDER_NOT_FOUND));
+    }
+
     private Order findOrderAndValidateOwnership(int id) {
         Customer customer = customerService.getCustomerOfCurrentUser();
         return orderRepository.findByIdAndCustomerId(id, customer.getId())
                 .orElseThrow(() -> new NotFoundException(Messages.Error.CUSTOM_ORDER_NOT_FOUND));
+    }
+
+    private List<ListOrderResponse> getOrdersForCustomer(Customer customer, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        List<Order> orders = orderRepository.findByCustomerId(customer.getId(), pageable).getContent();
+
+        List<OrderItem> allOrderItems = orders.stream()
+                .flatMap(order -> order.getItems().stream())
+                .collect(Collectors.toList());
+
+        return orders.stream().map(order -> {
+            ListOrderResponse response = OrderMapper.INSTANCE.listResponseFromOrder(order);
+            BigDecimal totalPriceForOrder = CalculationUtils.calculateTotalPrice(
+                    allOrderItems,
+                    orderItem -> orderItem.getOrder().getId(),
+                    OrderItem::getTotalPrice,
+                    order.getId()
+            );
+            response.setTotalPrice(totalPriceForOrder);
+            return response;
+        }).collect(Collectors.toList());
     }
 
     private String generateOrderNumber() {

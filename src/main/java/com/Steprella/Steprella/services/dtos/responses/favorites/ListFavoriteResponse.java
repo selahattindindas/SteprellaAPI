@@ -14,5 +14,5 @@ public class ListFavoriteResponse {
 
     private int id;
 
-    private ListProductVariantDetailResponse productVariant;
+    private ListProductVariantDetailResponse variant;
 }

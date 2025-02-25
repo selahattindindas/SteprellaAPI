@@ -19,10 +19,6 @@ public class UpdateCartItemRequest {
 
     @NotNull
     @Min(1)
-    private int cartId;
-
-    @NotNull
-    @Min(1)
     private int productVariantId;
 
     @NotNull

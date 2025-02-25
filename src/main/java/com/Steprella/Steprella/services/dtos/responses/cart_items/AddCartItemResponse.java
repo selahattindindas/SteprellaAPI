@@ -15,8 +15,6 @@ public class AddCartItemResponse {
 
     private int id;
 
-    private int cartId;
-
     private int productVariantId;
 
     private int productVariantSizeId;

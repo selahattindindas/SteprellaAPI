@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Getter
@@ -14,8 +13,9 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ListProductVariantDetailResponse {
+    private int variantId;
 
-    private BigDecimal price;
+    private String colorName;
 
     private double rating;
 
@@ -31,9 +31,5 @@ public class ListProductVariantDetailResponse {
 
     private String usageAreaName;
 
-    private String colorName;
-
-    private boolean isActive;
-
-    private List<ListFileResponse> productFiles;
+    private List<ListFileResponse> productImages;
 }

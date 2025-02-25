@@ -14,16 +14,16 @@ public interface FavoriteMapper {
 
     FavoriteMapper INSTANCE = Mappers.getMapper(FavoriteMapper.class);
 
-    @Mapping(target = "productVariant", source = "productVariant")
-    @Mapping(target = "productVariant.price", source = "productVariant.product.price")
-    @Mapping(target = "productVariant.rating", source = "productVariant.product.rating")
-    @Mapping(target = "productVariant.ratingCount", source = "productVariant.product.ratingCount")
-    @Mapping(target = "productVariant.description", source = "productVariant.product.description")
-    @Mapping(target = "productVariant.brandName", source = "productVariant.product.brand.name")
-    @Mapping(target = "productVariant.shoeModelName", source = "productVariant.product.shoeModel.modelName")
-    @Mapping(target = "productVariant.materialName", source = "productVariant.product.material.name")
-    @Mapping(target = "productVariant.usageAreaName", source = "productVariant.product.usageArea.name")
-    @Mapping(target = "productVariant.colorName", source = "productVariant.color.name")
+    @Mapping(target = "variant.variantId", source = "productVariant.id")
+    @Mapping(target = "variant.colorName", source = "productVariant.color.name")
+    @Mapping(target = "variant.rating", source = "productVariant.product.rating")
+    @Mapping(target = "variant.ratingCount", source = "productVariant.product.ratingCount")
+    @Mapping(target = "variant.description", source = "productVariant.product.description")
+    @Mapping(target = "variant.brandName", source = "productVariant.product.brand.name")
+    @Mapping(target = "variant.shoeModelName", source = "productVariant.product.shoeModel.modelName")
+    @Mapping(target = "variant.materialName", source = "productVariant.product.material.name")
+    @Mapping(target = "variant.usageAreaName", source = "productVariant.product.usageArea.name")
+    @Mapping(target = "variant.productImages", source = "productVariant.productFiles")
     ListFavoriteResponse listResponseFromFavorite(Favorite favorite);
 
     @Mapping(target = "id", ignore = true)

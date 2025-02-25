@@ -13,6 +13,8 @@ public interface OrderService {
 
     List<ListOrderResponse> getOrders(int page, int size);
 
+    List<ListOrderResponse> getOrdersByUserId(int userId, int page, int size);
+
     ListOrderResponse getById(int id);
 
     Order getOrderById(int id);

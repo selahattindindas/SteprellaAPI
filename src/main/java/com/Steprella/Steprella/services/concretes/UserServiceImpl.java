@@ -3,6 +3,7 @@ package com.Steprella.Steprella.services.concretes;
 import com.Steprella.Steprella.core.utils.exceptions.types.BusinessException;
 import com.Steprella.Steprella.core.utils.exceptions.types.NotFoundException;
 import com.Steprella.Steprella.core.utils.messages.Messages;
+import com.Steprella.Steprella.entities.concretes.Customer;
 import com.Steprella.Steprella.entities.concretes.User;
 import com.Steprella.Steprella.repositories.UserRepository;
 import com.Steprella.Steprella.services.abstracts.UserService;
@@ -60,9 +61,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User add(User user) {
+    public User save(User user) {
         return userRepository.save(user);
     }
+
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -90,6 +92,18 @@ public class UserServiceImpl implements UserService {
     @Override
     public int getTotalCount() {
         return (int) userRepository.count();
+    }
+
+    @Override
+    public ListUserResponse getResponseByCustomer(Customer customer) {
+        if (customer == null) {
+            throw new BusinessException(Messages.Error.CUSTOM_CUSTOMER_NOT_FOUND);
+        }
+        User user = customer.getUser();
+        if (user == null) {
+            throw new BusinessException(Messages.Error.CUSTOM_USER_NOT_FOUND);
+        }
+        return UserMapper.INSTANCE.listResponseFromUser(user);
     }
 
     private User findUserById(int id) {

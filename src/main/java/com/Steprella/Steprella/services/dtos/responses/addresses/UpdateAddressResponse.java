@@ -16,4 +16,8 @@ public class UpdateAddressResponse {
     private int cityId;
 
     private int districtId;
+
+    private String description;
+
+    private String title;
 }

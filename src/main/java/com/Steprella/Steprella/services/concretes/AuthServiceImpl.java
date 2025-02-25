@@ -3,6 +3,7 @@ package com.Steprella.Steprella.services.concretes;
 import com.Steprella.Steprella.core.services.JwtService;
 import com.Steprella.Steprella.core.utils.exceptions.types.BusinessException;
 import com.Steprella.Steprella.core.utils.messages.Messages;
+import com.Steprella.Steprella.entities.concretes.Customer;
 import com.Steprella.Steprella.entities.concretes.User;
 import com.Steprella.Steprella.services.abstracts.AuthService;
 import com.Steprella.Steprella.services.abstracts.CustomerService;
@@ -12,11 +13,14 @@ import com.Steprella.Steprella.services.dtos.requests.customers.AddCustomerReque
 import com.Steprella.Steprella.services.dtos.requests.tokens.RefreshTokenRequest;
 import com.Steprella.Steprella.services.dtos.requests.users.AddUserRequest;
 import com.Steprella.Steprella.services.dtos.requests.users.LoginUserRequest;
+import com.Steprella.Steprella.services.dtos.requests.users.UpdateUserRequest;
 import com.Steprella.Steprella.services.dtos.responses.tokens.RefreshTokenResponse;
 import com.Steprella.Steprella.services.dtos.responses.users.AddUserResponse;
 import com.Steprella.Steprella.services.dtos.responses.users.LoginUserResponse;
+import com.Steprella.Steprella.services.dtos.responses.users.UpdateUserResponse;
 import com.Steprella.Steprella.services.enums.Role;
 import com.Steprella.Steprella.services.mappers.AuthMapper;
+import com.Steprella.Steprella.services.mappers.UserMapper;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -45,7 +49,7 @@ public class AuthServiceImpl implements AuthService {
         newUser.setRole(Role.CUSTOMER);
         newUser.setVerified(false);
 
-        User savedUser = userService.add(newUser);
+        User savedUser = userService.save(newUser);
 
         AddCustomerRequest customerRequest = new AddCustomerRequest();
         customerRequest.setUserId(savedUser.getId());
@@ -54,6 +58,21 @@ public class AuthServiceImpl implements AuthService {
         verificationCodeService.sendActivationEmail(savedUser.getEmail());
 
         return AuthMapper.INSTANCE.addResponseFromUser(savedUser);
+    }
+
+    @Override
+    public UpdateUserResponse update(UpdateUserRequest request) {
+
+        User currentUser = userService.getLoggedInUser();
+        Customer customer = customerService.getCustomerOfCurrentUser();
+
+        currentUser.setFullName(request.getFullName());
+        currentUser.setPhone(request.getPhone());
+        currentUser.setGender(request.getGender());
+
+        User savedUser = userService.save(currentUser);
+        
+        return AuthMapper.INSTANCE.updateResponseFromUser(savedUser);
     }
 
     @Override

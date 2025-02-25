@@ -4,6 +4,7 @@ import com.Steprella.Steprella.core.utils.exceptions.types.BusinessException;
 import com.Steprella.Steprella.core.utils.exceptions.types.NotFoundException;
 import com.Steprella.Steprella.core.utils.messages.Messages;
 import com.Steprella.Steprella.entities.concretes.Cart;
+import com.Steprella.Steprella.entities.concretes.CartItem;
 import com.Steprella.Steprella.entities.concretes.Customer;
 import com.Steprella.Steprella.repositories.CartRepository;
 import com.Steprella.Steprella.services.abstracts.CartService;
@@ -28,6 +29,17 @@ public class CartServiceImpl implements CartService {
     public ListCartResponse getCart() {
         Customer customer = customerService.getCustomerOfCurrentUser();
         Cart cart = findCartByCustomerId(customer.getId());
+        
+        // Calculate total items and total price
+        int totalItems = cart.getCartItems().size();
+        BigDecimal totalPrice = cart.getCartItems().stream()
+                .map(CartItem::getTotalPrice)
+                .filter(price -> price != null)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        cart.setTotalItems(totalItems);
+        cart.setTotalPrice(totalPrice);
+
         return CartMapper.INSTANCE.listResponseFromCart(cart);
     }
 

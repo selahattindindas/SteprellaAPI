@@ -18,7 +18,7 @@ public class ListOrderItemResponse {
 
     private int orderId;
 
-    private int productVariantSizeValue;
+    private int sizeValue;
 
     private int quantity;
 
@@ -26,5 +26,5 @@ public class ListOrderItemResponse {
 
     private BigDecimal totalPrice;
 
-    private ListProductVariantDetailResponse productVariant;
+    private ListProductVariantDetailResponse variant;
 }

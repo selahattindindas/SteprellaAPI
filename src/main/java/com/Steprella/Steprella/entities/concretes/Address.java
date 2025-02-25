@@ -18,6 +18,9 @@ public class Address extends BaseEntity {
     @Column(name = "description")
     private String description;
 
+    @Column(name = "title")
+    private String title;
+
     @ManyToOne
     @JoinColumn(name = "customer_id")
     private Customer customer;

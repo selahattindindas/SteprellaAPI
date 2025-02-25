@@ -13,14 +13,9 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ListCartItemResponse {
-
     private int id;
 
-    private int cartId;
-
     private boolean inStock;
-
-    private int productVariantSizeValue;
 
     private int quantity;
 
@@ -28,5 +23,9 @@ public class ListCartItemResponse {
 
     private BigDecimal totalPrice;
 
-    private ListProductVariantDetailResponse productVariant;
+    private int sizeId;
+
+    private int sizeValue;
+
+    private ListProductVariantDetailResponse variant;
 }

@@ -8,7 +8,6 @@ import com.Steprella.Steprella.entities.concretes.Favorite;
 import com.Steprella.Steprella.repositories.FavoriteRepository;
 import com.Steprella.Steprella.services.abstracts.FavoriteService;
 import com.Steprella.Steprella.services.abstracts.CustomerService;
-import com.Steprella.Steprella.services.abstracts.ProductVariantService;
 import com.Steprella.Steprella.services.dtos.requests.favorites.AddFavoriteRequest;
 import com.Steprella.Steprella.services.dtos.responses.favorites.AddFavoriteResponse;
 import com.Steprella.Steprella.services.dtos.responses.favorites.ListFavoriteResponse;
@@ -26,7 +25,6 @@ import java.util.stream.Collectors;
 public class FavoriteServiceImpl implements FavoriteService {
 
     private final FavoriteRepository favoriteRepository;
-    private final ProductVariantService productVariantService;
     private final CustomerService customerService;
 
     @Override

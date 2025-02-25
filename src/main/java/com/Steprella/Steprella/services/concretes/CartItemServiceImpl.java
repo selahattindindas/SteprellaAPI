@@ -8,6 +8,7 @@ import com.Steprella.Steprella.entities.concretes.CartItem;
 import com.Steprella.Steprella.entities.concretes.ProductSize;
 import com.Steprella.Steprella.entities.concretes.ProductVariant;
 import com.Steprella.Steprella.entities.concretes.Customer;
+import com.Steprella.Steprella.entities.concretes.Cart;
 import com.Steprella.Steprella.repositories.CartItemRepository;
 import com.Steprella.Steprella.services.abstracts.CartItemService;
 import com.Steprella.Steprella.services.abstracts.CartService;
@@ -70,12 +71,18 @@ public class CartItemServiceImpl implements CartItemService {
 
     @Override
     public AddCartItemResponse add(AddCartItemRequest request) {
-        cartService.getById(request.getCartId());
+        Customer customer = customerService.getCustomerOfCurrentUser();
+        Cart cart = customer.getCart();
+
+        if (cart == null) {
+            throw new BusinessException(Messages.Error.CUSTOM_CART_NOT_FOUND);
+        }
+
         productVariantService.getById(request.getProductVariantId());
         entityValidator.checkProductVariantAvailability(request.getProductVariantId(), request.getProductVariantSizeId(), request.getQuantity());
 
         Optional<CartItem> existingCartItem = cartItemRepository.findByCartIdAndProductVariantIdAndProductSizeId(
-                request.getCartId(),
+                cart.getId(),
                 request.getProductVariantId(),
                 request.getProductVariantSizeId()
         );
@@ -90,6 +97,7 @@ public class CartItemServiceImpl implements CartItemService {
         CartItem addCartItem = CartItemMapper.INSTANCE.cartItemFromAddRequest(request);
         addCartItem.setUnitPrice(unitPrice);
         addCartItem.setTotalPrice(totalPrice);
+        addCartItem.setCart(cart);
 
         CartItem savedCartItem = cartItemRepository.save(addCartItem);
 
@@ -98,17 +106,25 @@ public class CartItemServiceImpl implements CartItemService {
 
     @Override
     public UpdateCartItemResponse update(UpdateCartItemRequest request) {
-        findCartItemById(request.getId());
-        cartService.getById(request.getCartId());
+        CartItem existingCartItem = findCartItemById(request.getId());
+        Customer customer = customerService.getCustomerOfCurrentUser();
+        Cart cart = customer.getCart();
+
+        if (cart == null) {
+            throw new BusinessException(Messages.Error.CUSTOM_CART_NOT_FOUND);
+        }
+
         productVariantService.getById(request.getProductVariantId());
         entityValidator.checkProductVariantAvailability(request.getProductVariantId(), request.getProductVariantSizeId(), request.getQuantity());
 
         BigDecimal unitPrice = productVariantService.getUnitPriceByProductVariantId(request.getProductVariantId());
         BigDecimal totalPrice = calculateTotalPrice(unitPrice, request.getQuantity());
 
+
         CartItem updateCartItem = CartItemMapper.INSTANCE.cartItemFromUpdateRequest(request);
         updateCartItem.setUnitPrice(unitPrice);
         updateCartItem.setTotalPrice(totalPrice);
+        updateCartItem.setCart(cart); 
 
         CartItem savedCartItem = cartItemRepository.save(updateCartItem);
 

@@ -42,9 +42,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Customer getCustomerById(int id) {
-        Customer customer = findCustomerById(id);
-        validateCustomerAccess(customer);
-        return customer;
+        return findCustomerById(id);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.Steprella.Steprella.services.abstracts;
 
 import com.Steprella.Steprella.entities.concretes.User;
+import com.Steprella.Steprella.entities.concretes.Customer;
 import com.Steprella.Steprella.services.dtos.responses.users.ListUserResponse;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
@@ -16,11 +17,13 @@ public interface UserService extends UserDetailsService {
 
     User getLoggedInUser();
 
-    User add(User user);
+    User save(User user);
 
     User getByEmail(String email);
 
     void setVerified(String email);
 
     int getTotalCount();
+
+    ListUserResponse getResponseByCustomer(Customer customer);
 }

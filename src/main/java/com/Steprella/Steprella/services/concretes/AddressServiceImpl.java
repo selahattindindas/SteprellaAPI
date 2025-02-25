@@ -1,7 +1,6 @@
 package com.Steprella.Steprella.services.concretes;
 
 import com.Steprella.Steprella.core.utils.EntityValidator;
-import com.Steprella.Steprella.core.utils.exceptions.types.BusinessException;
 import com.Steprella.Steprella.core.utils.exceptions.types.NotFoundException;
 import com.Steprella.Steprella.core.utils.messages.Messages;
 import com.Steprella.Steprella.entities.concretes.Address;
@@ -83,10 +82,6 @@ public class AddressServiceImpl implements AddressService {
         Customer customer = customerService.getCustomerOfCurrentUser();
         Address address = addressRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(Messages.Error.CUSTOM_ADDRESS_NOT_FOUND));
-
-        if (address.getCustomer().getId() != customer.getId()) {
-            throw new BusinessException(Messages.Error.CUSTOM_ADDRESS_ACCESS_DENIED);
-        }
 
         return address;
     }

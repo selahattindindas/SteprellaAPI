@@ -6,10 +6,12 @@ import com.Steprella.Steprella.services.abstracts.AuthService;
 import com.Steprella.Steprella.services.dtos.requests.tokens.RefreshTokenRequest;
 import com.Steprella.Steprella.services.dtos.requests.users.AddUserRequest;
 import com.Steprella.Steprella.services.dtos.requests.users.LoginUserRequest;
+import com.Steprella.Steprella.services.dtos.requests.users.UpdateUserRequest;
 import com.Steprella.Steprella.services.dtos.responses.BaseResponse;
 import com.Steprella.Steprella.services.dtos.responses.tokens.RefreshTokenResponse;
 import com.Steprella.Steprella.services.dtos.responses.users.AddUserResponse;
 import com.Steprella.Steprella.services.dtos.responses.users.LoginUserResponse;
+import com.Steprella.Steprella.services.dtos.responses.users.UpdateUserResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -46,5 +48,12 @@ public class AuthController extends BaseController {
     public ResponseEntity<BaseResponse<RefreshTokenResponse>> refreshToken(@RequestBody @Valid RefreshTokenRequest request, HttpServletResponse response) {
         RefreshTokenResponse refreshTokenResponse = authService.refreshToken(request, response);
         return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, refreshTokenResponse);
+    }
+
+    @PutMapping("/update")
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public ResponseEntity<BaseResponse<UpdateUserResponse>> update(@RequestBody @Valid UpdateUserRequest request) {
+        UpdateUserResponse updateResponse = authService.update(request);
+        return sendResponse(HttpStatus.OK, Messages.Success.CUSTOM_SUCCESSFULLY, updateResponse);
     }
 }

@@ -17,6 +17,9 @@ public class AddAddressRequest {
     @NotBlank
     private String description;
 
+    @NotBlank
+    private String title;
+
     @NotNull
     @Min(1)
     private int cityId;

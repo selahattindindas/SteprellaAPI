@@ -28,4 +28,6 @@ public class ListOrderResponse {
     private ListAddressResponse shippingAddress;
 
     private List<ListOrderItemResponse> items;
+
+    private String createdDate;
 }

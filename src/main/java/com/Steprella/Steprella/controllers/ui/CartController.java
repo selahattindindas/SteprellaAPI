@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/carts")
 @AllArgsConstructor
-@PreAuthorize("hasRole('ROLE_CUSTOMER')")
+//@PreAuthorize("hasRole('ROLE_CUSTOMER')")
 public class CartController extends BaseController {
 
     private final CartService cartService;
