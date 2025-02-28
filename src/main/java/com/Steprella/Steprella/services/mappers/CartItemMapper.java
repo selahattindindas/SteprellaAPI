@@ -16,16 +16,17 @@ public interface CartItemMapper {
 
     CartItemMapper INSTANCE = Mappers.getMapper(CartItemMapper.class);
 
-    @Mapping(target = "variant.variantId", source = "productVariant.id")
-    @Mapping(target = "variant.colorName", source = "productVariant.color.name")
-    @Mapping(target = "variant.rating", source = "productVariant.product.rating")
-    @Mapping(target = "variant.ratingCount", source = "productVariant.product.ratingCount")
-    @Mapping(target = "variant.description", source = "productVariant.product.description")
-    @Mapping(target = "variant.brandName", source = "productVariant.product.brand.name")
-    @Mapping(target = "variant.shoeModelName", source = "productVariant.product.shoeModel.modelName")
-    @Mapping(target = "variant.materialName", source = "productVariant.product.material.name")
-    @Mapping(target = "variant.usageAreaName", source = "productVariant.product.usageArea.name")
-    @Mapping(target = "variant.productImages", source = "productVariant.productFiles")
+    @Mapping(target = "product.productId", source = "productVariant.product.id")
+    @Mapping(target = "product.variantId", source = "productVariant.id")
+    @Mapping(target = "product.price", source = "productVariant.product.price")
+    @Mapping(target = "product.colorName", source = "productVariant.color.name")
+    @Mapping(target = "product.rating", source = "productVariant.product.rating")
+    @Mapping(target = "product.ratingCount", source = "productVariant.product.ratingCount")
+    @Mapping(target = "product.description", source = "productVariant.product.description")
+    @Mapping(target = "product.brandName", source = "productVariant.product.brand.name")
+    @Mapping(target = "product.shoeModelName", source = "productVariant.product.shoeModel.modelName")
+    @Mapping(target = "product.usageAreaName", source = "productVariant.product.usageArea.name")
+    @Mapping(target = "product.productImages", source = "productVariant.productFiles")
     @Mapping(target = "sizeId", source = "productSize.id")
     @Mapping(target = "sizeValue", source = "productSize.sizeValue")
     ListCartItemResponse listResponseFromCartItem(CartItem cartItem);

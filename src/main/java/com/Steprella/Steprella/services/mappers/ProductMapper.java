@@ -20,19 +20,19 @@ public interface ProductMapper {
 
     ProductMapper INSTANCE = Mappers.getMapper(ProductMapper.class);
 
-    @Mapping(target = "rating", source = "rating")
-    @Mapping(target = "ratingCount", source = "ratingCount")
-    @Mapping(target = "shoeModelName", source = "shoeModel.modelName")
-    @Mapping(target = "category", source = "category")
-    @Mapping(target = "brandName", source = "brand.name")
-    @Mapping(target = "materialName", source = "material.name")
-    @Mapping(target = "usageAreaName", source = "usageArea.name")
-    @Mapping(target = "features", source = "features")
-    @Mapping(target = "productVariants", expression = "java(mapProductVariants(product.getProductVariants()))")
+    @Mapping(target = "rating", source = "product.rating")
+    @Mapping(target = "ratingCount", source = "product.ratingCount")
+    @Mapping(target = "shoeModelName", source = "product.shoeModel.modelName")
+    @Mapping(target = "category", source = "product.category")
+    @Mapping(target = "brandName", source = "product.brand.name")
+    @Mapping(target = "materialName", source = "product.material.name")
+    @Mapping(target = "usageAreaName", source = "product.usageArea.name")
+    @Mapping(target = "features", source = "product.features")
+    @Mapping(target = "productVariants", expression = "java(mapProductVariantsWithFavorites(product.getProductVariants(), favoriteVariantIds))")
     @Mapping(target = "productComments", expression = "java(mapComments(product.getComments()))")
-    @Mapping(target = "createdDate", source = "createdDate")
-    @Mapping(target = "updatedDate", source = "updatedDate")
-    ListProductResponse listResponseFromProduct(Product product);
+    @Mapping(target = "createdDate", source = "product.createdDate")
+    @Mapping(target = "updatedDate", source = "product.updatedDate")
+    ListProductResponse listResponseFromProduct(Product product, List<Integer> favoriteVariantIds);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "shoeModel.id", source = "shoeModelId")
@@ -78,9 +78,14 @@ public interface ProductMapper {
                 .collect(Collectors.toList());
     }
 
-    default List<ListProductVariantResponse> mapProductVariants(List<ProductVariant> variants) {
+    default List<ListProductVariantResponse> mapProductVariantsWithFavorites(List<ProductVariant> variants, List<Integer> favoriteVariantIds) {
         return variants.stream()
-                .map(ProductVariantMapper.INSTANCE::listResponseFromProductVariant)
+                .map(variant -> {
+                    ListProductVariantResponse response = ProductVariantMapper.INSTANCE.listResponseFromProductVariant(variant);
+                    boolean isFavorite = favoriteVariantIds.contains(variant.getId());
+                    response.setFavorite(isFavorite);
+                    return response;
+                })
                 .collect(Collectors.toList());
     }
 }

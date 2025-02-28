@@ -36,6 +36,7 @@ public class ProductServiceImpl implements ProductService {
     private final ShoeModelService shoeModelService;
     private final BrandService brandService;
     private final EntityValidator entityValidator;
+    private final FavoriteService favoriteService;
 
     @Override
     public List<ListProductResponse> getAll(int page, int size) {
@@ -186,9 +187,16 @@ public class ProductServiceImpl implements ProductService {
 
     private ListProductResponse createProductResponse(Product product) {
         ListCategoryResponse category = categoryService.getCategoryHierarchy(product.getCategory().getId());
-        ListProductResponse response = ProductMapper.INSTANCE.listResponseFromProduct(product);
-        response.setCategory(category);
 
+        List<Integer> favoriteVariantIds = Collections.emptyList();
+        try {
+            favoriteVariantIds = favoriteService.getCurrentUserFavoriteProductVariantIds();
+        } catch (Exception ignored) {
+            // User might not be logged in
+        }
+
+        ListProductResponse response = ProductMapper.INSTANCE.listResponseFromProduct(product, favoriteVariantIds);
+        response.setCategory(category);
         return response;
     }
 

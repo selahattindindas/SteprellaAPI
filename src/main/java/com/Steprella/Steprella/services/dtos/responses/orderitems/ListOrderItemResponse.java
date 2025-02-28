@@ -26,5 +26,5 @@ public class ListOrderItemResponse {
 
     private BigDecimal totalPrice;
 
-    private ListProductVariantDetailResponse variant;
+    private ListProductVariantDetailResponse product;
 }

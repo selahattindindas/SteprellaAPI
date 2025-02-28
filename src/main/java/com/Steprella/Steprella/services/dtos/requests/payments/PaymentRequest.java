@@ -16,7 +16,6 @@ import java.math.BigDecimal;
 public class PaymentRequest {
 
     @NotNull
-    @Min(1)
     private int orderId;
 
     @NotNull

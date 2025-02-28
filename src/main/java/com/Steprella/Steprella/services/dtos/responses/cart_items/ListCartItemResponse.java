@@ -27,5 +27,5 @@ public class ListCartItemResponse {
 
     private int sizeValue;
 
-    private ListProductVariantDetailResponse variant;
+    private ListProductVariantDetailResponse product;
 }

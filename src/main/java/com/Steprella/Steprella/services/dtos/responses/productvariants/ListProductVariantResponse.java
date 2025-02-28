@@ -21,6 +21,8 @@ public class ListProductVariantResponse {
 
     private boolean isActive;
 
+    private boolean isFavorite;
+
     private List<ListProductSizeResponse> productSizes;
 
     private List<ListFileResponse> productFiles;

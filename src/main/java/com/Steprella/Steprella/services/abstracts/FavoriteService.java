@@ -15,4 +15,6 @@ public interface FavoriteService {
     void delete(int id);
 
     int getTotalCount();
+
+    List<Integer> getCurrentUserFavoriteProductVariantIds();
 }

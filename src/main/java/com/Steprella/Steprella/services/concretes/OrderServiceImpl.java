@@ -70,12 +70,12 @@ public class OrderServiceImpl implements OrderService {
         Customer customer = customerService.getCustomerOfCurrentUser();
         entityValidator.validateCustomerAddress(request.getShippingAddressId());
 
-        boolean isValidCartItems = cartItemService.validateCartItems(request.getCartItem());
+        boolean isValidCartItems = cartItemService.validateCartItems(request.getSelectedCartItemIds());
         if (!isValidCartItems) {
             throw new NotFoundException(Messages.Error.CUSTOM_CART_ITEMS_NOT_FOUND);
         }
 
-        List<CartItem> cartItems = cartItemService.getCartItemsForOrder(request.getCartItem());
+        List<CartItem> cartItems = cartItemService.getCartItemsForOrder(request.getSelectedCartItemIds());
         
         cartItems.forEach(entityValidator::validateProductAvailabilityForOrder);
 
@@ -87,7 +87,7 @@ public class OrderServiceImpl implements OrderService {
 
         List<OrderItem> orderItems = orderItemService.convertCartItemsToOrderItems(cartItems, savedOrder);
         orderItemService.saveOrderItems(orderItems);
-        cartItemService.deleteCartItemsForOrder(request.getCartItem());
+        cartItemService.deleteCartItemsForOrder(request.getSelectedCartItemIds());
 
         return OrderMapper.INSTANCE.addResponseFromOrder(savedOrder);
     }

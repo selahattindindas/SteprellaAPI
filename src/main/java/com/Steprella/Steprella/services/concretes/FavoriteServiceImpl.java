@@ -11,6 +11,7 @@ import com.Steprella.Steprella.services.abstracts.CustomerService;
 import com.Steprella.Steprella.services.dtos.requests.favorites.AddFavoriteRequest;
 import com.Steprella.Steprella.services.dtos.responses.favorites.AddFavoriteResponse;
 import com.Steprella.Steprella.services.dtos.responses.favorites.ListFavoriteResponse;
+import com.Steprella.Steprella.services.dtos.responses.productvariants.ListProductVariantResponse;
 import com.Steprella.Steprella.services.mappers.FavoriteMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -35,7 +36,18 @@ public class FavoriteServiceImpl implements FavoriteService {
         List<Favorite> favorites = favoriteRepository.findByCustomerId(customer.getId(), pageable).getContent();
 
         return favorites.stream()
-                .map(FavoriteMapper.INSTANCE::listResponseFromFavorite)
+                .map(favorite -> {
+                    ListFavoriteResponse response = FavoriteMapper.INSTANCE.listResponseFromFavorite(favorite);
+
+                    int favoriteVariantId = favorite.getProductVariant().getId();
+                    List<ListProductVariantResponse> filteredVariants = response.getProduct().getProductVariants().stream()
+                            .filter(variant -> variant.getId() == favoriteVariantId)
+                            .peek(variant -> variant.setFavorite(true))
+                            .collect(Collectors.toList());
+
+                    response.getProduct().setProductVariants(filteredVariants);
+                    return response;
+                })
                 .collect(Collectors.toList());
     }
     
@@ -64,6 +76,12 @@ public class FavoriteServiceImpl implements FavoriteService {
     public int getTotalCount() {
         Customer customer = customerService.getCustomerOfCurrentUser();
         return favoriteRepository.findByCustomerId(customer.getId()).size();
+    }
+
+    @Override
+    public List<Integer> getCurrentUserFavoriteProductVariantIds() {
+        Customer customer = customerService.getCustomerOfCurrentUser();
+        return favoriteRepository.findProductVariantIdsByCustomerId(customer.getId());
     }
 
     private Favorite findFavoriteAndValidateOwnership(int id) {

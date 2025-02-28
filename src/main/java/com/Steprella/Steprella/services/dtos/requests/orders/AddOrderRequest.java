@@ -1,5 +1,4 @@
 package com.Steprella.Steprella.services.dtos.requests.orders;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,9 +14,8 @@ import java.util.List;
 public class AddOrderRequest {
 
     @NotNull
-    @Min(1)
     private int shippingAddressId;
 
     @NotNull
-    private List<Integer> cartItem;
+    private List<Integer> selectedCartItemIds;
 }

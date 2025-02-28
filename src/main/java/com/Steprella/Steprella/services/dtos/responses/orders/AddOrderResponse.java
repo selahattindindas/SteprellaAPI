@@ -19,5 +19,5 @@ public class AddOrderResponse {
 
     private String orderNumber;
 
-    private List<Integer> cartItem;
+    private List<Integer> selectedCartItemIds;
 }
