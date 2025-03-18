@@ -22,22 +22,18 @@ public class Payment extends AuditEntity {
     @JoinColumn(name = "order_id")
     private Order order;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "bank_card_id", nullable = false)
+    private BankCard bankCard;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
+
     @Column(name="amount", nullable = false)
     private BigDecimal amount;
 
     @Enumerated(EnumType.STRING)
     @Column(name="method", nullable = false)
     private PaymentMethod method;
-
-    @Column(name="card_number", nullable = false)
-    private String cardNumber;
-
-    @Column(name="card_holder_name", nullable = false)
-    private String cardHolderName;
-
-    @Column(name="expiration_date", nullable = false)
-    private String expirationDate;
-
-    @Column(name="cvv", nullable = false)
-    private String cvv;
 }

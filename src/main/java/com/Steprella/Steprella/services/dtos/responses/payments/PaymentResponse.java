@@ -18,15 +18,9 @@ public class PaymentResponse {
 
     private Long orderId;
 
+    private Long bankCardId;
+
     private BigDecimal amount;
 
     private PaymentMethod method;
-
-    private String cardNumber;
-
-    private String cardHolderName;
-
-    private String expirationDate;
-
-    private String cvv;
 }

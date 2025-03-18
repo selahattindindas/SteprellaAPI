@@ -76,7 +76,6 @@ public class OrderServiceImpl implements OrderService {
         }
 
         List<CartItem> cartItems = cartItemService.getCartItemsForOrder(request.getSelectedCartItemIds());
-        
         cartItems.forEach(entityValidator::validateProductAvailabilityForOrder);
 
         Order addOrder = OrderMapper.INSTANCE.orderFromAddRequest(request, customer);
@@ -98,6 +97,13 @@ public class OrderServiceImpl implements OrderService {
         order.setStatus(request.getStatus());
         Order savedOrder = orderRepository.save(order);
         return OrderMapper.INSTANCE.updateResponseFromOrder(savedOrder);
+    }
+
+    @Override
+    public void updateOrderStatus(int orderId, OrderStatus status) {
+        Order order = findByOrderId(orderId);
+        order.setStatus(status);
+        orderRepository.save(order);
     }
 
     @Override

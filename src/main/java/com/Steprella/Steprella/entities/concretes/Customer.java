@@ -33,6 +33,12 @@ public class Customer extends BaseEntity {
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     private List<Favorite> favorites;
 
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+    private List<BankCard> bankCards;
+
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+    private List<Payment> payments;
+
     @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL)
     private Cart cart;
 }

@@ -80,10 +80,9 @@ public class AddressServiceImpl implements AddressService {
 
     private Address findAddressAndValidateOwnership(int id) {
         Customer customer = customerService.getCustomerOfCurrentUser();
-        Address address = addressRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException(Messages.Error.CUSTOM_ADDRESS_NOT_FOUND));
 
-        return address;
+        return addressRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(Messages.Error.CUSTOM_ADDRESS_NOT_FOUND));
     }
 
     private void validateAddressRequest(int cityId, int districtId) {

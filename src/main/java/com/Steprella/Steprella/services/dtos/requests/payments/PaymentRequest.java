@@ -1,5 +1,6 @@
 package com.Steprella.Steprella.services.dtos.requests.payments;
 
+import com.Steprella.Steprella.services.enums.CardType;
 import com.Steprella.Steprella.services.enums.PaymentMethod;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -25,18 +26,11 @@ public class PaymentRequest {
     @NotNull
     private PaymentMethod method;
 
-    @NotBlank
-    @Size(min = 16, max = 16)
-    private String cardNumber;
+    @NotNull
+    private int bankCardId;
 
-    @NotBlank
-    private String cardHolderName;
-
-    @NotBlank
-    @Size(min = 5, max = 5)
-    private String expirationDate;
-
-    @NotBlank
     @Size(min = 3, max = 3)
     private String cvv;
+
+    private CardType cardType;
 }

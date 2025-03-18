@@ -5,5 +5,5 @@ import com.Steprella.Steprella.services.dtos.responses.payments.PaymentResponse;
 
 public interface PaymentService {
 
-    PaymentResponse createPayment(PaymentRequest request);
+    PaymentResponse processPayment(PaymentRequest request);
 }

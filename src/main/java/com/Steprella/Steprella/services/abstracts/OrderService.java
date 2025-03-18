@@ -6,6 +6,7 @@ import com.Steprella.Steprella.services.dtos.requests.orders.UpdateOrderRequest;
 import com.Steprella.Steprella.services.dtos.responses.orders.AddOrderResponse;
 import com.Steprella.Steprella.services.dtos.responses.orders.ListOrderResponse;
 import com.Steprella.Steprella.services.dtos.responses.orders.UpdateOrderResponse;
+import com.Steprella.Steprella.services.enums.OrderStatus;
 
 import java.util.List;
 
@@ -22,6 +23,8 @@ public interface OrderService {
     AddOrderResponse add(AddOrderRequest request);
 
     UpdateOrderResponse update(UpdateOrderRequest request);
+
+    void updateOrderStatus(int orderId, OrderStatus status);
 
     void delete(int id);
 

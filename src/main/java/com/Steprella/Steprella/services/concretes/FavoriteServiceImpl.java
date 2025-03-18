@@ -31,14 +31,14 @@ public class FavoriteServiceImpl implements FavoriteService {
     @Override
     public List<ListFavoriteResponse> getFavorites(int page, int size) {
         Customer customer = customerService.getCustomerOfCurrentUser();
-        
+
         Pageable pageable = PageRequest.of(page, size);
         List<Favorite> favorites = favoriteRepository.findByCustomerId(customer.getId(), pageable).getContent();
-
-        return favorites.stream()
+        List<ListFavoriteResponse> responses = favorites.stream()
                 .map(favorite -> {
                     ListFavoriteResponse response = FavoriteMapper.INSTANCE.listResponseFromFavorite(favorite);
 
+                    // Filter to only include the favorited variant
                     int favoriteVariantId = favorite.getProductVariant().getId();
                     List<ListProductVariantResponse> filteredVariants = response.getProduct().getProductVariants().stream()
                             .filter(variant -> variant.getId() == favoriteVariantId)
@@ -49,12 +49,14 @@ public class FavoriteServiceImpl implements FavoriteService {
                     return response;
                 })
                 .collect(Collectors.toList());
+
+        return responses;
     }
-    
+
     @Override
     public AddFavoriteResponse add(AddFavoriteRequest request) {
         Customer customer = customerService.getCustomerOfCurrentUser();
-        
+
         if (favoriteRepository.existsByCustomerIdAndProductVariantId(
                 customer.getId(), request.getProductVariantId())) {
             throw new BusinessException(Messages.Error.FAVORITE_ALREADY_EXISTS);
